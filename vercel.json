@@ -19,14 +19,5 @@
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
       ]
     }
-  ],
-  "env": {
-    "SUPABASE_URL": "@supabase-url",
-    "SUPABASE_KEY": "@supabase-key",
-    "SUPABASE_SERVICE_KEY": "@supabase-service-key",
-    "DEEPSEEK_API_KEY": "@deepseek-api-key",
-    "DEEPSEEK_GENERATION_MODEL": "deepseek-chat",
-    "DEEPSEEK_MONTHLY_BUDGET_CNY": "10.0",
-    "AMAP_KEY": "@amap-key"
-  }
+  ]
 }
