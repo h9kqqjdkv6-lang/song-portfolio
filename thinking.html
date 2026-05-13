@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="深度思考 · 方法论、历史研究与博弈推演" />
+  <title>宋宗源 · 深度思考</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #000000;
+      --surface: #0d0d0d;
+      --surface-raised: #111111;
+      --border: rgba(255, 255, 255, 0.1);
+      --text: rgba(255, 255, 255, 0.72);
+      --text-heading: #ffffff;
+      --muted: #a1a1aa;
+      --accent: #6d28d9;
+      --accent-soft: rgba(109, 40, 217, 0.12);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Inter",
+        ui-sans-serif,
+        system-ui,
+        "Segoe UI",
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 85% 45% at 50% -10%, rgba(109, 40, 217, 0.12), transparent 50%),
+        radial-gradient(ellipse 65% 50% at 100% 100%, rgba(109, 40, 217, 0.06), transparent 45%);
+      color: var(--text);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 3rem;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem clamp(1rem, 4vw, 1.75rem);
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(16px) saturate(1.1);
+      -webkit-backdrop-filter: blur(16px) saturate(1.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .topbar__brand {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-heading);
+    }
+
+    .topbar__brand span {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .topbar__back {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-heading);
+      text-decoration: none;
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      transition:
+        border-color 0.18s ease,
+        background 0.18s ease;
+    }
+
+    .topbar__back:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: clamp(2.5rem, 6vw, 3.5rem) clamp(1rem, 4vw, 2rem) 2rem;
+    }
+
+    .page-heading {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .page-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      color: var(--text-heading);
+      margin: 0 0 0.65rem;
+      letter-spacing: -0.035em;
+    }
+
+    .page-lead {
+      font-size: 0.9375rem;
+      color: var(--muted);
+      margin: 0 auto;
+      max-width: 40rem;
+      line-height: 1.65;
+    }
+
+    .think-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 900px) {
+      .think-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .topbar { padding: 0.7rem clamp(0.75rem, 3vw, 1.25rem); }
+      .topbar__brand { font-size: 0.75rem; }
+      .think-grid { gap: 0.85rem; }
+      .think-topic { padding: 1.25rem; }
+      .think-topic h2 { font-size: 1.05rem; }
+      .think-topic p { font-size: 0.875rem; }
+    }
+
+    @media (max-width: 480px) {
+      body { font-size: 0.875rem; padding-bottom: 1.5rem; }
+      .think-topic { padding: 1rem; border-radius: 12px; }
+      .think-topic h2 { font-size: 0.95rem; }
+      .think-topic p { font-size: 0.8125rem; line-height: 1.6; }
+      .think-topic .readmore { font-size: 0.75rem; }
+    }
+
+    .think-topic {
+      padding: 1.75rem 1.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .think-topic:hover {
+      border-color: rgba(167, 139, 250, 0.25);
+      background: var(--surface-raised);
+    }
+
+    .think-topic__icon {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(109, 40, 217, 0.28);
+      background: var(--accent-soft);
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .think-topic__icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .think-topic h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .think-topic p {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin: 0 0 1.1rem;
+      line-height: 1.65;
+    }
+
+    .think-topic .readmore {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: rgba(167, 196, 253, 0.95);
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
+
+    .think-topic .readmore:hover {
+      color: #c4b5fd;
+    }
+
+    :focus-visible {
+      outline: 2px solid rgba(167, 139, 250, 0.55);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <span class="topbar__brand">宋宗源 <span>· 深度思考</span></span>
+    <a class="topbar__back" href="index.html#thinking">返回主页</a>
+  </header>
+
+  <main>
+    <div class="page-heading">
+      <h1 class="page-title">深度思考</h1>
+      <p class="page-lead">方法论、历史研究与博弈推演分列如下；可逐栏阅读原文。</p>
+    </div>
+
+    <div class="think-grid">
+      <article class="think-topic" id="methodology">
+        <div class="think-topic__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        </div>
+        <h2>方法论体系</h2>
+        <p>五层框架、周期理论等：如何把复杂政策与场景压成可追溯的结构。</p>
+        <a class="readmore" href="#">阅读全文</a>
+      </article>
+
+      <article class="think-topic" id="historical">
+        <div class="think-topic__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z"/></svg>
+        </div>
+        <h2>历史人物研究</h2>
+        <p>韩信的能力模型与现实启示——资源有限时如何找对战场与节拍。</p>
+        <a class="readmore" href="#">阅读全文</a>
+      </article>
+
+      <article class="think-topic" id="game-theory">
+        <div class="think-topic__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+        </div>
+        <h2>博弈论应用</h2>
+        <p>求职与协作中的囚徒困境、智猪博弈：策略选择在现实中的边界。</p>
+        <a class="readmore" href="#">阅读全文</a>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

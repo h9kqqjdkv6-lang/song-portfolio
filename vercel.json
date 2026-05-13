@@ -1,0 +1,32 @@
+{
+  "functions": {
+    "api/health.js": { "memory": 128, "maxDuration": 10 },
+    "api/mentors.js": { "memory": 256, "maxDuration": 15 },
+    "api/intel.js": { "memory": 256, "maxDuration": 30 },
+    "api/scenes/[name].js": { "memory": 256, "maxDuration": 15 },
+    "api/generate.js": { "memory": 512, "maxDuration": 180 },
+    "api/usage.js": { "memory": 128, "maxDuration": 10 }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+      ]
+    }
+  ],
+  "env": {
+    "SUPABASE_URL": "@supabase-url",
+    "SUPABASE_KEY": "@supabase-key",
+    "SUPABASE_SERVICE_KEY": "@supabase-service-key",
+    "DEEPSEEK_API_KEY": "@deepseek-api-key",
+    "DEEPSEEK_GENERATION_MODEL": "deepseek-chat",
+    "DEEPSEEK_MONTHLY_BUDGET_CNY": "10.0",
+    "AMAP_KEY": "@amap-key"
+  }
+}

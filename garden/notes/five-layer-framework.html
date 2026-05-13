@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#050508" />
+  <title>五层框架 · 从地基到演进 · 数字花园</title>
+  <link rel="stylesheet" href="../garden.css" />
+</head>
+<body>
+  <div class="g-read-progress" aria-hidden="true">
+    <div class="g-read-progress__bar" id="g-read-progress-bar"></div>
+  </div>
+  <div class="garden-noise" aria-hidden="true"></div>
+  <div class="g-page">
+    <header class="g-nav">
+      <div class="g-nav__inner">
+        <a class="g-nav__brand" href="../../index.html">← <span>回主页</span></a>
+        <nav class="g-nav__links" aria-label="花园导航">
+          <a href="../index.html">数字花园</a>
+          <a href="../../index.html#hub-title">作品与能力</a>
+        </nav>
+        <button type="button" class="g-nav__toggle" id="nav-toggle" aria-expanded="false" aria-label="打开菜单">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </header>
+    <div class="g-mobile-drawer__overlay" id="drawer-overlay"></div>
+    <div class="g-mobile-drawer" id="mobile-drawer" role="dialog" aria-label="导航菜单">
+      <a href="../index.html">数字花园</a>
+      <a href="../../index.html#hub-title">作品与能力</a>
+    </div>
+    <article class="g-note-layout">
+      <nav class="g-breadcrumb" aria-label="面包屑"><a href="../index.html">数字花园</a> / 方法论 / <span aria-current="page">五层框架 · 从地基到演进</span></nav>
+      <div class="g-read">
+        <p style="margin:0 0 0.75rem;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(167,139,250,0.9);">方法论 · <span aria-hidden="true">🌳</span> <span class="visually-hidden">evergreen</span></p>
+        <h1>五层框架 · 从地基到演进</h1>
+        <h1>五层框架 · 从地基到演进</h1>
+<h2>为什么需要一层「操作系统」</h2>
+<p>复杂问题之所以难，往往不是因为缺少信息，而是因为<strong>层次混在一起</strong>：还没弄清题干就开始列方案，或一上来就执行却没有反馈闭环。五层框架把思考强制拆成五个顺序阶段——从<strong>澄清本质</strong>到<strong>可复用演进</strong>——让单次决策可读、可复盘、可迁移。</p>
+<hr>
+<h2>五层分别做什么</h2>
+<h3>1. 地基：定义问题的本质，澄清底层假设</h3>
+<ul>
+<li><strong>在问什么</strong>：先把「我们在解决谁、在什么约束下、成功长什么样」写清楚，避免把症状当病因。</li>
+<li><strong>隐含假设</strong>：列出当前判断依赖的前提（例如「客户在乎的是成本而非合规风险」）；标出哪些是事实、哪些是推断。</li>
+<li><strong>输出物</strong>：一句可检验的问题陈述 + 假设清单；尚未进入拆解。</li>
+</ul>
+<h3>2. 分析：分解关键要素，识别反馈回路与延迟效应</h3>
+<ul>
+<li><strong>结构</strong>：把问题拆成变量、干系人、约束与资源，画清依赖关系。</li>
+<li><strong>动力学</strong>：标出增强/平衡回路；注意<strong>延迟</strong>——今天的动作可能下周才体现在指标上，避免短视调参。</li>
+<li><strong>输出物</strong>：要素图或要点列表 + 「哪里会反噬」的备注，为策略提供靶面。</li>
+</ul>
+<h3>3. 策略：设计可选方案，权衡成本与收益</h3>
+<ul>
+<li><strong>多方案</strong>：至少两条路径（激进/稳妥、自研/采购等），每条对应不同假设。</li>
+<li><strong>权衡显式化</strong>：成本不仅是钱，还包括时间、组织信用、机会成本与不可逆性。</li>
+<li><strong>输出物</strong>：可选方案表 + 推荐序与保留条件（「若假设 X 被证伪则切换到 B」）。</li>
+</ul>
+<h3>4. 落地：选择最小可行动作，推到真实世界验证</h3>
+<ul>
+<li><strong>MVA（最小可行行动）</strong>：小到能在真实场景里跑通、又能暴露假设是否成立。</li>
+<li><strong>证据标准</strong>：事先约定「看到什么信号算验证成功/失败」，减少事后叙事。</li>
+<li><strong>输出物</strong>：行动项、责任人、时间盒、观测指标。</li>
+</ul>
+<h3>5. 演进：收集反馈，迭代框架，形成可复用 SOP</h3>
+<ul>
+<li><strong>复盘</strong>：对照地基里的假设，哪些被加强、哪些被推翻。</li>
+<li><strong>沉淀</strong>：把「这次做对的检查清单」写成 SOP 或模板，进入下一轮的地基素材库。</li>
+<li><strong>输出物</strong>：更新后的问题定义 + 模板/清单版本号，形成<strong>可累积</strong>的知识资产。</li>
+</ul>
+<hr>
+<h2>层间关系（如何串起来）</h2>
+<p>五层不是写死一次就完：<strong>演进</strong>会回流<strong>地基</strong>（问题重述），<strong>落地</strong>的数据会修正<strong>分析</strong>里的模型。实务上可以看成是螺旋上升的五个锚点，而不是严格线性的瀑布。</p>
+<hr>
+<h2>应用迁移案例</h2>
+<h3>求职：把「面试」拆成可操作的链</h3>
+<p>将模糊的「去面试」迁移到五层逻辑，可落成一条流水线式叙事：</p>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>在求职里的落点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>地基</td>
+<td>我到底要证明什么信号？目标岗位/城市/薪酬的约束是什么？</td>
+</tr>
+<tr>
+<td>分析</td>
+<td>招聘方筛选机制、缺口叙事、我与竞争对手的差分在哪里？延迟：投递→回音往往非即时。</td>
+</tr>
+<tr>
+<td>策略</td>
+<td>主攻校招/内推/猎头？简历一版还是多版？笔面试准备资源如何分配？</td>
+</tr>
+<tr>
+<td>落地</td>
+<td>单次具体动作：<strong>信号设计</strong>（项目故事）→ <strong>渠道选择</strong>（内推与岗位池）→ <strong>叙事构建</strong>（宝洁八大问式 STAR）→ <strong>反馈收集</strong>（面试官追问记录）→ <strong>简历迭代</strong>（按反馈改一页纸）。</td>
+</tr>
+<tr>
+<td>演进</td>
+<td>把高频追问与有效故事沉淀为个人题库与简历版本库，下一轮地基更稳。</td>
+</tr>
+</tbody></table>
+<p>核心是把面试从「一次事件」改成<strong>可迭代产品</strong>：每一轮输出可观测反馈，驱动下一轮。</p>
+<h3>个人成长：地基向内，落地向外</h3>
+<ul>
+<li><strong>地基（向内）</strong>：厘清<strong>内部评价系统</strong>——你用什么标准定义「我今天算进步」；同时管理<strong>认知闭合需求</strong>（急于下结论的冲动），避免用忙碌感代替成长。</li>
+<li><strong>分析</strong>：精力账本、习惯回路、环境触发器；识别拖延是来自恐惧还是任务颗粒度过大。</li>
+<li><strong>策略</strong>：是补技能栈、换环境，还是先降认知负荷；权衡时间与机会成本。</li>
+<li><strong>落地（向外）</strong>：例如<strong>每日打卡</strong>（可观测的最小行动）和<strong>个人方案生成器</strong>（把重复决策模板化）的持续迭代——让「演进」有硬输出，而不停在动机层。</li>
+<li><strong>演进</strong>：每周回看打卡与生成器版本，调整地基里的评价口径，避免自我叙事与行为脱节。</li>
+</ul>
+<hr>
+<h2>小结</h2>
+<p>五层框架的价值在于<strong>可迁移</strong>：同一套锚点既可做大方案，也可压缩成求职链或个人习惯系统。关键是别让执行抢在地基之前，也别让复盘停在情绪层而没有<strong>假设—证据—SOP</strong>的闭环。</p>
+<p>相关地图入口：<a class="wiki-link" href="../notes/moc-architecture-thinking.html">MOC · 解决方案架构思维</a> <a class="wiki-link" href="../notes/moc-career-mental-models.html">MOC · 职场心智与博弈</a></p>
+<section class="moc-grid" aria-label="笔记地图"><a class="moc-card" href="../notes/moc-architecture-thinking.html"><h3 class="moc-card__title">MOC · 解决方案架构思维</h3><p class="moc-card__excerpt">从政府业务理解到产品化交付的完整方法体系。</p></a><a class="moc-card" href="../notes/moc-career-mental-models.html"><h3 class="moc-card__title">MOC · 职场心智与博弈</h3><p class="moc-card__excerpt">求职博弈、职业决策、向上管理等职场心智模型。</p></a></section>
+        <section class="g-backlinks"><h2>引用本页的笔记</h2><ul><li><a href="../notes/government-decision-chain.html">政府决策链三重门 · 采购、业务与领导的三层穿透</a></li><li><a href="../notes/ai-agent-robot-landscape.html">AI时代的全栈架构师 · 从Agent到机器人的技术版图</a></li></ul></section>
+      </div>
+      <aside class="g-aside" aria-label="相关笔记">
+        <div class="g-aside__section"><h2>链出</h2><ul><li><a href="../notes/moc-architecture-thinking.html">MOC · 解决方案架构思维</a></li><li><a href="../notes/moc-career-mental-models.html">MOC · 职场心智与博弈</a></li></ul></div>
+        <div class="g-aside__section"><h2>反向链接</h2><ul><li><a href="../notes/government-decision-chain.html">政府决策链三重门 · 采购、业务与领导的三层穿透</a></li><li><a href="../notes/ai-agent-robot-landscape.html">AI时代的全栈架构师 · 从Agent到机器人的技术版图</a></li></ul></div>
+      </aside>
+    </article>
+    <footer class="g-footer">
+      <a href="../index.html">数字花园</a> · Markdown 源位于 <code>/content/garden/</code>
+    </footer>
+  </div>
+  <script>
+(function () {
+  var bar = document.getElementById("g-read-progress-bar");
+  if (!bar) return;
+  function update() {
+    var el = document.documentElement;
+    var scrollTop = window.scrollY != null ? window.scrollY : el.scrollTop;
+    var height = el.scrollHeight - el.clientHeight;
+    var p = height <= 0 ? 0 : (scrollTop / height) * 100;
+    if (p < 0) p = 0;
+    if (p > 100) p = 100;
+    bar.style.width = p + "%";
+  }
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update, { passive: true });
+  update();
+})();
+  </script>
+  <script src="../wiki-popup.js" defer></script>
+<script>
+(function () {
+  var toggle = document.getElementById("nav-toggle");
+  var drawer = document.getElementById("mobile-drawer");
+  var overlay = document.getElementById("drawer-overlay");
+  if (!toggle || !drawer || !overlay) return;
+  function openDrawer() {
+    drawer.classList.add("is-open");
+    overlay.classList.add("is-open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+  function closeDrawer() {
+    drawer.classList.remove("is-open");
+    overlay.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+  toggle.addEventListener("click", function () {
+    if (drawer.classList.contains("is-open")) closeDrawer(); else openDrawer();
+  });
+  overlay.addEventListener("click", closeDrawer);
+  drawer.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", closeDrawer); });
+})();
+</script>
+</body>
+</html>

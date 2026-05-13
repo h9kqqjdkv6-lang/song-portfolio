@@ -1,0 +1,77 @@
+{
+  "compareDimensions": [
+    { "id": "tco", "label": "TCO / 相对成本", "weight": 1 },
+    { "id": "delivery", "label": "交付周期", "weight": 1 },
+    { "id": "compliance", "label": "合规与等保适配", "weight": 1 },
+    { "id": "ops", "label": "运维与维保", "weight": 1 },
+    { "id": "scale", "label": "扩展性与多场景", "weight": 1 },
+    { "id": "pocRisk", "label": "POC 技术风险", "weight": 1 }
+  ],
+  "defaultCompareRows": [
+    {
+      "id": "row-a",
+      "name": "方案 A：云托管 + 标准集成",
+      "scores": { "tco": 4, "delivery": 4, "compliance": 4, "ops": 5, "scale": 4, "pocRisk": 4 },
+      "notes": "适合 G 端快速过会、减少自建机房压力。"
+    },
+    {
+      "id": "row-b",
+      "name": "方案 B：专网 / 私有化部署",
+      "scores": { "tco": 3, "delivery": 3, "compliance": 5, "ops": 3, "scale": 3, "pocRisk": 3 },
+      "notes": "数据不出域；建设与运维成本高。"
+    },
+    {
+      "id": "row-c",
+      "name": "方案 C：混合云（分析在政务云、飞行数据边缘侧）",
+      "scores": { "tco": 4, "delivery": 3, "compliance": 4, "ops": 4, "scale": 5, "pocRisk": 3 },
+      "notes": "平衡性能与监管；架构复杂度高。"
+    }
+  ],
+  "pocChecklistTemplate": [
+    { "id": "p1", "label": "范围确认：场景边界、空域与起降点清单已书面确认", "done": false, "note": "" },
+    { "id": "p2", "label": "环境：网络/图传/视频回传链路与警务或政务云联通性验证", "done": false, "note": "" },
+    { "id": "p3", "label": "用例：典型任务剖面（侦察/投送/取证）脚本与验收阈值", "done": false, "note": "" },
+    { "id": "p4", "label": "指标：端到端时延、丢包、取证时间戳链完整性抽检", "done": false, "note": "" },
+    { "id": "p5", "label": "验收：POC 纪要签署与风险登记表归档", "done": false, "note": "" }
+  ],
+  "tenderPhases": [
+    { "id": "ph1", "title": "立项与可研", "hint": "纳入低空与信息化专项、投资估算与效益分析", "done": false },
+    { "id": "ph2", "title": "需求论证 / 招标文件", "hint": "技术规格与商务条款分离评审；涉密按分级保护要求", "done": false },
+    { "id": "ph3", "title": "公示 / 开标 / 评标", "hint": "技术偏离表与演示材料（DEMO）准备", "done": false },
+    { "id": "ph4", "title": "建设实施", "hint": "等保测评窗口、航空器与平台联调", "done": false },
+    { "id": "ph5", "title": "验收与运维移交", "hint": "试运行 KPI、培训与知识转移", "done": false }
+  ],
+  "tenderOutlineTemplate": [
+    { "title": "总则与项目背景", "body": "（可编辑）项目背景、建设目标、编制依据。\n\n本大纲为演示草稿，不构成法律或招投标专业意见。" },
+    { "title": "现状与需求分析", "body": "（可编辑）业务现状、痛点、约束（空域、网络、合规）。" },
+    { "title": "总体架构与技术路线", "body": "（可编辑）逻辑架构、部署拓扑、与政务云/专网关系。" },
+    { "title": "关键功能与性能指标", "body": "（可编辑）功能清单、SLA、接口与安全要求。" },
+    { "title": "实施计划与里程碑", "body": "（可编辑）阶段划分、资源与风险管理。" },
+    { "title": "培训、运维与质保", "body": "（可编辑）交付物列表、服务等级。" }
+  ],
+  "deliveryMilestonesTemplate": [
+    { "id": "m1", "label": "需求冻结", "status": "planned", "artifactNote": "签字版需求说明", "datePlanned": "" },
+    { "id": "m2", "label": "详细设计评审", "status": "planned", "artifactNote": "架构与接口设计", "datePlanned": "" },
+    { "id": "m3", "label": "采购到货 / 试飞准备", "status": "planned", "artifactNote": "设备清单、试飞计划", "datePlanned": "" },
+    { "id": "m4", "label": "联调与试飞", "status": "planned", "artifactNote": "POC/试飞报告", "datePlanned": "" },
+    { "id": "m5", "label": "培训与初验", "status": "planned", "artifactNote": "培训记录、初验纪要", "datePlanned": "" },
+    { "id": "m6", "label": "终验与运维移交", "status": "planned", "artifactNote": "终验报告、运维手册", "datePlanned": "" }
+  ],
+  "shareOutlineSlides": [
+    "封面：场景价值与政策窗口",
+    "客户痛点：时效、成本、合规三角",
+    "业务架构：空地协同与指挥闭环",
+    "技术架构：云边端与数据流",
+    "安全合规：等保、视频专网、数据留存",
+    "参考案例与可量化收益",
+    "合作模式：产品 + 集成 + 运维",
+    "下一步：POC 范围与时间表"
+  ],
+  "ecosystemPartners": [
+    { "role": "航空器与载荷", "name": "主机厂 / ODM", "value": "适航、维保、备件体系" },
+    { "role": "云平台与专网", "name": "政务云 / 运营商", "value": "IaaS、专线、等保辅导" },
+    { "role": "系统集成", "name": "SI 伙伴", "value": "交付、二次开发、本地运维" },
+    { "role": "行业软件", "name": "空管 / 视频 / 证据平台", "value": "接口互通、联合方案" },
+    { "role": "科研与测评", "name": "高校 / 测评机构", "value": "算法评测、标准与课题联合" }
+  ]
+}

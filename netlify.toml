@@ -1,0 +1,12 @@
+# Netlify build config
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/api/weather"
+  to = "/.netlify/functions/weather"
+  status = 200
+
+# Set these in Netlify Dashboard > Site > Environment variables:
+#   QWEATHER_KEY = your-qweather-api-key
+#   AMAP_KEY     = your-amap-web-api-key

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#050508" />
+  <title>政府侧采购话术的几条主线 · 数字花园</title>
+  <link rel="stylesheet" href="../garden.css" />
+</head>
+<body>
+  <div class="g-read-progress" aria-hidden="true">
+    <div class="g-read-progress__bar" id="g-read-progress-bar"></div>
+  </div>
+  <div class="garden-noise" aria-hidden="true"></div>
+  <div class="g-page">
+    <header class="g-nav">
+      <div class="g-nav__inner">
+        <a class="g-nav__brand" href="../../index.html">← <span>回主页</span></a>
+        <nav class="g-nav__links" aria-label="花园导航">
+          <a href="../index.html">数字花园</a>
+          <a href="../../index.html#hub-title">作品与能力</a>
+        </nav>
+        <button type="button" class="g-nav__toggle" id="nav-toggle" aria-expanded="false" aria-label="打开菜单">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </header>
+    <div class="g-mobile-drawer__overlay" id="drawer-overlay"></div>
+    <div class="g-mobile-drawer" id="mobile-drawer" role="dialog" aria-label="导航菜单">
+      <a href="../index.html">数字花园</a>
+      <a href="../../index.html#hub-title">作品与能力</a>
+    </div>
+    <article class="g-note-layout">
+      <nav class="g-breadcrumb" aria-label="面包屑"><a href="../index.html">数字花园</a> / 低空经济 / <span aria-current="page">政府侧采购话术的几条主线</span></nav>
+      <div class="g-read">
+        <p style="margin:0 0 0.75rem;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(167,139,250,0.9);">低空经济 · <span aria-hidden="true">🌱</span> <span class="visually-hidden">seedling</span></p>
+        <h1>政府侧采购话术的几条主线</h1>
+        <p>在政府与采购语境里，方案常被问到的不止是「飞什么」，而是 <strong>谁决策、谁运维、事故链怎么收口</strong>。我会把对话压成几条可复述的主线：</p>
+<ol>
+<li><strong>任务边界</strong>：测绘、巡线、应急与治安的边界如何划分，能否写进招标文件的技术规格。</li>
+<li><strong>数据与合规</strong>：空域、航线、影像与日志留存周期，和现有公安/应急系统的对接方式。</li>
+<li><strong>运维与退出</strong>：机队规模、备件与培训，合同期结束后数据与账号如何移交。</li>
+</ol>
+<p>这些主线会回到花园总览 <a class="wiki-link" href="../notes/low-altitude-narrative-moc.html">低空经济叙事地图</a>，并与 <a class="wiki-link" href="../notes/knowledge-to-demo.html">从知识库到可演示作品</a> 里「可演示」一节互相引用。</p>
+
+        <section class="g-backlinks"><h2>引用本页的笔记</h2><ul><li><a href="../notes/knowledge-to-demo.html">从知识库到可演示作品</a></li><li><a href="../notes/low-altitude-narrative-moc.html">低空经济叙事地图</a></li><li><a href="../notes/low-altitude-ops-emergency.html">低空运营与应急场景的交集</a></li></ul></section>
+      </div>
+      <aside class="g-aside" aria-label="相关笔记">
+        <div class="g-aside__section"><h2>链出</h2><ul><li><a href="../notes/low-altitude-narrative-moc.html">低空经济叙事地图</a></li><li><a href="../notes/knowledge-to-demo.html">从知识库到可演示作品</a></li></ul></div>
+        <div class="g-aside__section"><h2>反向链接</h2><ul><li><a href="../notes/knowledge-to-demo.html">从知识库到可演示作品</a></li><li><a href="../notes/low-altitude-narrative-moc.html">低空经济叙事地图</a></li><li><a href="../notes/low-altitude-ops-emergency.html">低空运营与应急场景的交集</a></li></ul></div>
+      </aside>
+    </article>
+    <footer class="g-footer">
+      <a href="../index.html">数字花园</a> · Markdown 源位于 <code>/content/garden/</code>
+    </footer>
+  </div>
+  <script>
+(function () {
+  var bar = document.getElementById("g-read-progress-bar");
+  if (!bar) return;
+  function update() {
+    var el = document.documentElement;
+    var scrollTop = window.scrollY != null ? window.scrollY : el.scrollTop;
+    var height = el.scrollHeight - el.clientHeight;
+    var p = height <= 0 ? 0 : (scrollTop / height) * 100;
+    if (p < 0) p = 0;
+    if (p > 100) p = 100;
+    bar.style.width = p + "%";
+  }
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update, { passive: true });
+  update();
+})();
+  </script>
+  <script src="../wiki-popup.js" defer></script>
+<script>
+(function () {
+  var toggle = document.getElementById("nav-toggle");
+  var drawer = document.getElementById("mobile-drawer");
+  var overlay = document.getElementById("drawer-overlay");
+  if (!toggle || !drawer || !overlay) return;
+  function openDrawer() {
+    drawer.classList.add("is-open");
+    overlay.classList.add("is-open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+  function closeDrawer() {
+    drawer.classList.remove("is-open");
+    overlay.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+  toggle.addEventListener("click", function () {
+    if (drawer.classList.contains("is-open")) closeDrawer(); else openDrawer();
+  });
+  overlay.addEventListener("click", closeDrawer);
+  drawer.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", closeDrawer); });
+})();
+</script>
+</body>
+</html>

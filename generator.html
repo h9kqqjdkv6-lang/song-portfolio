@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>解决方案指挥台 · 低空方案工作台</title>
+  <script>
+    window.AMAP_KEY = 'AMAP_KEY_PLACEHOLDER';
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/generator-workbench.css">
+</head>
+<body>
+  <div class="tog-backdrop" aria-hidden="true"></div>
+
+  <header class="tog-top-bar" role="banner">
+    <div class="tog-top-left">
+      <a class="tog-back-link" href="index.html">返回主页</a>
+      <div class="tog-top-titles">
+        <span class="tog-product-name">低空经济 · 解决方案指挥台</span>
+        <span class="tog-product-sub">宋宗源 · 解决方案工程师 · ToB / G端</span>
+      </div>
+    </div>
+    <div class="tog-top-actions">
+      <button type="button" class="tog-theme-toggle" id="tog-theme-toggle" aria-pressed="false" title="切换浅色/深色">浅色视图</button>
+    </div>
+  </header>
+
+  <div class="tog-app" id="tog-app">
+    <aside class="tog-sidebar" aria-label="方案步骤导航">
+      <div id="tog-kpi-bar" class="tog-kpi-bar tog-kpi-bar--sidebar" role="region" aria-label="关键指标速览">
+        <div class="tog-kpi-item">
+          <span class="tog-kpi-label">当前场景</span>
+          <span class="tog-kpi-val tog-kpi-val--sm" id="tog-kpi-scene">—</span>
+        </div>
+        <div class="tog-kpi-item">
+          <span class="tog-kpi-label">空间档位</span>
+          <span class="tog-kpi-val tog-kpi-val--sm" id="tog-kpi-spatial">—</span>
+        </div>
+        <div class="tog-kpi-item tog-kpi-item--wind">
+          <span class="tog-kpi-label">现场风速</span>
+          <div class="tog-kpi-wind-row">
+            <span class="tog-kpi-val" id="tog-kpi-wind">—</span>
+            <span class="tog-kpi-badge" id="tog-kpi-wind-tier" data-tier="na">—</span>
+          </div>
+        </div>
+        <div class="tog-kpi-item">
+          <span class="tog-kpi-label">推荐方案加权</span>
+          <span class="tog-kpi-val" id="tog-kpi-compare">—</span>
+        </div>
+        <div class="tog-kpi-item">
+          <span class="tog-kpi-label">工作区版本</span>
+          <span class="tog-kpi-val tog-kpi-val--sm" id="tog-kpi-revision">—</span>
+        </div>
+        <div class="tog-kpi-item tog-kpi-item--wide">
+          <span class="tog-kpi-hint" id="tog-kpi-hint">请先在右侧填写风速并点击「生成方案」。</span>
+        </div>
+      </div>
+      <p class="tog-sidebar-title">工作台步骤</p>
+      <nav class="tog-steps" role="tablist" aria-label="模块切换">
+        <button type="button" class="wb-tab tog-step is-active" role="tab" aria-selected="true" data-panel="brief" data-step="1">
+          <span class="tog-step-num" aria-hidden="true">1</span>
+          <span class="tog-step-text"><span class="tog-step-label">解决方案</span><span class="tog-step-desc">场景方案生成与导出</span></span>
+        </button>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="policy" data-step="2">
+          <span class="tog-step-num" aria-hidden="true">2</span>
+          <span class="tog-step-text"><span class="tog-step-label">政策法规</span><span class="tog-step-desc">标准 · 空域 · 采购</span></span>
+        </button>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="pain" data-step="3">
+          <span class="tog-step-num" aria-hidden="true">3</span>
+          <span class="tog-step-text"><span class="tog-step-label">痛点分析</span><span class="tog-step-desc">运行与组织</span></span>
+        </button>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="cases" data-step="4">
+          <span class="tog-step-num" aria-hidden="true">4</span>
+          <span class="tog-step-text"><span class="tog-step-label">真实案例</span><span class="tog-step-desc">行业叙事参考</span></span>
+        </button>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="tech" data-step="5">
+          <span class="tog-step-num" aria-hidden="true">5</span>
+          <span class="tog-step-text"><span class="tog-step-label">技术实施</span><span class="tog-step-desc">端侧与集成</span></span>
+        </button>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="security" data-step="6">
+          <span class="tog-step-num" aria-hidden="true">6</span>
+          <span class="tog-step-text"><span class="tog-step-label">安全管控</span><span class="tog-step-desc">飞行与数据</span></span>
+        </button>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="contact" data-step="7">
+          <span class="tog-step-num" aria-hidden="true">7</span>
+          <span class="tog-step-text"><span class="tog-step-label">联系我们</span><span class="tog-step-desc">商务与生态</span></span>
+        </button>
+      </nav>
+      <details class="tog-sidebar-extra">
+        <summary class="tog-sidebar-extra-sum">场景配图（可选）</summary>
+        <p class="tog-sidebar-extra-note">政务界面默认隐藏轮播以保持高信噪比。如需品牌示意，可使用独立宣传物料。</p>
+      </details>
+    </aside>
+
+    <main class="tog-main" role="main">
+      <div class="tog-main-scroll">
+        <div id="wb-panel-brief" class="wb-panel wb-panel--brief is-active" role="tabpanel">
+          <header class="tog-brief-header">
+            <h1 class="tog-page-title" id="page-title">高楼灭火</h1>
+            <p class="tog-page-sub" id="page-subtitle">基于十部门联合印发《低空经济标准体系建设指南》</p>
+          </header>
+
+          <section class="tog-brief-video-slot panel--tog" aria-label="场景演示视频">
+            <div class="tog-brief-video-frame" id="tog-brief-video-frame">
+              <video id="tog-brief-video" class="tog-brief-video" controls playsinline preload="metadata" poster="">
+              </video>
+              <button type="button" class="tog-video-play-overlay" id="tog-brief-video-play" aria-label="播放视频">
+                <span class="tog-video-play-icon" aria-hidden="true"></span>
+              </button>
+            </div>
+            <p class="tog-brief-video-hint">预留视频区</p>
+          </section>
+
+          <div id="tog-work-wrap" class="wrap tog-brief-wrap">
+            <div class="lower-grid" id="lower-grid">
+              <section id="medical-map-section" class="card medical-map-card panel--tog" hidden aria-hidden="true">
+                <h3>青岛市 · 供血航线示意</h3>
+                <div id="amap-container" role="img" aria-label="地图：血站至医院航线"></div>
+                <p class="medical-map-caption">起点：血站 → 终点：医院。生成方案后将绘制蓝色示意航线。</p>
+              </section>
+              <div class="output-stack">
+                <div id="output" role="region" aria-live="polite"></div>
+                <details class="case-breakdown">
+                  <summary>案例拆解：作战简报管道</summary>
+                  <div class="case-breakdown-body">
+                    <section class="case-breakdown-section">
+                      <h4 class="case-breakdown-h">输入与输出</h4>
+                      <p>在右侧选择场景、空间档位与风速；步骤 1「解决方案」中生成简报并导出 PNG。</p>
+                    </section>
+                    <section class="case-breakdown-section">
+                      <h4 class="case-breakdown-h">工作台</h4>
+                      <p>步骤 2–7 为政策法规、痛点、案例、技术、安全与联系等门户化栏目，支持子类与文章层级浏览。</p>
+                    </section>
+                  </div>
+                </details>
+                <footer class="tog-panel-footer-note">数据自 scenes.json、aircrafts.json 加载；离线使用页面内嵌 fallback；PNG 依赖 html2canvas。</footer>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="wb-panel-policy" class="wb-panel gov-hub-panel" role="tabpanel" hidden>
+          <div class="gov-hub" data-gov-hub="policy">
+            <aside class="gov-hub-aside">
+              <p class="gov-hub-aside-title">栏目导航</p>
+              <nav class="gov-hub-subnav" aria-label="政策法规子类"></nav>
+            </aside>
+            <div class="gov-hub-body panel--tog">
+              <header class="gov-hub-head">
+                <div class="gov-hub-head-row">
+                  <h2 class="gov-hub-head-title"><span class="gov-hub-head-bar" aria-hidden="true"></span><span class="gov-hub-head-text">政策法规</span></h2>
+                  <span class="gov-hub-head-more" aria-hidden="true">更多 &gt;&gt;</span>
+                </div>
+              </header>
+              <div class="gov-hub-list-wrap">
+                <ul class="gov-hub-article-list"></ul>
+              </div>
+              <article class="gov-hub-article-detail" hidden>
+                <button type="button" class="gov-hub-back btn-wb-ghost">← 返回列表</button>
+                <h3 class="gov-hub-detail-title"></h3>
+                <div class="gov-hub-detail-content"></div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div id="wb-panel-pain" class="wb-panel gov-hub-panel" role="tabpanel" hidden>
+          <div class="gov-hub" data-gov-hub="pain">
+            <aside class="gov-hub-aside">
+              <p class="gov-hub-aside-title">栏目导航</p>
+              <nav class="gov-hub-subnav" aria-label="痛点分析子类"></nav>
+            </aside>
+            <div class="gov-hub-body panel--tog">
+              <header class="gov-hub-head">
+                <div class="gov-hub-head-row">
+                  <h2 class="gov-hub-head-title"><span class="gov-hub-head-bar" aria-hidden="true"></span><span class="gov-hub-head-text">痛点分析</span></h2>
+                  <span class="gov-hub-head-more" aria-hidden="true">更多 &gt;&gt;</span>
+                </div>
+              </header>
+              <div class="gov-hub-list-wrap">
+                <ul class="gov-hub-article-list"></ul>
+              </div>
+              <article class="gov-hub-article-detail" hidden>
+                <button type="button" class="gov-hub-back btn-wb-ghost">← 返回列表</button>
+                <h3 class="gov-hub-detail-title"></h3>
+                <div class="gov-hub-detail-content"></div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div id="wb-panel-cases" class="wb-panel gov-hub-panel" role="tabpanel" hidden>
+          <div class="gov-hub" data-gov-hub="cases">
+            <aside class="gov-hub-aside">
+              <p class="gov-hub-aside-title">栏目导航</p>
+              <nav class="gov-hub-subnav" aria-label="真实案例子类"></nav>
+            </aside>
+            <div class="gov-hub-body panel--tog">
+              <header class="gov-hub-head">
+                <div class="gov-hub-head-row">
+                  <h2 class="gov-hub-head-title"><span class="gov-hub-head-bar" aria-hidden="true"></span><span class="gov-hub-head-text">真实案例</span></h2>
+                  <span class="gov-hub-head-more" aria-hidden="true">更多 &gt;&gt;</span>
+                </div>
+              </header>
+              <div class="gov-hub-list-wrap">
+                <ul class="gov-hub-article-list"></ul>
+              </div>
+              <article class="gov-hub-article-detail" hidden>
+                <button type="button" class="gov-hub-back btn-wb-ghost">← 返回列表</button>
+                <h3 class="gov-hub-detail-title"></h3>
+                <div class="gov-hub-detail-content"></div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div id="wb-panel-tech" class="wb-panel gov-hub-panel" role="tabpanel" hidden>
+          <div class="gov-hub" data-gov-hub="tech">
+            <aside class="gov-hub-aside">
+              <p class="gov-hub-aside-title">栏目导航</p>
+              <nav class="gov-hub-subnav" aria-label="技术实施子类"></nav>
+            </aside>
+            <div class="gov-hub-body panel--tog">
+              <header class="gov-hub-head">
+                <div class="gov-hub-head-row">
+                  <h2 class="gov-hub-head-title"><span class="gov-hub-head-bar" aria-hidden="true"></span><span class="gov-hub-head-text">技术实施</span></h2>
+                  <span class="gov-hub-head-more" aria-hidden="true">更多 &gt;&gt;</span>
+                </div>
+              </header>
+              <div class="gov-hub-list-wrap">
+                <ul class="gov-hub-article-list"></ul>
+              </div>
+              <article class="gov-hub-article-detail" hidden>
+                <button type="button" class="gov-hub-back btn-wb-ghost">← 返回列表</button>
+                <h3 class="gov-hub-detail-title"></h3>
+                <div class="gov-hub-detail-content"></div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div id="wb-panel-security" class="wb-panel gov-hub-panel" role="tabpanel" hidden>
+          <div class="gov-hub" data-gov-hub="security">
+            <aside class="gov-hub-aside">
+              <p class="gov-hub-aside-title">栏目导航</p>
+              <nav class="gov-hub-subnav" aria-label="安全管控子类"></nav>
+            </aside>
+            <div class="gov-hub-body panel--tog">
+              <header class="gov-hub-head">
+                <div class="gov-hub-head-row">
+                  <h2 class="gov-hub-head-title"><span class="gov-hub-head-bar" aria-hidden="true"></span><span class="gov-hub-head-text">安全管控</span></h2>
+                  <span class="gov-hub-head-more" aria-hidden="true">更多 &gt;&gt;</span>
+                </div>
+              </header>
+              <div class="gov-hub-list-wrap">
+                <ul class="gov-hub-article-list"></ul>
+              </div>
+              <article class="gov-hub-article-detail" hidden>
+                <button type="button" class="gov-hub-back btn-wb-ghost">← 返回列表</button>
+                <h3 class="gov-hub-detail-title"></h3>
+                <div class="gov-hub-detail-content"></div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div id="wb-panel-contact" class="wb-panel gov-hub-panel" role="tabpanel" hidden>
+          <div class="gov-hub" data-gov-hub="contact">
+            <aside class="gov-hub-aside">
+              <p class="gov-hub-aside-title">栏目导航</p>
+              <nav class="gov-hub-subnav" aria-label="联系我们子类"></nav>
+            </aside>
+            <div class="gov-hub-body panel--tog">
+              <header class="gov-hub-head">
+                <div class="gov-hub-head-row">
+                  <h2 class="gov-hub-head-title"><span class="gov-hub-head-bar" aria-hidden="true"></span><span class="gov-hub-head-text">联系我们</span></h2>
+                  <span class="gov-hub-head-more" aria-hidden="true">更多 &gt;&gt;</span>
+                </div>
+              </header>
+              <div class="gov-hub-list-wrap">
+                <ul class="gov-hub-article-list"></ul>
+              </div>
+              <article class="gov-hub-article-detail" hidden>
+                <button type="button" class="gov-hub-back btn-wb-ghost">← 返回列表</button>
+                <h3 class="gov-hub-detail-title"></h3>
+                <div class="gov-hub-detail-content"></div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <aside class="tog-rail" aria-label="参数配置与工具">
+      <h3 class="tog-rail-title">参数与导出</h3>
+
+      <div class="card card-input panel--tog tog-rail-card">
+        <div class="row">
+          <label for="scenario">业务场景</label>
+          <select id="scenario" aria-label="选择场景">
+            <option value="高楼灭火" selected>高楼灭火</option>
+            <option value="山林搜救">山林搜救</option>
+            <option value="公安执法">公安执法</option>
+            <option value="医疗应急">医疗应急</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card card-input panel--tog tog-rail-card">
+        <div class="row">
+          <label for="height" id="height-field-label">建筑高度</label>
+          <select id="height" aria-label="建筑高度">
+            <option value="50">50米</option>
+            <option value="100" selected>100米</option>
+            <option value="150">150米</option>
+            <option value="other">其他（自定义米数）</option>
+          </select>
+        </div>
+        <div class="row row--height-custom" id="row-height-custom" hidden>
+          <label for="height-custom-m">自定义高度（米）</label>
+          <input id="height-custom-m" type="number" inputmode="numeric" min="10" max="600" step="1" value="120" aria-label="自定义建筑高度（米）" />
+        </div>
+        <div class="row row--wind-rail">
+          <label for="wind-beaufort">当前风速（m/s）</label>
+          <select id="wind-beaufort" class="wind-beaufort-select" aria-label="蒲福风级（1–8 级，10 m 高度风速）">
+            <option value="">按风力等级选择（可选）</option>
+            <option value="1">1级风（0.3–1.5 m/s）</option>
+            <option value="2">2级风（1.6–3.3 m/s）</option>
+            <option value="3">3级风（3.4–5.4 m/s）</option>
+            <option value="4">4级风（5.5–7.9 m/s）</option>
+            <option value="5">5级风（8.0–10.7 m/s）</option>
+            <option value="6">6级风（10.8–13.8 m/s）</option>
+            <option value="7">7级风（13.9–17.1 m/s）</option>
+            <option value="8">8级风（17.2–20.7 m/s）</option>
+          </select>
+          <p class="wind-beaufort-note">风速区间为蒲福风级对应 10 m 高度风程（m/s），与气象业务常用表一致；也可在下方直接输入精确值。</p>
+          <div class="wind-field">
+            <input id="wind" type="number" min="0" max="40" step="0.1" placeholder="例：8.5" inputmode="decimal" aria-label="当前风速（米/秒）" />
+            <button type="button" id="btn-wind-now" class="btn-wind-now">获取风速</button>
+          </div>
+        </div>
+        <div class="btn-stack btn-stack--generate-only">
+          <button type="button" id="btn">生成方案</button>
+          <button type="button" id="btn-ai">AI 生成方案</button>
+        </div>
+      </div>
+
+      <div class="card card-input panel--tog tog-rail-card">
+        <div class="tog-doc-depth-head">
+          <span class="tog-doc-depth-title">文档深度</span>
+          <span class="tog-doc-depth-caption">随场景提示略有不同；已生成简报时点击可即时切换。</span>
+        </div>
+        <div class="tog-doc-depth" role="radiogroup" aria-label="作战简报文档深度">
+          <button type="button" class="tog-depth-option" role="radio" aria-checked="false" data-depth="overview" id="tog-depth-overview">
+            <span class="tog-depth-name">决策速览</span>
+            <span class="tog-depth-desc">步骤 · 流程 · 要点</span>
+          </button>
+          <button type="button" class="tog-depth-option" role="radio" aria-checked="false" data-depth="technical" id="tog-depth-technical">
+            <span class="tog-depth-name">技术深化</span>
+            <span class="tog-depth-desc">上云实施 · 卡点提示</span>
+          </button>
+          <button type="button" class="tog-depth-option" role="radio" aria-checked="false" data-depth="full" id="tog-depth-full">
+            <span class="tog-depth-name">全案汇编</span>
+            <span class="tog-depth-desc">政策到沟通全量展开</span>
+          </button>
+        </div>
+        <div class="tog-rail-png-export">
+          <button type="button" id="btn-export" disabled aria-disabled="true">导出简报 PNG</button>
+        </div>
+      </div>
+
+      <div class="tog-rail-links">
+        <a class="btn-simulator" href="evidence-panel.html" target="_blank" rel="noopener noreferrer">证据链面板</a>
+        <a class="btn-simulator" href="drone-simulator.html" target="_blank" rel="noopener noreferrer">调度模拟器</a>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="tog-footer" role="contentinfo">
+    <div class="tog-footer-meta">
+      <span class="tog-footer-item" id="tog-footer-revision">revision —</span>
+      <span class="tog-footer-item" id="tog-footer-updated">更新时间 —</span>
+      <span class="tog-footer-item" id="tog-footer-pack">方案包 —</span>
+    </div>
+    <span class="tog-footer-copyright">© 2026 宋宗源</span>
+  </footer>
+
+  <a class="feedback-fab feedback-fab--tog" href="https://8pczx084.jsjform.com/f/eigkFW" target="_blank" rel="noopener noreferrer" aria-label="提交反馈">反馈</a>
+
+  <script type="application/json" id="scenes-fallback">{"高楼灭火":{"displayName":"高楼灭火","themeColor":"#F59E0B","documentDepthHints":{"overview":"一页纸：场景矛盾→我方方案→核心能力→最小作战编成→合规→贵局下一步+页脚战训法规声明；无参数、无型号、无表格，≤800字。","technical":"技术解析体例：问题—逻辑—实现—要点；分节叙述+简表+技巧；术语表；定量标注战训或厂方。","full":"全案汇编：仅输出装订正文（封面四项、前言、声明框、一至七章、附录一至四）；不叠放政策解读、参数条、流程与客户话术块。"},"subtitle":"高层外攻：侦察穿烟 · 系留/投送 · 链路与国标合规（2026）","payloadSceneBody":"净载重与厂方公开数据一致：在起飞重量 149.9 kg 工况下约 94.7 kg（对应吊装系统空机自重差）；绞车方案空机更重，须另算商载。系留持续作业依托地面电源与水带泵组，电力侧 PSDK 第三方供电接口厂方标称至 3000 W，整站功率与热管理以电气会签为准。","aircraftModel":{"primary":"FC100","reconnaissance":"M400"},"policyBasis":["《中华人民共和国民用航空法》（2025年12月27日第十四届全国人民代表大会常务委员会第十九次会议修订通过，2026年7月1日起施行）：民用航空领域基础性法律；无人驾驶航空器等内容与《无人驾驶航空器飞行管理暂行条例》等行政法规衔接（条文以国家法律法规数据库/全国人大网公示文本为准）。【权威来源·已核实·法律名称与施行日期】","《无人驾驶航空器飞行管理暂行条例》（国务院、中央军事委员会令第761号，2024年1月1日起施行）：第十条明确民用无人驾驶航空器所有者应当依法进行实名登记；第十一条规定除微型以外从事飞行活动的单位应申请取得运营合格证（农用等除外情形见同款）；第十二条规定经营性飞行及小型及以上非经营性飞行应依法投保责任保险；第十六条明确小型、中型、大型民用无人驾驶航空器操控员应取得执照（来源：中国政府网《中华人民共和国国务院公报》2023年第20号，国务院公报2023年第20号刊登的条例全文）。【权威来源·已核实·条款编号】","《低空经济标准体系建设指南（2025年版）》（国家市场监督管理总局会同有关部门印发，2026年2月）：低空经济领域标准体系顶层设计的政策文件，投标「标准对标」应直接引用市场监管总局公开的 PDF 正文及本地主管部门执行口径。【权威来源·已核实·文件名称与印发时间；文号与章节以总局公开文本为准】","GB 46761-2025《民用无人驾驶航空器实名登记和激活要求》（国家市场监督管理总局、中国民用航空局2025年10月31日发布，强制性国家标准，2026年5月1日起施行）：国家标准化管理委员会公开新闻稿明确其落实实名登记与激活，从技术上支撑「谁能飞」管理；标准正文可透过国家标准全文公开系统、民航局政府信息公开「标准规范」栏目获取。【权威来源·已核实·标准号与实施日期；具体技术条款以标准正文为准】","GB 46750-2025《民用无人驾驶航空器系统运行识别规范》（国家市场监督管理总局、中国民用航空局2025年10月31日发布，强制性国家标准，2026年5月1日起施行）：国家标准化管理委员会新闻通稿明确其要求运行识别信息报送、与「广播式发送、网络式发送」等能力相关；**报送时间间隔、存储时长等定量指标必须以 GB 46750—2025 标准印刷版/PDF 原文为准**，新闻稿仅为引导阅读。【权威来源·已核实标准属性；定量指标待对照标准正文逐条引用】"],"strategyPrinciples":{"modularPayload":"【新增·与前文一致】高空灭火可按任务拆模块：水袋投送（常见 20–40 L 级软体水袋 + 快卸挂钩，须按「干重 + 充装后总重」累加校核，总重不超过当前起飞重量下的净载重预算）；灭火弹/灭火剂舱（按甲方装备谱系与鉴定目录选配，典型单件约 5–15 kg 级，以采购技术规格书为准）；系留输水依托地面泵组 + 耐压水带，航空器侧重挂钩解脱、路径避障与电气热管理。上述数值须经现场称重单与会签确认。","relayMode":"【参数来源·大疆 FlyCart 100 公开规格】电池模式下航时受限于公开工况：双电约 14 min 飞行 / 12 min 悬停 / 航程 12 km；单电约 7 min / 6 min / 6 km（均基于起飞重量 149.9 kg、海平面静风 25℃ 测得，来源：https://www.dji.com/cn/flycart-100）。系留持续作业时滞空与可连续供水时长取决于地面电源额定、缆温升、泵组与 SOP，不以电池航时为上限。【系留最大持续作业时间·待项目实测与电气热管理会签】","obliquePath":"超高层与强烟热场景优先斜向接近与快速穿越，避免在火点正上方长时间悬停。","precisionDelivery":"【参数来源·大疆 FlyCart 100 公开规格】投递/定位：开启 RTK 固定解时约 ±10 cm 量级，无 RTK 时水平约 ±60 cm、垂直约 ±30 cm（同上产品页）。百米级以上外立面作业建议默认启用 RTK/D-RTK，并与地面基准点联合校核。"},"operationFlow":["【程序模板·合规须对照属地批复】T+0min：M400 RTK + 禅思 H30T 起飞侦察（快速响应，可依托自动机场网格）。","T+2min：热成像（测温范围等技术参数以禅思 H30 系列官网规格为准）协助锁定高温点坐标，回传指挥平台/指挥车。","T+3min：FC100 携高压水带/系留水体系升空，对准起火层建立射流（地面泵组/系留功率、真高与管制空域以批复为准）。【与前序分钟数并为叙事目标，非国家标准时限】","T+3min+：小型多旋翼红外侦察机型并行升空，监测余火与飞火，向指挥席回传（具体型号以采购目录为准）。"],"compliance":["【权威来源·已核实】《无人驾驶航空器飞行管理暂行条例》（国务院、中央军委令第761号，2024年1月1日起施行）第十条：民用无人驾驶航空器所有者应当依法进行实名登记；第十一条：使用除微型以外的民用无人驾驶航空器从事飞行活动的单位应依法申请运营合格证（除外情形见同款）；第十二条：经营性飞行及使用小型及以上航空器从事非经营性飞行应依法投保责任保险；第十六条：操控小型、中型、大型无人驾驶航空器飞行的人员应取得操控员执照（来源：中国政府网国务院公报2023年第20号刊载条例全文）。","【权威来源·已核实】GB 46761-2025、GB 46750-2025（2026年5月1日起施行）：分别落实实名登记激活与运行识别；技术要求与报送参数以国家标准正文及 CAAC/UOM 接口文档为准（标准文本获取：国家标准化管理委员会新闻稿—市场监管总局/民航局标准发布栏目）。","【权威来源·已核实】新修订《中华人民共和国民用航空法》（2026年7月1日起施行）：无人驾驶航空器等纳入民用航空法律框架，与上述行政法规、强制性国标一体执行（条文以国家法律法规数据库为准）。","数据与网络安全：飞行与视频数据经政务网或专网传输，涉密/涉敏视频按《数据安全法》《保守国家秘密法》及客户等保方案管理；**医疗等跨场景引用本条款时不得套用不存在的法规名称**。【细则待客户信息化部门会签】","适航与认证：中型、大型民用无人驾驶航空器系统设计生产等应依法取得适航许可（《暂行条例》第八条）；采购文件可约定 TC/AC、试验报告及系留等改装鉴认路径。","运行限制：火场高温区避免长时间正上方悬停；人员密集区、管制空域、真高 120 m 以上等适用《暂行条例》第三章空域与飞行活动管理规定。【具体划设以当地空中交通管理机构公布为准】"],"customerScripts":{"procurement":"【新增】投标响应可与法制、审计部门会签：厂方检测报告与保险单证，GB 46761/46750 及《暂行条例》第十条、第十一条、第十二条、第十六条的逐条索引表（无偏离亦附页码/条款号）。","business":"【基于公开资料·功能以厂测与 POC 为准】FC100 支持航线规划与地面站/司空链路；培训学时与独立上岗考核由采购文件与服务等级协议约定，不承诺未经实测的「固定天数上手」。","leadership":"【基于公开资料·待核实】「国家级/部委级试点」须以发展改革委、民航局或当地政府公开发布的试验区、示范区名单为准；本方案可嵌套争创叙事，但不得虚构已获批试点名称。"},"cloudMigration":["专网/政务云：指挥视频与飞行轨迹进入政务外网或消防视频云；运行识别汇聚与互联网逻辑隔离，公网仅作备案的应急备份链路。","边缘与弱网：火场周边弱网时图传边缘缓存，出网后批量同步识别与视频片段；与城市「一张图」或应急 GIS 坐标系对齐。","5G-A 通感：将通感基站与既有铁塔、电源、传输资源捆绑规划，分期投资与「试点街道—全区—全域」里程碑一致；与 GB 46750 报送周期联合做链路预算。","私有化平台：视频云、运管平台、日志审计可部署于客户机房或行业云；历史任务对象存储按监管要求设定留存与脱敏策略。","对接：与城市消防接处警/应急指挥平台、客户统一身份与零信任接入策略联调；接口协议在 POC 阶段锁定版本。"],"implementationChecklist":["一期试点：完成 2–3 个街道/片区起降场址与铁塔站址联合勘察，冻结空域与电磁环境初勘纪要。","完成机场与主战机型的实名登记、激活与运行识别报送联调，形成台帐与抽检脚本。","系留场地供电容量、 FC100 与侦察机统一任务 ID，与 119 平台或司空完成视频/状态回传联调。","二期：扩展航线库与网格责任人表，建立 5 分钟先遣侦察 KPI 与月度讲评。","三期：全市域资源编排、跨部门数据共享安全评估与等保测评闭环。","制定大风/强对流熔断预案，与步骤1简报风险区一键同步表述。"],"tenderHints":["【修订备忘·2026-04-30】已核对：国务院公报《暂行条例》条款号、GB 46761/46750 标准属性及文本获取路径、《程序规定》证据条款；医疗场景删除虚构法规名；莆田 25 机场引用福州新闻网 2026-01-30；国标定量指标仍以 PDF 原文为准。","技术卷须单列：GB 46761、GB 46750 及新《民用航空法》相关条款的响应表与偏离表（无偏离亦附索引页）。","将「无人值守机场 + 载荷清单 + 5G-A/通感 + 政务网私有化」写成可打分子项，附加厂家测试报告占位。","商务卷写明分期付款与验收：与一期试点、二期全区、三期全域里程碑绑定。","全生命周期 TCO：电池循环、系留缆磨损件、保险、空域服务与运维人天。","数据与知识产权：私有化部署源码封装、日志留存年限、监管抽查导出格式。"],"pocDefaults":{"kpiLine":"侦察热成像锁定火点坐标误差、系留连续供水时长、指挥端到端延迟（目标 < 3s 级演示）"},"media":[{"title":"技术视频（占位示例）","url":"https://example.com","embedUrl":""}],"policyTranslations":["高层建筑灭火方案在决策层可引用：新修法为低空无人作业提供上位法依据，强调安全与发展并重，投标「依法合规」章节可与无人驾驶航空专章挂钩。","指南印发后，将「基础通用、关键技术、安全监管」等标准簇与本市/本单位业务逐条映射，形成可勾选的对标矩阵（步骤2政策法规栏已预置结构）。","项目文本应写明：运营前完成实名登记与激活流程、地面站与监管平台接口测试记录；设备到货验收增加「未激活不起飞」自检项。","多机并发与指挥席位设计需同时满足运行识别报送周期与视频带宽；技术深化卷建议给出链路预算表与「广播+专网」双路径说明。"],"briefingOverviewBullets":["任务架构：侦察（热成像/斜向路径）→ 系留或运载投送 → 指挥回传；风速、建筑高度触发「侦察先行」时在流程表内首行加注。","监管 2026 时间轴：5月1日起 GB 46761、GB 46750 强制适用；7月1日起新《民用航空法》施行——简报合规段按时间轴排序便于审批表引用。","工作台：步骤2 为《民航法》/指南/两国标详解；步骤5 为硬件·网络·部署·安全·分期；步骤3 痛点矩阵仍可按场景扩展。"],"cloudMigrationTechnical":["硬件：优选支持无人值守的自动机场（如机场 3 级），面向全天候作业；方案级可写单次任务覆盖半径约 10 km、工作温区约 -20℃～45℃及雨雪风沙适应，以厂测与场勘为准。载荷按场景选配高清、热成像、气体检测、喊话、照明等模块。","网络：基于 5G-A 规划连续低空覆盖，通感一体基站目标亚米级感知（须无线电合规与实测验证）；站址尽量复用通信铁塔以降低基建成本，可研可比新建节约约 60%（类比口径，以造价清单为准）。","部署：可选固定机场重点驻守、机动队灵活增援，或「中大型机 + 机库 + 机动队」三级资源体系；在资源表中写清点数、机型与 5 分钟/10 分钟响应圈。","数据安全：业务与运行识别数据走政务网或消防专网闭环，「数据不出政务网」；视频与运管平台支持私有化部署、等保分区与审计导出。","分期：一期 2–3 个街道试点验证链路与国标联动；二期扩至全区连续覆盖；三期全市域协同与 KPI 运维。"],"implementationChecklistTechnical":["机场 3（或同等）站址：供电、防雷、防风、箱体温控与无人机激活状态监测接入运管。","载荷电磁兼容与检校记录归档；热成像校准周期写入运维 SOP。","5G-A 通感站址与铁塔资源清单、传输带宽与时延抽测记录。","运行识别：广播与网络两路发送的路由与failover演示截图。","政务网：VPC/专线路由、堡垒机与日志留存策略经信息化部门会签。"],"tenderHintsTechnical":["技术深化卷须附：链路带宽测算表、识别报送间隔与视频并发假定、铁塔复用造价类比说明。","偏离表仅列与技术规范书直接冲突的条款，其余用「已在方案第×章响应」索引。"],"briefingDepthTemplates":{"overview":{"title":"决策速览","decisionBrief":{"coreConflict":"百米级乃至更高楼宇持续增多，传统云梯常在百米附近触顶，150米以上外攻窗口逼仄。外立面火借保温层迅速形成立体燃烧，烟囱效应下火势快速上蹿、浓烟蔽目，内攻险象环生。全城舆论高度聚焦，一线常陷“望火兴叹”，城市安全如悬顶之剑。","solutionSummary":"以侦察先行、重载送水为主线，把传统装备“够不到”的楼层变成可瞄准、可压制的外攻面，实现从“望火兴叹”到“精准打击”。依托靠前部署与快速换电保障，做到接警即起飞、起飞即作战，从部署到出水锚定约3分钟级快反节拍¹。","capabilities":["先遣穿烟，看得见、定得准：热成像穿透浓烟锁定火点，指挥席实时判读，决策有依据。","重载带水，压得住、展得开：越过登高极限直抵起火层，变被动内攻为主动外攻。","多机协同，分层不乱：侦察、灭火、监护轮转配合，远程决策与现场打击形成闭环。"],"orgTable":[{"platform":"中型侦察无人机","duty":"昼夜火情扫描、火点与热源初判","qty":"≥1架"},{"platform":"重载灭火无人机","duty":"高压水带升空、外立面定点射流压制","qty":"≥1架"},{"platform":"轻便监护无人机","duty":"余火面扫、异常温升告警","qty":"≥1架"},{"platform":"靠前快充/自动值守单元","duty":"换电轮转、缩短再出动间隔","qty":"按站队配置"},{"platform":"移动供电与指挥专链节点","duty":"现场保障、画面与坐标回传指挥中心","qty":"≥1套"}],"complianceOneLiner":"依法完成航空器登记、运营资质与责任保险；恶劣天气、浓烟及坠落高风险区一律服从现场指挥熔断；多机分层避让，统一返航与降落秩序。","authorityNextSteps":["明确常备起降点、上风向安全走廊，指定与指挥中心数据接口的牵头部门。","将“出动—出水”关键节拍纳入年度联合战训，固化对内对外统一口径。"]},"footerNote":""},"technical":{"title":"技术深化｜高楼灭火技术解析","preamble":"高层建筑火灾的瓶颈多在烟热遮障与外攻窗口受限。本节按侦察、灭火、看护三环节，依次说明问题、技术逻辑、实现方式与操作要点；文中出现的能力数据，凡未另行标注的，均需客户战训数据替换或以厂方最新规格为准。","dataDisclaimerGlobal":"全篇定量结论分为两类：一是作战演练由局方实测给出的时序与误差；二是装备公开额定值，以后者随厂家改款即时更新为准。","phases":[{"sectionNo":"第一节","title":"侦察环节","problem":"起火初期浓烟遮蔽可见光，地面难以快速判断蔓延方向与高危楼层，延误外攻与疏散决策。","logic":"利用红外谱段穿透烟尘、结合可见光变焦与测距，将“模糊烟团”还原为可坐标化的高温轮廓与疑似火点。","implementation":"选用 Matrice 400 RTK 为空中平台，挂载禅思 H30T 双光传感器；飞行沿建筑侧向或上风向斜视航线，先广域扫边再逐点放大；坐标回传至司空 2 或客户统一指挥平台，与 119 席位同任务号关联。","operationPoints":"起飞前确认登高面与侧向障碍物；全程避免在玻璃密集坠落面正下方长时间悬停；热像增益按战斗阶段切换，防止过曝假热点。","simplifiedTable":{"caption":"表1-1 侦察环节要点对照","headers":["环节","手段","输出"],"rows":[["广域扫测","广角红外与可见光组合","蔓延方向与高危面"],["火点判别","变焦与测距","坐标与估计层位"],["态势回传","指挥专链","实时画面与标注"]]},"fieldTips":["侧风进入、短停快出，减少电机与云台在热浪中的暴露时间。","怀疑玻璃雨风险时，优先斜视窗框与喷淋失败面，勿贴幕墙正中。"],"quantityLine":"航时与测温区间以厂方最新规格为准；热源定位误差以战训实飞统计替换。"},{"sectionNo":"第二节","title":"灭火环节","problem":"举高车流体力争车位与展开时间，百米级以上外立面常难形成持续有效射流。","logic":"由重载平台将耐压水带抬升至预设射流点，地面泵组维持压力，机载端负责挂钩解脱与姿态稳定，形成“地面对水、空中对位”的分工。","implementation":"主战选用 FlyCart 100，配套吊具或绞车方案按采购文件执行；系留供电时由地面电缆提供持续动力，电池工况用于快速转场；与泵车口令统一为加压、停水、移位三段式通联。","operationPoints":"起飞前称重与重心校核；释放水带防缠绕；喷射中注意反冲力，必要时悬停定点；风力超装备额定即执行熔断返航。","simplifiedTable":{"caption":"表2-1 灭火环节分工","headers":["要素","地面","空中"],"rows":[["加压","泵车与水源","挂钩稳定"],["控火","指挥口令","射流指向"],["撤收","减压排水","解脱返航"]]},"fieldTips":["系留工况须电气监理临场签字，断电即按预案改电池工况撤离。","多机同空域须垂直分层，防止水雾干扰图传。"],"quantityLine":"净载重、抗风与悬停时间均以厂方最新规格为准；出水节拍需客户战训数据替换。"},{"sectionNo":"第三节","title":"看护环节","problem":"明火扑灭后外保温与屋面设备易阴燃，地面巡查视角受限。","logic":"小型平台低噪声、快起落，用热像面对外立面与屋面做面扫，异常温升即提示复查。","implementation":"选用 Mavic 4 Enterprise 等行业巡视机型，红外分辨率与续航以采购目录与厂方规格为准；巡逻航线预设网格，温度告警推送指挥席。","operationPoints":"与主战航线错时错峰；夜间打开避障灯光模式并遵守属地光污染通报；录像片段单独归档备查。","simplifiedTable":{"caption":"表3-1 看护巡逻清单","headers":["部位","手法","记录"],"rows":[["外立面","竖向带扫","时间戳热图"],["屋面","环向封闭","高温点清单"],["接壤立面","对比测温","变化趋势"]]},"fieldTips":["关注飞火落向周边低矮建筑。","告警点由飞手与防检员双签确认，再通知内攻组。"],"quantityLine":"告警门限与复检间隔需客户战训数据替换；机体续航以厂方最新规格为准。"}],"closingNote":"本解析仅描述技术与作业逻辑，不构成空域许可；接入 119 与客户网络须单独立项测评。","glossary":[{"term":"系留","definition":"航空器通过缆线由地面供电，获得长时间滞空能力，缆长与载流须按电气规范设计。"},{"term":"RTK","definition":"实时动态差分定位，用于将空中坐标与建筑轴网对齐，压缩投点误差。"},{"term":"高增益","definition":"红外相机在火场初期采用的灵敏测温模式，具体量程以所挂载传感器最新规格为准。"},{"term":"熔断返航","definition":"当风力、电量、链路或指挥员口令触发中止条件时，立即中断作业按预案返航或备降。"},{"term":"运行识别","definition":"按国家标准向监管系统报送航空器身份与状态信息的能力，与战术图传链路物理或逻辑隔离。"},{"term":"实名登记","definition":"民用无人驾驶航空器在飞行前须完成身份登记与激活，未激活不得擅自起飞。"}]},"full":{"deliverableTitle":"","cover":{"organization":"〔待补充单位名称〕","applicableScene":"百米级及以上高层建筑火灾外部攻击与协同处置","version":"V1.0","dateText":"2026年5月","scenarioName":""},"documentControl":{"rows":[]},"tableOfContents":[],"executiveSummary":"","prefaceTitle":"前言与编制说明","prefaceParagraphs":["随着我国城市化进程加速，百米以上超高层建筑数量持续增长，传统消防装备在作业高度、响应速度与外攻手段上面临严峻挑战。为探索无人机技术在超高层建筑火灾救援中的体系化应用，特编制本方案。","本方案聚焦“重载无人机高压水带外攻灭火”这一核心战术场景，系统阐述了从场景定义、装备选型到作业流程、安全合规的完整解决路径。方案结合现有公开技术资料、政策框架及一线实战经验整合而成，旨在为应急管理部门提供一份可讨论、可验证、可定制化的技术参考。"],"disclaimerBox":"本方案为演示叙事框架，所有定量指标（包括但不限于出水时间、飞行高度、载荷重量等）需依据客户实际战训数据、厂方最新规格参数及当地空域批文进行调整。法规条文以国家正式公布的法律、法规及标准文本为准。","bodyChapters":[{"chapterNo":"一、","title":"场景定义与痛点分析","intro":"高楼建筑火灾，因其蔓延迅速、救援通道受限、社会关注度极高，已成为威胁现代城市公共安全的“头顶利剑”。","sections":[{"heading":"（一）核心痛点：传统手段的物理局限与现实困境","body":"长期以来，消防救援队伍面对超高层建筑火灾时面临“够不到、看不清、展不开、风险高”四大核心矛盾。举高消防车作业高度常局限在百米级附近，对于150米以上楼层的外立面火点，往往只能依靠内攻或等待，错失压制窗口。同时，地面指挥对浓烟遮蔽下的火点位置、发展态势感知滞后，难以实现精准部署。消防员在极端高温、浓烟与坠落风险中强行内攻，承受着巨大的生命安全压力。高层火灾极易在短时间内演变为全城关注的舆论焦点，对应急决策的时效性与有效性提出了极高要求。"},{"heading":"（二）火灾类型与场景特征","paragraphs":["根据实战指挥经验，将超高层建筑火灾归纳为以下三种典型形态：","外立面火灾：多由空调外机、电气线路老化、施工火星等引燃，火势沿外墙保温材料迅速蔓延，形成立体燃烧。其特点是烟囱效应显著，高温烟气在数分钟内即可从底层蹿升至顶层，火焰温度可达800-1000℃。","室内火灾：火源位于建筑内部，浓烟通过管道井、楼梯间快速扩散，能见度极低，人员搜索与逃生困难。传统力量难以快速抵达起火楼层，内攻风险极大。","楼顶火：常见于楼顶设备间、太阳能板、违规搭建物等。此类火灾地面水源难以到达，直升机作业成本高且受限条件多，存在明显的救援空白。","【插图位】建筑/火势/云梯局限示意图","以上痛点分析表明，市场迫切需要一种能突破高度限制、快速响应、精准作业且能最大限度保障救援人员安全的新型外攻手段。这正是本方案着力解决的核心问题。"]}]},{"chapterNo":"二、","title":"核心价值主张","intro":"本方案所构建的无人机灭火体系，其核心价值在于将“够不到”的被动局面，转变为“精准打击”的主动控制，具体体现在以下四点：","sections":[{"heading":"","paragraphs":["高空可达，突破物理极限：通过重载无人机挂载高压水带，垂直抵近150米以上任意起火楼层，实施定点射流压制，彻底突破传统云梯高度瓶颈[²]。","快速响应，抢占制胜窗口：依托靠前部署与快速备电体系，可实现“接警即起飞”，从无人机部署到建立稳定出水的时间窗口被压缩至约3分钟级，相较于传统登高作业的5-10分钟展开时间，为火灾初期控制赢得了宝贵时间节点[³]。","透视浓烟，实现精准感知：集成高分辨率热成像与AI辅助识别技术，可有效穿透浓烟，在数秒内完成对火点、高温区域及被困人员热源的锁定，使指挥中心的决策从“凭经验判断”升级为“靠数据指挥”。","协同有序，重构作战编成：建立“侦察-打击-看护”的分层多机协同机制，将火场信息获取、主要火力压制、余火监控任务分解至不同无人机平台，通过统一指挥平台实现任务流的高效闭环，避免频道冲突与资源浪费。","[²]：作业高度须以当地空域管理部门批复的真高和飞行动态限制为准。","[³]：“3分钟级”与“5-10分钟”为方案叙事锚点，实际响应节拍须结合泵组供水能力、系留系统展开、现场空域指令及地方消防站实战演练数据综合确定。"]}]},{"chapterNo":"三、","title":"任务规划与作业流程","intro":"在明确核心价值后，本章将价值主张分解为可执行的战术动作。整个作业流程围绕“侦察—打击—看护”三阶段展开，形成一条从感知到行动最终到巩固的完整打击链条。","sections":[{"heading":"（一）侦察阶段：先遣升空，穿烟定位","body":"接警后，侦察型无人机作为第一梯队立即升空。基于上风向安全通道快速飞抵火场，利用高增益热成像模式对建筑外立面与顶部进行全域扫描，穿透浓烟锁定起火楼层、火线蔓延方向及核心高温点。同时，通过高清变焦镜头确认目标楼层具体位置与障碍物分布，实时回传坐标与画面至前线指挥部与后方指挥中心，为后续打击提供精准指引。"},{"heading":"（二）灭火阶段：重载送水，定点压制","body":"在侦察机锁定目标并建立稳定坐标后，重载灭火无人机搭载高压水带升空。依靠前期坐标指引，快速抵达起火楼层作业面，结合机载图传进行二次确认，随即与地面高压泵车协同建立射流，对准火点根部实施持续压制。此阶段需密切监控无人机因水带供水及射流反冲带来的姿态变化，确保悬停稳定。"},{"heading":"（三）看护阶段：余火扫描，防患复燃","body":"明火被扑灭后，灭火机撤离，轻便型监护无人机接替升空。任务切换为低增益热成像模式，对过火外立面、内部窗口及楼顶区域进行拉网式测温排查，实时监测异常温升点，一旦发现阴燃或温度复升立即告警，引导地面力量进行针对性处理，直至现场完全降温，彻底消除复燃风险。"},{"heading":"","paragraphs":["原完整作业阶段表、时间轴表详见附录一。","在上述流程中，多机协同与热成像判读是贯穿全程的关键技巧。侦察与灭火并非割裂的任务，而是在统一指挥口令下，侦察机持续提供火场变化态势，为灭火机调整喷射角度提供视觉引导，形成“一侦一打”的实时联动。热成像则从初期的火点定位，贯穿至后期的复燃排查，成为消防员的“透视眼”，需根据火场阶段灵活切换高/低增益模式以获取最准确的温度信息。"]}]},{"chapterNo":"四、","title":"装备选型与地面保障","intro":"合理的装备选型与可靠的地面保障是将作战流程转化为实际战斗力的物质基础。本章将整合阐述装备选择的内在逻辑与持续作战的能源策略。","sections":[{"heading":"（一）核心任务平台选型逻辑","paragraphs":["为实现前文所述的三阶段任务，我们推荐以下构型的无人机装备组合，其选型理由紧密围绕任务需求：","侦察平台：我们推荐选用具备厘米级定位能力的中型多旋翼无人机，挂载集成高分辨率红外热成像与高倍变焦可见光相机的一体化云台。理由在于，厘米级定位是精准标定火点坐标、引导后续打击的前提；而热成像与变焦镜头的组合，是唯一能同时满足“穿透浓烟找火”和“白天黑夜拉近确认楼层”双重需求的技术路径。","主战平台：核心选用重载货运级无人机，通过专用挂架与高压水带、地面大流量泵浦及系留供电模块连接。其选型逻辑是，唯有大载荷、高可靠性的重载平台，才能在挂载百米级满载水带并克服射流反冲后，依然维持稳定悬停和精确喷射，这是桌面级或轻小型无人机无法替代的战术价值。","看护平台：选用便携折叠型无人机，搭载高灵敏度红外热成像模组。选择理由是，看护阶段对载荷要求低，但对部署速度和便携性要求高。此类平台可由单兵背负，快速升空对建筑进行余火巡检，成为主战平台的有效、低成本补充。"]},{"heading":"（二）地面能源与持续保障策略","paragraphs":["无人机灭火成功的关键不仅在于升空平台本身，更在于地面的能源补给与持续保障能力。针对高层灭火高能耗、高时效要求的特点，我们制定以下保障方案：","靠前部署：在前线指挥部或安全区域部署移动式大功率充电站或静音发电机，建立“充电-换电”轮转阵位。","多机轮换策略：作业时至少保持“一主一备”或“一主多备”的电池组配置，灭火机降落第一时间更换已预热的满电电池，人停机不停，最大化出动频次[⁴]。","系留供电选择：对于长时间定点射流的主战平台，优先采用地面电源通过系留线缆直接供电的方案。此时机载电池仅作为应急备份，可从根本上突破电池续航限制，实现持续数小时的不间断作业。"]},{"heading":"（三）通信与数据保障","body":"为保障多机流画面与指令的实时回传，需在现场快速搭建由专网设备或5G/4G多卡聚合路由器组成的指挥通信专链节点。该节点负责将所有无人机画面、坐标数据汇聚至本地指挥屏与远程指挥中心，并在弱网环境下触发边缘录像本地存储回灌功能，确保数据完整不丢失。"},{"heading":"","paragraphs":["[⁴]：备用电池组数量建议每架次准备2-3组，具体数量需在本地完成放电循环测试后，结合实际飞行功耗曲线确定。","原装备选型对比表、充电策略详细参数表详见附录二。"]}]},{"chapterNo":"五、","title":"推荐编成与部署方案","intro":"基于上述任务规划与装备逻辑，我们建议组建一支具备独立作战能力的最小化无人机灭火编队，以清单形式清晰呈现。","sections":[{"heading":"最小作战编成清单：","paragraphs":["侦察主平台：配备RTK定位模块与热成像/变焦双光云台的中型侦察无人机，1架。","外攻主平台：重载货运无人机，集成高压水带挂载与系留接口，1架。","余火监护平台：便携式红外热成像无人机，1架。","地面泵送与能源单元：高压泵车（或等同功能泵组）与系留地面电源，1套。","指挥控制节点：多链路聚合指挥云平台（含硬件与软件），1套。","辅助备件：备用桨叶、水带专用挂钩备件、备用电池组、夜间作业补光灯，按任务量打包配置。","[选配] 自动化值守单元：可远程开闭、自动充电的气象站级无人机机场，用于重点辖区常态化部署，数量按辖区需求配置。","该编队配置可以在突发火情时，于最短时间内完成出动准备，独立完成从侦察到灭火监护的全流程闭环，是后续扩展更大规模机群编组的核心种子单元。"]}]},{"chapterNo":"六、","title":"安全与合规底线","intro":"","sections":[{"heading":"（一）作业环境与飞行安全红线","paragraphs":["起降场选址：必须在火场上风向平展开阔地设立起降点，与起火建筑保持安全距离，升空后快速切换至安全作业高度，避开下方人员与装备。","障碍物识别：起飞前通过图传完整扫视作业面，确认广告牌、天线、高压线、LED屏等突出障碍物的位置与高度，并在航线规划中设置避让。","气象与环境戒备：作业全程持续监测风速、风向及浓烟走向。无人机严禁长时间进入浓烟核心区，以防传感器失效。遭遇突发风切变或风速超过平台设计阈值时，立即执行返航或备降程序。","统一返航与空域管理：所有无人机预设统一返航高度层和安全走廊。降落前，由指挥员统一确认降落场净空，遵循“先收侦察、再收灭火、监护待命”的回收秩序。"]},{"heading":"（二）法律法规遵循要点","paragraphs":["所有运营活动必须严格遵守现行法律法规体系，核心要点如下：","行政管理：依据《无人驾驶航空器飞行管理暂行条例》，完成所有机型的实名登记，运营主体须取得相应运营合格证、操控员须持有有效执照，并按规定投保第三者责任保险。","运行识别与标准：遵从即将实施的GB 46761、GB 46750等国标中关于登记激活、运行识别与数据传输的技术要求。","数据安全：所有任务视频、航迹与坐标数据通过专网回传并脱敏后存储。涉密场所附近作业时，须按客户单位保密规范执行数据清除或物理隔离。","完整法规索引快表详见附录三。"]}]},{"chapterNo":"七、","title":"附录","intro":"以下附件内容为支撑正文叙述的详细图表、法规索引与边界声明，供技术审查与采购论证环节使用。","sections":[]}],"appendices":[{"appendixNo":"附录一","title":"作业任务规划原始表格","paragraphs":["（此处插入原稿中“侦察—打击—看护阶段任务规划表”及“典型作业时间轴”）"]},{"appendixNo":"附录二","title":"装备选型对比与地面保障原始表格","paragraphs":["（此处插入原稿中“装备选型表”、“充电保障与作业策略详细参数”）"]},{"appendixNo":"附录三","title":"法规与标准合规快表","paragraphs":[],"lawTable":{"caption":"表附3-1 法规与标准合规快表","headers":["文件/时点","核心要点"],"rows":[["《无人驾驶航空器飞行管理暂行条例》（2024-01-01）","实名登记、运营合格证、责任保险、操控员执照等"],["GB 46761 / GB 46750（2026-05-01）","登记激活、运行识别；具体技术指标以正式PDF为准"],["新《民用航空法》（2026-07-01）","与上位条例、国标一体化援引"],["数据与视频留存要求","专网、脱敏、留存；涉密按客户规范"]]}},{"appendixNo":"附录四","title":"边界声明与联络渠道","paragraphs":["边界声明：本方案中所有定量数据，包括但不限于水带长度（≥150m）、净载重量（约94.7kg）等均为基于公开资料的叙事参考，投标或采购须以厂商最终会签的技术规格书为准。“5-10分钟”、“3分钟出水”等时间锚点非强制性国标，须经本地化联合战训实测验证。","厂商联络：大疆创新行业应用，电话 400-700-0303，邮箱 enterprise@dji.com。此联络方式以厂商官网最新公布为准。","〔待补充〕：此处建议附上方案分析师/编制单位的联系方式与个性化增值服务引导语。"]}],"figureTableCounterStart":1}}},"山林搜救":{"displayName":"山林搜救","themeColor":"#10B981","documentDepthHints":{"overview":"速览：M400 RTK 起降检校 → 沿主路格网扫测（广角+红外、云台下倾）→ 变焦辨人 → 喊话稳局 → 激光打点上传司空 2 → 照明接引地面队；弱网打「最后已知点」。","technical":"深化：多负载链路（热成像/广角/测距/喊话/底灯）、O4 图传与司空 2、边缘缓存；夜间补充报批与灯光频闪。","full":"全案汇编：仅输出装订正文（封面四项、前言、声明框、一至七章、附录一至四）；不叠放政策解读、参数条、流程与客户话术块。"},"subtitle":"M400 RTK · 夜间山林热成像搜救完整 SOP","payloadSceneLabel":"设备选型（主平台）","payloadSceneBody":"【参数来源】机型 Matrice 400（M400 RTK）挂载禅思 H30T：公开最大航时约 59 min、最大悬停约 53 min、最大航程约 49 km（来源：https://www.dji.com/cn/matrice-400 规格页，海平面、无风、25℃、双 TB100 工况）。**海拔升高、低温、载重与多负载功耗会使航时低于标称**，投标应附 TB100 放电曲线与高海拔修正说明。[高海拔航时衰减·待项目实测]","aircraftModel":{"primary":"M400","reconnaissance":"大疆M30T搜救"},"policyBasis":["《无人驾驶航空器飞行管理暂行条例》（国务院、中央军事委员会令第761号，2024年1月1日起施行）：第十条实名登记、第十六条小型及以上执照要求、关于管制空域与飞行活动管理的条款适用于山地搜救飞行组织（来源：中国政府网国务院公报2023年第20号）。【权威来源·已核实】","《「十四五」国家综合防灾减灾规划》（国家减灾委员会印发，国减发〔2022〕1号，公开文本见中国政府网 2022-07-22）：可作为投标「政策对标」章节引用防灾减灾能力现代化、科技支撑等方向，**与本场景 SOP 的逐条对应须在正文手写索引**。【权威来源·已核实·文件名称】","全国山林搜救年均事件量、成功率等量化指标：须引用应急管理部《全国自然灾害基本情况》年鉴、公安统计公报或学术论文；**本生成器不写入未经核实的全国均值**。[数据待核实]"],"policyTranslations":["可将本搜救链写入应急演练与联勤预案附件，突出「空—地—指」同一坐标与同一任务号。","采购侧可要求供应商提供 M400 RTK 负载兼容表、司空 2 或指定云平台接口说明与弱网离线包。","条例衔接：机组资质、空域、夜间与电磁环境等特殊情形成文到 SOP 第 0 章「放行条件」。"],"operationFlow":["SOP-0 放行：【条例衔接】操控小型无人驾驶航空器须持相应执照（《暂行条例》第十六条）；完成任务备案、飞行计划/报备；夜间或管制空域须按当地空中交通管理机构要求**另行报批**；M400 RTK 收星、电池与避障自检。","SOP-1 起降点：选开阔、避开树冠与线缆；标绘禁入区与风向；预留地面队接驳位置。","SOP-2 航线：优先沿**主山路/兽径**布设格网或走廊（走失人员常沿路等待救援）；海拔爬升与返航电量按 TB100 曲线预留冗余。","SOP-3 第一遍（找「在哪」）：**广角 + 红外**快速扫山；云台**下俯约 60°–80°** 削弱正下方盲区；标记全部异常热源为可疑点。","SOP-4 第二遍（辨「是不是」）：对可疑点**变焦放大**确认人体轮廓与行为；坚持**先广角后变焦**，避免早变焦漏扫。","SOP-5 接触：开启**喊话器**引导目标**原地等待**、保持体温与可见性；**激光测距打点**，坐标实时同步**司空 2**（或客户统一指挥云），与地面队**同一坐标系**。","SOP-6 地面接引：保持安全高度悬停监看；**底部照明灯**指示接近方位；目标若移动，补打**动态跟踪点**直至汇合。","SOP-7 链路中断：**最后已知点** + 最后航向记入任务手记；指引地面队望远镜/便携红外复核。","SOP-8 投送（可选）：确认着陆点后抛投应急物资/通讯器材，CEP 与脱钩高度写入航迹记录。"],"compliance":["人员资质：《无人驾驶航空器飞行管理暂行条例》第十六条——操控小型、中型、大型民用无人驾驶航空器须取得 CAAC 操控员执照（微型、轻型除外情形见条例第十七条）。","公安备案与飞行计划：按属地公安机关及空中交通管理机构要求完成备案与计划；雷雨、大风触发熔断。【属地细则待核实】","数据合规：《数据安全法》《个人信息保护法》及任务机关内部规程；热成像影像限搜救目的，留存周期与脱敏策略书面约定。","夜间作业：除常规材料外，取得夜航或延长时段批复；照明与信标符合当地通告。","【新增·KPI占位】热源复核率、空中发现—地面到达时差等指标须引用客户战评或学术论文；**勿引用未经核验的全国平均成功率**。[数据待核实]"],"customerScripts":{"procurement":"【新增】标书宜写清：M400 RTK、禅思 H30 系列负载、司空 2/客户云 API、弱网策略与年度驻训；培训与备件单独报价。","business":"【参数来源·厂方规格页】公开工况下 H30T 组合航时约 59 min 档，用于估算「单架次格网覆盖」；实际作业须按风速、海拔与商载打折，并配地面接力预案。","leadership":"【基于公开资料·待核实】可将「智慧应急+空天地协同」纳入市级专项，但须引用本地政府已公布的规划或案例编号，避免虚构试点。"},"cloudMigration":["司空 2 / 客户指定云：激光打点、动态跟踪点与视频流统一任务 ID，便于指挥席复盘。","弱网：图传边缘缓存，恢复链路后批量补传关键帧与坐标包至指挥中心对象存储。","GIS：格网、山路中心线与等高线可预载入政务一张图或离线地图包。","账号：多部门联勤统一身份与 VPN/零信任，避免临时账号散落。"],"implementationChecklist":["起飞前单：RTK 固定解、电池循环、避障与下视盲区复核（尤其云台下俯 60°–80° 工况）。","负载检校：红外与非制冷背景对比标定、激光测距零点、喊话器音量与照明灯眩光对飞行员影响。","格网：失联区域切块编号，与山地主路网对齐；大范围档同步启用补给点与备降带。","地面队：APP/电台与司空 2 同一坐标系（GCJ-02/WGS-84 转换书面固定）。","夜间包：额外批复复印件、灯光模式、对空警示与森林禁火窗口确认。","演练：每季度至少一次「广角—变焦—打点—弱网」全链路桌演 + 一次带飞。"],"tenderHints":["技术卷附：负载兼容表、司空 2 API/素材样例、弱网断点续传截图。","服务卷：年度夜航演练次数、装备可用率 KPI、极端气象熔断签字人。","商务卷：卫星图传备份（若有）单列资费；培训与备件包单独报价。"],"pocDefaults":{"kpiLine":"热源发现距离、变焦确认耗时、打点—地面队到达时差、司空 2 坐标漂移（对比 RTK 真值）"},"media":[],"strategyPrinciples":{"modularPayload":"【负载链】红外热成像（主搜）+ 广角 + 激光测距 + 喊话器 + 底部照明；须在约 6 kg 商载与厂方兼容矩阵内选型。H30T 测温量程等见 https://www.dji.com/cn/zenmuse-h30-series/specs 。","relayMode":"指挥链：飞手—司空 2—现场指挥—地面救援队；弱网时「最后已知点」+ 动态跟踪点双备份。","obliquePath":"林冠下保持安全高度；云台下俯 60°–80° 与斜向航线降低正下方盲区；警惕山口风切变。","precisionDelivery":"激光测距坐标写入指挥云；目标移动时持续更新跟踪点直至汇合。"},"riskWarning":{"windConstraint":"峡谷与山口风切变显著，超过 M400 额定抗风（约 12 m/s）须立即返航或备降。","fallingDebris":"广域档格网拉长，须按航时 59 min 工况校核往返比与备降点，避免电量窗口触底。","thermalLimitation":"夜间红外利于发现人体，但仍须「先广角后变焦」；注意冷背景、水面与岩石假热点。"},"briefingOverviewBullets":["架构：M400 RTK 为主平台；可选 M30T 作超大面积首轮走廊侦察（与本场景 recon 槽位一致）。","两遍法：第一遍广角+红外快速扫、第二遍变焦辨人；云台下俯 60°–80° 压盲区。","协同：喊话稳局 → 激光打点 → 司空 2 同步 → 照明接引地面队；失联补「动态跟踪点」。","合规：执照 + 备案 + 计划报备 + 夜间额外批；数据限搜救用途。"],"briefingDepthTemplates":{"overview":{"title":"决策速览","decisionBrief":{"coreConflict":"山林失联警情窗口紧、地形割裂、夜航与弱网并存；仅靠地面单向推进易错失目标，热背景与林冠遮挡放大误判。","solutionSummary":"以「两遍法」空中格网为主线：一遍广角+红外扫出可疑热源，一遍变焦辨人；喊话稳局、激光打点进指挥云，与地面队同一坐标系接引，弱网以最后已知点保底。","capabilities":["先搜后辨：云台下俯配合斜向航线，压低正下方盲区；红外在夜航与冷背景条件下快速筛点。","空地一体：司空2/客户统一任务号、动态跟踪点与录像边缘缓存，恢复链路后补传关键帧。","稳局接引：喊话器稳局、底灯指示方位；熔断风切变、低电量与链路中断预案写死到 SOP。"],"orgTable":[{"platform":"中型搜救主平台（RTK+双光）","duty":"格网扫测、变焦确认、打点回传","qty":"≥1架"},{"platform":"轻便侦察/接力机","duty":"外缘走廊扫测或电池接力","qty":"按需"},{"platform":"地面搜救分队","duty":"按坐标接引、医救前出","qty":"≥1组"},{"platform":"指挥专链节点","duty":"弱网聚合、任务 ID 与离线包","qty":"≥1套"},{"platform":"快充/换电单元","duty":"轮转缩短再次出动间隔","qty":"按驻点配置"}],"complianceOneLiner":"依法完成登记、运营资质与操控员资质；任务备案与飞行计划齐备；夜航与管制空域按属地另批；影像限搜救用途并约定留存周期。","authorityNextSteps":["冻结失联区格网编号、坐标系（GCJ-02/WGS-84）与指挥云接口牵头单位。","将「广角—变焦—打点—弱网」纳入季度联勤桌演+带飞。"]},"footerNote":""},"technical":{"title":"技术深化｜山林热成像搜救技术解析","preamble":"本节按问题—逻辑—实现—要点叙述山林热成像搜救；定量以战训实测与厂方最新规格为准。","dataDisclaimerGlobal":"航时、测温与风限等须在标称工况上叠加海拔、低温与负载功耗折扣。","phases":[{"sectionNo":"第一节","title":"侦察与热源管理","problem":"林冠与峡谷地形造成下视盲区，冷背景、水面与岩石易产生假热点。","logic":"先广角后变焦；云台下俯与斜向航线结合，压制正下方未知区。","implementation":"H30T 等双光载荷快扫标记异常温升，可疑点变焦复核人体轮廓与行为，全过程写入任务号。","operationPoints":"坚持两遍法；早变焦易漏扫；热源清单与格网块编号对齐。","simplifiedTable":{"caption":"表1-1 扫测手法对照","headers":["阶段","手段","输出"],"rows":[["第一遍","广角+红外","可疑点清单"],["第二遍","变焦+测距","人体确认与坐标"],["接引","喊话+底灯","稳局与方位指示"]]},"fieldTips":["山口风切变显著时缩短滞空，随时准备备降。","链路抖动时本地缓存最后一帧坐标。"],"quantityLine":"公开工况航时须按海拔与风速打折；测温门限由战训标定。"},{"sectionNo":"第二节","title":"空地协同与坐标统一","problem":"空地若坐标系不一致，打点无法被地面队复现。","logic":"激光测距+RTK 将目标写入指挥云，与地面 APP/电台同一基准。","implementation":"司空2或客户云汇聚视频、航迹与打点；地面队动态跟踪点随目标移动刷新。","operationPoints":"接手人员双签确认疑似目标再前出，避免单人误判。","simplifiedTable":{"caption":"表2-1 协同分工","headers":["要素","空中","地面"],"rows":[["发现","热源标注","望远镜/便携红外复核"],["接引","悬停监看","医救前出"],["记录","时间戳录像","任务手记+坐标截图"]]},"fieldTips":["移动目标持续刷新跟踪点直至汇合。","交接完毕后归档航迹供复盘。"],"quantityLine":"坐标漂移以 RTK 固定解状态与客户验收抽测为准。"},{"sectionNo":"第三节","title":"弱网、夜航与熔断","problem":"山区链路断续，夜航审批与灯光管理要求高。","logic":"边缘缓存+最后已知点；夜航单独报批，灯光模式避免眩光干扰。","implementation":"图传中断时记录最后航向与高度层；恢复后批量补传；风速超平台阈值立即返航。","operationPoints":"雷雨、大风与低电量任一则执行预案终止线。","simplifiedTable":{"caption":"表3-1 熔断条件示例","headers":["触发","动作"],"rows":[["风速>额定抗风","返航或备降"],["链路中断>阈值","记入 LKP，地面复核"],["电量低于预留","中止扩展扫测，直接回程"]]},"fieldTips":["夜航包需额外批复印件随队。","禁火窗口与空域通告每日复核。"],"quantityLine":"具体阈值写入客户 SOP；本稿不代填未经会签的数字。"}],"closingNote":"本解析不构成空域许可；与警务/空管接口须单独立项。","glossary":[{"term":"两遍法","definition":"先快速广域扫测再找点变焦确认，降低漏扫与误判。"},{"term":"最后已知点（LKP）","definition":"链路中断前最后一次可信坐标与航向，用于指引地面搜寻。"},{"term":"动态跟踪点","definition":"目标移动时持续更新的指挥云坐标，直至空地汇合。"},{"term":"格网","definition":"失联区按山路/等高线切块编号，便于分工与复盘。"}]},"full":{"deliverableTitle":"","cover":{"organization":"〔待补充单位名称〕","applicableScene":"复杂地形条件下失踪人员空中搜救与空地协同处置","version":"V1.0","dateText":"2026年5月","scenarioName":""},"documentControl":{"rows":[]},"tableOfContents":[],"executiveSummary":"","prefaceTitle":"前言与编制说明","prefaceParagraphs":["山林走失与灾害救援中，空中视角能显著压缩搜索空白区，但必须与空地协同、弱网保障结合方可落地。","本方案给出与现有条例、国标相衔接的叙述框架，正文一至七章与附录可据客户战训与采购书替换量化表。"],"disclaimerBox":"本文为演示级装订框架，航时、风限、测温门限与审批流程须以属地空管、应急部门及厂方最终会签为准。","bodyChapters":[{"chapterNo":"一、","title":"场景定义与痛点分析","intro":"复杂山林搜救具有窗口紧、地形遮挡、夜航弱网并存等特征。","sections":[{"heading":"（一）主要矛盾","body":"地面队单维度推进难以覆盖深谷与陡崖；可见光在夜航与雨雾下失效；热成像易受环境假热点干扰。"},{"heading":"（二）任务特征","paragraphs":["失联区常与主路、兽径相关，格网划设应对齐可通达走廊。","接警后需在安全前提下尽快建立空中视角，避免盲目扩大徒步范围。"]}]},{"chapterNo":"二、","title":"核心价值主张","intro":"以可复制的两遍法与统一坐标，将「找得到、接得住、留得下证据」串成闭环。","sections":[{"heading":"","paragraphs":["快扫：广角+红外压低盲区，形成可疑点清单。","精辨：变焦+测距确认目标，激光打点写入指挥云。","稳局：喊话与照明支持地面接引，弱网以 LKP 保底。"]}]},{"chapterNo":"三、","title":"任务规划与作业流程","intro":"流程与场景 `operationFlow` SOP-0～8 一致，此处给出指挥视角摘要。","sections":[{"heading":"（一）放行与起飞准备","body":"执照、备案与计划齐备；夜航与管制空域单独报批；RTK、电池与避障自检。"},{"heading":"（二）格网扫测与确认","body":"沿主路/兽径布设走廊或格网；第一遍快扫，第二遍对可疑点变焦；全程任务号一致。"},{"heading":"（三）弱网与撤收","body":"记录 LKP 与最后航向；风速、电量或指挥口令触发熔断返航；航迹与录像归档。"}]},{"chapterNo":"四、","title":"装备选型与地面保障","intro":"主平台选型应与负载链、商载与兼容性矩阵一致。","sections":[{"heading":"（一）平台与负载","body":"中型 RTK 平台挂载双光云台；喊话、测距、底灯纳入统一重量预算；接力机用于外缘扫测或航时补充。"},{"heading":"（二）链路与地面保障","paragraphs":["指挥专链节点支持弱网聚合与离线包；地面队终端与指挥云坐标系书面锁定。","快充/换电轮转缩短再次出动；备降点与补给点在格网图中标注。"]}]},{"chapterNo":"五、","title":"推荐编成与部署方案","intro":"最小编成示例，可按行政区或林场分局扩展。","sections":[{"heading":"最小单元建议","paragraphs":["搜救主平台 1；指挥专链 1；地面分队 1；换电/快充单元按驻点配置。","可选轻便侦察机用于外缘初扫，降低主平台无效航时。"]}]},{"chapterNo":"六、","title":"安全与合规底线","intro":"","sections":[{"heading":"（一）飞行与环境安全","paragraphs":["关注峡谷风切与树冠障碍；严禁低于安全高度贴林飞行。","浓烟、雷雨或能见度不满足时禁止强行作业。"]},{"heading":"（二）数据与法规","paragraphs":["遵守无人驾驶航空器条例关于登记、资质、保险与空域管理的条款。","热成像与影像留存限搜救与复盘用途，周期与脱敏策略书面约定。"]}]},{"chapterNo":"七、","title":"附录","intro":"支撑材料见附录一至四；技术表格可在采购阶段替换为厂方与战训会签版。","sections":[]}],"appendices":[{"appendixNo":"附录一","title":"SOP 阶段与时间轴占位","paragraphs":["（插入格网划分表、阶段口令与典型时间轴，由客户战训填写。）"]},{"appendixNo":"附录二","title":"负载与通信参数占位","paragraphs":["（插入兼容矩阵、带宽与弱网策略抽测记录。）"]},{"appendixNo":"附录三","title":"法规与标准合规快表","paragraphs":[],"lawTable":{"caption":"表附3-1 法规快表（示例）","headers":["要点","说明"],"rows":[["实名登记与资质","条例第十条、第十一条、第十六条等"],["飞行计划与夜航","属地公安机关及空中交通管理机构要求"],["个人信息与影像","依法限定用途与留存周期"]]}},{"appendixNo":"附录四","title":"边界声明与联络渠道","paragraphs":["边界声明：公开航时/风限为厂方标称叙事锚点，投标以最终会签为准。","联络渠道与增值服务用语由编制单位补充。"]}],"figureTableCounterStart":1}}},"公安执法":{"displayName":"公安执法","themeColor":"#3B82F6","documentDepthHints":{"overview":"速读：抵达—取证—回传—证据包闭环，指挥席与现场民警同步。","technical":"深化：加密图传、GB/T 28181 或客户指定网关、断网本地加密与审计同步。","full":"全案汇编：仅输出装订正文（封面四项、前言、声明框、一至七章、附录一至四）；不叠放政策解读、参数条、流程与客户话术块。"},"subtitle":"低空执法 · 证据链采集与实时回传","aircraftModel":{"primary":"M400","reconnaissance":""},"policyBasis":["《公安机关办理行政案件程序规定》（2012年公安部令第125号公布，历经公安部令第132号、第149号、第160号等修正；中国政府网转载文本）：第二十六条在列举证据种类时明确第（七）项为「视听资料、电子数据」；第三十二条明确收集电子数据应优先扣押原始存储介质，无法扣押时应制作笔录并附电子数据清单，特殊情况下可以打印、拍照等方式固定并附说明。【权威来源·已核实条款号】","GB/T 28181-2016《公共安全视频监控联网系统信息传输、交换、控制技术要求》：警务视频图像联网常用国标，技术响应应写明与平台对接的信令与媒体流版本。【标准全文以国家标准全文公开系统为准】","《无人驾驶航空器飞行管理暂行条例》（国务院、中央军委令第761号）：第二十二条等条款对警察部门辖有无人驾驶航空器与其他航空器融合飞行等情形作出规范；操控员、空域要求同条例第十条、第十六条、第十九条。【权威来源·已核实】","《公安信息化建设“十五五”规划》《关于深化公安执法规范化建设的意见》等文件：若属内部件或未对外全文公开，投标引用应改附**客户法制或科技信息化部门提供的可公开摘编**，本生成器不代填具体文号。【密级与公开范围待核实】"],"operationFlow":["T+0min：接处警，M400 搭载可见光/热成像云台起飞（飞行与空域审批按《暂行条例》及属地规定执行）。","T+3min：抵达任务空域，加密回传至指挥中心与移动终端（链路符合等保与客户视频联网规范）。","T+8min：对涉案要素变焦取证并平台打点（人像、车辆采集须遵守法律法规对客户/监察机关授权边界）。","T+10min：封装执法证据包（时间、坐标、视音频哈希），按《程序规定》第三十二条要求形成笔录/清单后上传警务云。"],"compliance":["电子证据程序：收集、固定电子数据应符合《公安机关办理行政案件程序规定》第三十二条及相关章节；需要鉴定的，适用第九十二条等条款。【以最新修订文本为准】","视频联网：平台对接技术指标应对照 GB/T 28181-2016 及客户省级平台接口细则。","飞行资质：《无人驾驶航空器飞行管理暂行条例》第十条、第十六条——实名登记与小型及以上操控员执照；任务空域依法报批。","数据安全与保密：《数据安全法》《保守国家秘密法》《个人信息保护法》及公安机关数据安全管理规定；涉密视频禁止违规互联网传播。【细化条款待法制支队书面清单】"],"customerScripts":{"procurement":"【基于公开资料·待核实】若招标引用警用装备目录或协议供货清单，应以公安部装备财务局最新公告为准；我方提供检测报告、源代码及知识产权归属响应表。","business":"双光载荷+加密链路+证据包导出，可减少一线近距离风险；效率百分比需以客户指挥中心统计数据为准。[数据待核实]","leadership":"空地协同与在线证据回传可作为「科技兴警」案例素材，立项依据应引用当地政府或公安厅已公开发布的文件名称与文号，不得虚构评比名次。"},"cloudMigration":["视频流经警务加密通道进入视频云；与社会面摄像头平台对接时执行 GB/T 28181-2016 或客户指定网关规范。","证据包完整性：可采用 SHA-256、SM3 等算法生成校验值并绑定可信时间戳；**证据能力与证明力**仍以《公安机关办理行政案件程序规定》取证程序及法庭审查认定为准。","专网断开时本地加密存储，恢复后按审计策略同步，防止单点丢失。"],"implementationChecklist":["完成与警务综合网/视频联网平台的网络策略与白名单开通","证据导出格式（文件夹结构、哈希清单、播放器）与法制支队确认","权限模型：指挥席、取证席、审计席角色隔离","对接本 portfolio 的 evidence-panel 流程做 POC 演示脚本"],"tenderHints":["招标文件常要求「源代码与知识产权归属」「三年质保与重大活动保障」专节","技术偏离表需逐条响应涉密、审计、等保条款，避免泛泛而谈「支持」"],"pocDefaults":{"kpiLine":"图传稳定性（丢包）、取证打点与平台时间同步误差、证据包一键导出成功率"},"media":[{"title":"工作台关联：证据链管理面板（本仓库）","url":"evidence-panel.html","embedUrl":""}],"strategyPrinciples":{"modularPayload":"执法取证典型挂载：H30T 双光云台；扩展喊话、照明等模块时，总重不得超过 M400 约 6 kg 商载上限。取证分辨率与时戳须满足法制与审计导出格式。","relayMode":"重点保障图传链路稳定与证据包完整性；专网中断时本地加密缓存，恢复后按审计策略同步。","obliquePath":"人员密集区控制航线高度与速度，取证变焦遵守当地对敏感采集的规定。","precisionDelivery":"涉案要素打点应与平台 UTC/NTP 时间同步；哈希算法仅用于防篡改校验，不构成对证据合法性的单独背书，最终以法制部门审查为准。"},"briefingDepthTemplates":{"overview":{"title":"决策速览","decisionBrief":{"coreConflict":"大型警情与群体性事件现场取证窗口短、风险高；地面视角难以快速覆盖广域要素，电子证据若链路或程序不合规则无法闭环。","solutionSummary":"无人机快速抵近、双光取证与平台打点同步；全程加密链路至警务视频云，按程序规定封装哈希与时间轴的证据包，指挥席与一线民警同源可视。","capabilities":["广域抵近：安全高度覆盖现场态势，变焦锁定关键要素。","链路与合规：专网/加密与 GB/T28181 或客户网关对接，防止违规外泄。","证据闭环：时间、坐标、视音频哈希与笔录清单一体导出。"],"orgTable":[{"platform":"执法取证主平台","duty":"双光云台、打点回传","qty":"≥1架"},{"platform":"通信与加密节点","duty":"聚合路由、断网本地加密缓存","qty":"≥1套"},{"platform":"指挥中心席","duty":"任务分发、法务审计账号","qty":"按编制"},{"platform":"法制/督查联席","duty":"证据格式与留存签认","qty":"按需进驻"}],"complianceOneLiner":"飞行与人员资质符合无人驾驶航空器条例；电子数据收集、固定与移送符合《公安机关办理行政案件程序规定》等现行有效文本；涉密与个人信息采集遵守授权边界。","authorityNextSteps":["确认视频平台接口版本与等保分区、证据导出目录结构。","联合法制支队做一次端到端取证实飞演练并形成签字纪要。"]},"footerNote":""},"technical":{"title":"技术深化｜警务低空取证与视频联网","preamble":"从抵近、传输到固证分节说明；量化与时戳误差以平台测评与客户验收为准。","dataDisclaimerGlobal":"哈希与时间戳用于防篡改校验，证明力仍受法定程序与法庭审查约束。","phases":[{"sectionNo":"第一节","title":"快速抵近与光学取证","problem":"地面摄录角度受限，易遗漏动态要素。","logic":"中空斜向覆盖+变焦局部固证，兼顾安全距离。","implementation":"按预案航线高度、速度进入任务空域；热成像辅助夜间与烟雾条件下的要素辨识。","operationPoints":"变焦取证遵守当地对敏感采集的规定；避免非任务需要的长时间跟拍。","simplifiedTable":{"caption":"表1-1 取证动作","headers":["阶段","输出"],"rows":[["广域覆盖","态势图传"],["变焦固证","关键帧与时间码"],["打点","平台坐标+任务号"]]},"fieldTips":["人员密集区优先固定高度层，减少公众心理扰动。","恶劣天气按指挥口令熔断。"],"quantityLine":"图传丢包率与时钟偏差以警务云监控指标为准。"},{"sectionNo":"第二节","title":"加密链路与平台对接","problem":"公网直传不满足等保与客户视频联网规范。","logic":"专网/ VPN 与 GB/T28181 信令媒体版本书面锁定；断网本地加密落盘。","implementation":"视频流经警务加密通道；与社会面平台对接走指定网关；恢复链路后按审计策略补传。","operationPoints":"账号分级：指挥、取证、审计三权分立；导出操作全量审计。","simplifiedTable":{"caption":"表2-1 对接要素","headers":["层","要求"],"rows":[["传输","TLS/专网策略"],["信令","28181 版本与客户增补"],["本地","断电保护与加密存储"]]},"fieldTips":["白名单与防火墙策略提前工单化，避免临演端口不通。"],"quantityLine":"具体端口与加密套件以信息化部门会签为准。"},{"sectionNo":"第三节","title":"证据包与程序衔接","problem":"仅有视频文件不足以形成可移送材料。","logic":"封装文件夹结构+哈希清单+可信时间戳（如客户策略要求）+笔录相互印证。","implementation":"平台一键导出符合法制支队模板；必要时打印或拍照固定附说明。","operationPoints":"对涉及个人隐私的画面脱敏策略预先备案。","simplifiedTable":{"caption":"表3-1 证据包要素","headers":["项","说明"],"rows":[["时间线","UTC/NTP 对齐"],["哈希","SHA-256/SM3 等"],["签认","制作人、法制复核"]]},"fieldTips":["重大案件建议同步磁带库或冷备策略。"],"quantityLine":"程序条款以最新修订的程序规定及本地细则为准。"}],"closingNote":"本解析不构成法律意见；敏感案件口径以法制部门为准。","glossary":[{"term":"GB/T 28181","definition":"公共安全视频监控联网常用国标，对接版本须与客户省级平台一致。"},{"term":"证据包","definition":"含视音频、元数据、哈希清单与签认信息的结构化导出物。"},{"term":"专网链路","definition":"与互联网逻辑隔离的警务承载网络及加密隧道。"}]},"full":{"deliverableTitle":"","cover":{"organization":"〔待补充单位名称〕","applicableScene":"警务警情低空快速取证与视频证据链闭环","version":"V1.0","dateText":"2026年5月","scenarioName":""},"documentControl":{"rows":[]},"tableOfContents":[],"executiveSummary":"","prefaceTitle":"前言与编制说明","prefaceParagraphs":["科技兴警背景下，低空平台为指挥席提供广域、快速、可追溯的视听材料，但必须与法定取证程序和信息化规范对齐。","本方案提供装订式叙事骨架，接口与等保参数应由客户科技与法制部门联合定稿。"],"disclaimerBox":"文中所列程序与标准名称供培训讨论；引用条文以国家法律法规数据库及客户提供的可公开文本为准。","bodyChapters":[{"chapterNo":"一、","title":"场景定义与痛点分析","intro":"大型现场态势变化快、风险高，传统取证手段覆盖与固证效率不足。","sections":[{"heading":"（一）指挥与取证矛盾","body":"地面机位难以快速建立全场面；移动端上传若不走专网存在合规风险。"},{"heading":"（二）任务边界","paragraphs":["聚焦依法授权的空中巡视与取证，敏感采集须事前授权与事中审计。","与交通、应急等跨部门接口在联合预案中定义数据归属。"]}]},{"chapterNo":"二、","title":"核心价值主张","intro":"以「可视、可达、可证」为主线服务法制化处置。","sections":[{"heading":"","paragraphs":["可视：双光图传与平台同屏指挥。","可达：预设安全航线覆盖热点区域。","可证：时间、坐标、哈希与清单一体导出。"]}]},{"chapterNo":"三、","title":"任务规划与作业流程","intro":"与场景 operationFlow 时序对齐的指挥摘要。","sections":[{"heading":"（一）接警与起飞","body":"空域与任务备案完成后起飞，加密链路握手成功方可进入取证航线。"},{"heading":"（二）取证与打点","body":"变焦固证与平台打点同步；多要素任务拆分任务号管理。"},{"heading":"（三）固证与上传","body":"落地后按法制模板导出证据包；专网中断场景先本地加密再补传。"}]},{"chapterNo":"四、","title":"装备选型与地面保障","intro":"","sections":[{"heading":"（一）平台与挂载","body":"中型多旋翼+双光云台为主；总重与抗风须留安全裕度。"},{"heading":"（二）网络与地面设备","paragraphs":["聚合路由器、专网终端与移动电源构成机动节点。","重大活动前完成链路压测与账号演练。"]}]},{"chapterNo":"五、","title":"推荐编成与部署方案","intro":"","sections":[{"heading":"最小单元","paragraphs":["取证机 1；通信节点 1；指挥席 1；法制联络机制常态化。"]}]},{"chapterNo":"六、","title":"安全与合规底线","intro":"","sections":[{"heading":"（一）飞行安全","paragraphs":["雷雨大风熔断；人群密集区控制噪声与高度；夜间飞行按批件执行。"]},{"heading":"（二）数据与保密","paragraphs":["涉密视频禁止违规互联网传播；个人信息脱敏与访问控制按公安数据安全规定执行。"]}]},{"chapterNo":"七、","title":"附录","intro":"表格与接口说明书在采购阶段替换为客户定稿版。","sections":[]}],"appendices":[{"appendixNo":"附录一","title":"典型时序与口令表占位","paragraphs":["（插入 T+0/T+3/T+8/T+10min 与客户指挥口令变体。）"]},{"appendixNo":"附录二","title":"平台与网络参数占位","paragraphs":["（插入 28181 版本、端口、加密套件与压测截图索引。）"]},{"appendixNo":"附录三","title":"法规与标准快表","paragraphs":[],"lawTable":{"caption":"表附3-1 法规快表（示例）","headers":["文件","要点"],"rows":[["程序规定（证据章节）","视听资料、电子数据收集与固定"],["无人驾驶航空器条例","登记、执照、空域"],["数据安全/个保法律","授权、脱敏、留存"]]}},{"appendixNo":"附录四","title":"边界声明与联络渠道","paragraphs":["边界声明：公开指标为叙事参考，投标响应以客户招标文件与测评报告为准。","联络渠道由编制单位补充。"]}],"figureTableCounterStart":1}}},"医疗应急":{"displayName":"医疗应急","themeColor":"#EF4444","documentDepthHints":{"overview":"速读：温控与时窗优先；起飞前货舱预冷并与接收端确认卸货窗口。","technical":"深化：温度曲线导出、医院集成（HL7/FHIR）、迫降与院内净空预案。","full":"全案汇编：仅输出装订正文（封面四项、前言、声明框、一至七章、附录一至四）；不叠放政策解读、参数条、流程与客户话术块。"},"subtitle":"血液/急救物资 · 温控运输 · 黄金窗口","aircraftModel":{"primary":"FC100_Medical","reconnaissance":""},"policyBasis":["《中华人民共和国献血法》《医疗机构临床用血管理办法》（2012年卫生部令第58号公布，2019年国家卫生健康委令第8号修订）：临床用血质量管理的部门规章依据；其中第十五条规定医疗机构对血液预订、接收、入库、储存、出库及库存预警的管理须保证血液储存、运送符合国家有关标准和要求；第十八条规定全血、红细胞储藏温度 2–6℃ 等；第十九条规定医务人员应当执行临床输血技术规范（公开文本引用无锡滨湖区政府网站转载版本，投标应换用国家卫健委法规数据库正本核对）。【权威来源·条款号已核对转载文本】","WS 400—2023《血液运输标准》：国家卫生健康委发布的强制性卫生行业标准，适用于血站—医疗机构等环节血液运输技术要求；**具体温度区段与监测频次以标准 PDF 为准**（行业公开信息：2023年第9号公告发布，上海市血液中心等牵头制修订）。【标准技术指标待下载卫健委 PDF 核对】","《关于进一步完善院前医疗急救服务的指导意见》：国家卫生健康委、国家发展改革委等九部门联合，经国务院批准的相关安排，载于《中华人民共和国国务院公报》2021年第2号（中国政府网可检）；提出加强院前急救信息化与多部门协同，可作为「低空+急救」政策背景引用，**但非专门针对无人机运输的专门许可条款**。【权威来源·国务院公报路径】","《低空经济标准体系建设指南（2025年版）》：十部门 2026 年 2 月联合印发，将医疗物资低空运投列为标准体系建设关注场景之一；执行细节以市场监管总局公开 PDF 为准。"],"operationFlow":["T+0min：接到用血/物资需求，核对血液成分、数量与 WS 400—2023/院感 SOP 约定的温控区间。","T+3min：FC100 医疗构型完成货舱预冷与装载签证后起飞（飞行活动同时遵守《无人驾驶航空器飞行管理暂行条例》关于登记、执照、空域的规定）。","T+8min：抵达医院协定起降点，实施卸货与交接记录（电子签名与追溯号按血站—医院协议）。","T+10min：返航与航后温控记录归档，供不良反应追溯。"],"compliance":["临床用血管理：《医疗机构临床用血管理办法》第十五条、第十八条、第十九条——储存温度、运送符合国家有关标准，并执行临床输血技术规范；对应运输层应引用 WS 400—2023 等强制性标准技术指标。【细节以 PDF 为准】","空域与飞行：《无人驾驶航空器飞行管理暂行条例》第十条、第十二条、第十六条等；医疗救护飞行涉及临时管制空域公告的，见条例第二十条第二款精神。【批复主体待属地空中交通管理机构确认】","数据与个人信息：适用《个人信息保护法》《数据安全法》及《人口健康信息管理办法（试行）》等；院内接口需遵循客户伦理与信息化要求。**不存在名为《医疗数据安全管理条例》的单一行政法规，投标勿再使用该表述。**【已更正】","验证与质保：血站/医院可参照 GMP/GSP 思路开展冷链设备 IQ/OQ/PQ，作为服务标附件；具体是否强制以采购文件为准。"],"customerScripts":{"procurement":"【待核实】是否纳入省级应急采购协议目录以各省公告为准；我方提供飞机 TC 数据、温控曲线样例与保险背书响应表。","business":"低空直达可缩短「血站到手术室」窗口，但「提升 50%」类表述须引用医院或血站联合出具的前后对比数据。[数据待核实]","leadership":"可将项目纳入低空经济与公共急救协同的创新试点叙事，但须对应政府已公布的试点名录或发改、卫健联合批文。"},"cloudMigration":["温控与航线数据对接医院 HIS/物流平台时走 HL7/FHIR 或医院集成平台，避免直连核心生产库","建议部署在卫健行业云或医院托管私有云，满足医疗数据分级","血液运输全程审计日志留存周期按院感与血站规范配置"],"implementationChecklist":["血站—医院航线空域与起降点协议、应急联络人清单","货舱预冷 SOP 与每架次温度曲线导出","医院净空与迫降预案，夜间标识与进场程序","本页面高德航线示意与真实运行航道分开管理（示意仅供售前）"],"tenderHints":["服务标可加入「血液安全事故零容忍条款」与保险背书","若含冷链验证，需附 IQ/OQ/PQ 或等效第三方报告占位"],"pocDefaults":{"kpiLine":"温控曲线落在 WS 400—2023/院感协定的限值区间达标率、航线准点率、异常事件闭环时间"},"media":[],"strategyPrinciples":{"modularPayload":"【新增】医疗型 FC100 温控货舱载荷方案：净载重按 FC100_Medical 约 80 kg 档粗算；红细胞储藏温度遵循《医疗机构临床用血管理办法》第十八条（2–6℃），道路运输/联运执行 WS 400—2023 的血液运输温度限值及监测要求——**无人机厢内设定值需在两类规范与客户 SOP 交叉评审后锁定**。","relayMode":"航线以温控曲线与时窗硬约束优先；双电航时仍受电池模式限制，长距离任务需备降点与机动接力方案。","obliquePath":"医院净空与迫降水域预案在 briefing 全案中展开，禁飞区与院内隐私路径提前会签。","precisionDelivery":"卸货点以医院协定的 RTK/视觉融合落点为首选，时间戳接入 HIS/物流追溯。"},"briefingDepthTemplates":{"overview":{"title":"决策速览","decisionBrief":{"coreConflict":"血液与急救物资对温控与时窗极度敏感；城市道路拥堵与院内接驳不确定性放大断链风险。","solutionSummary":"医疗构型无人机货舱预冷后装载，航线直达协定起降点；电子交接与追溯号贯通血站—飞行—院内，温控曲线可导出备查。","capabilities":["温控优先：起飞前预冷，飞行中连续监测，落地即交接。","时窗可视：指挥席掌握 ETA 与异常门限，触发备降与接力。","追溯一体：对接 HIS/物流平台策略由客户信息化部门会签。"],"orgTable":[{"platform":"医疗运力平台","duty":"温控货舱航线直飞","qty":"按协议"},{"platform":"血站/药房发站","duty":"装箱签证与追溯号","qty":"1"},{"platform":"院内接收组","duty":"净空、卸货与签名回执","qty":"1"},{"platform":"运管与医务值班","duty":"熔断与不良事件上报","qty":"按院规"}],"complianceOneLiner":"飞行活动遵守无人驾驶航空器条例；运输层遵循临床用血与 WS 400 等卫生标准技术指标；个人信息与医疗数据按卫健客户规范处理。","authorityNextSteps":["固化血站—医院航线批件与院内起降点协议文本。","完成一次冷链验证飞行（IQ/OQ/PQ 或等效）并形成联合签字。"],"timeWindowNarrative":"以「黄金窗口」叙事服务临床：具体缩短比例须引用血站与医院出具的 Before/After 数据，本稿不代填未经核验的百分比。"},"footerNote":""},"technical":{"title":"技术深化｜医疗低温物资低空运输","preamble":"温控、航线与时窗、院内交接三节展开；定量以冷链验证与厂方规格为准。","dataDisclaimerGlobal":"红细胞 2–6℃ 等阈值以现行规章与标准 PDF 为准；无人机厢内设定值由多学科评审锁定。","phases":[{"sectionNo":"第一节","title":"温控与装载","problem":"地面与环境热扰动易导致超温或欠温。","logic":"预冷—装载签证—飞行中监测—落地立即交接的四段控制。","implementation":"货舱传感器采样周期与告警门限写入 SOP；异常即中断起飞或启动备降。","operationPoints":"装机单与追溯号双人复核；电池模式下注意航时与温控功耗折减。","simplifiedTable":{"caption":"表1-1 温控链路","headers":["环节","控制点"],"rows":[["预冷","达到设定起始温区"],["装机","签证与时间戳"],["在航","连续曲线记录"],["交割","电子签名"]]},"fieldTips":["酷暑/严寒天气需额外环境修正策略。"],"quantityLine":"验证报告应附于服务标响应。"},{"sectionNo":"第二节","title":"航线、空域与时窗","problem":"城区空域与院内净空限制多，时窗不可违约。","logic":"批件航线+备降点+接力方案； ETA 与窗口双约束调度。","implementation":"批件与 NOTAM/公告每日复核；指挥席掌握改降决策链。","operationPoints":"「提升50%」类表述禁止出现在未引用数据的文本中。","simplifiedTable":{"caption":"表2-1 调度要素","headers":["要素","说明"],"rows":[["主航线","批件坐标廊道"],["备降","第二医院或地面冷链车"],["时窗","手术室/检验科接收时段"]]},"fieldTips":["院内迫降预案与保卫、院感联合签字。"],"quantityLine":"准点率 KPI 以客户统计为准。"},{"sectionNo":"第三节","title":"院内交接与信息化","problem":"不与 HIS/物流平台对齐则追溯断裂。","logic":"HL7/FHIR 或医院集成平台中转，避免直连核心库。","implementation":"电子交接单、温控曲线与航迹绑定存储；权限按最小化原则。","operationPoints":"不良事件按院感与药事路径上报。","simplifiedTable":{"caption":"表3-1 信息化要点","headers":["项","说明"],"rows":[["接口","经集成平台"],["日志","符合留存周期"],["灾备","双活或冷备策略"]]},"fieldTips":["演示地图航线与生产运行航线分离管理。"],"quantityLine":""}],"closingNote":"不构成医疗广告或疗效承诺；法规引用以正本为准。","glossary":[{"term":"WS 400—2023","definition":"血液运输卫生行业标准，技术指标以 PDF 正文为准。"},{"term":"IQ/OQ/PQ","definition":"安装/运行/性能确认，可作为冷链设备验证思路。"},{"term":"追溯号","definition":"贯通发血—运输—交接的业务主键。"}]},"full":{"deliverableTitle":"","cover":{"organization":"〔待补充单位名称〕","applicableScene":"血液及急救物资低空温控快运与院内电子化交接","version":"V1.0","dateText":"2026年5月","scenarioName":""},"documentControl":{"rows":[]},"tableOfContents":[],"executiveSummary":"","prefaceTitle":"前言与编制说明","prefaceParagraphs":["院前与院内衔接段是血液与急救物资供应链的脆弱环节，低空直达可在合规前提下提供增量选项。","本装订框架与卫健、空管、信息化多部门会签并行使用；温控与数据条款以采购文件为准。"],"disclaimerBox":"未列入批件的空域不得实施运行；本文定量占位须替换为验证报告与厂商会签参数。","bodyChapters":[{"chapterNo":"一、","title":"场景定义与痛点分析","intro":"城市路况与院内不确定性影响温控与时窗双目标。","sections":[{"heading":"（一）供应链痛点","body":"拥堵、路口延误与院内电梯/通道占用导致不可控等待；温度曲线一旦出现尖峰即可能触发报废风险。"},{"heading":"（二）适用边界","paragraphs":["适用于已获批航线与起降点、且信息化条件满足交接与审计的客户。","不替代国家强制性标准中的陆运要求；为并联补充渠道。"]}]},{"chapterNo":"二、","title":"核心价值主张","intro":"把「看得见温度、卡得住时窗、溯得到责任」落到运营级。","sections":[{"heading":"","paragraphs":["温控：预冷、在航监测、落地即交接。","时窗：ETA+窗口双约束，异常即备降或接力。","追溯：电子签名+曲线归档+权限可控。"]}]},{"chapterNo":"三、","title":"任务规划与作业流程","intro":"与场景 operationFlow 四段时序一致。","sections":[{"heading":"（一）需求确认与预冷","body":"核对成分、数量与温控区间；货舱预冷达标后签证装载。"},{"heading":"（二）飞行与监控","body":"按批件航线实施；指挥席实时监控曲线与地理围栏。"},{"heading":"（三）交割与返航","body":"院内接收电子签；返航后归档曲线供药事/血库抽查。"}]},{"chapterNo":"四、","title":"装备选型与地面保障","intro":"","sections":[{"heading":"（一）运力与温控舱","body":"选型须满足商载与温控精度的联合指标；双电航时与备用接力方案写入保障章。"},{"heading":"（二）地面与信息化","paragraphs":["起降点安防、消防与院感要求一次会签；","集成平台账号、VPN 与审计策略与信息科联调记录存档。"]}]},{"chapterNo":"五、","title":"推荐编成与部署方案","intro":"","sections":[{"heading":"最小单元","paragraphs":["航线机组+签派；血站与院内各设联络员；重大节假日升格值班。"]}]},{"chapterNo":"六、","title":"安全与合规底线","intro":"","sections":[{"heading":"（一）飞行与运行安全","paragraphs":["气象熔断；院内净空与迫降水域预案；噪声与社会影响评估按属地要求。"]},{"heading":"（二）医疗数据与患者隐私","paragraphs":["遵循《个人信息保护法》及卫健数据分级要求；不存在单一所谓「医疗数据安全管理条例」可替代上述体系。"]}]},{"chapterNo":"七、","title":"附录","intro":"验证记录、保险与商务条款在采购包中展开。","sections":[]}],"appendices":[{"appendixNo":"附录一","title":"温控曲线与时序表占位","paragraphs":["（插入典型航次曲线、门限与告警处置记录。）"]},{"appendixNo":"附录二","title":"航线与起降点清单占位","paragraphs":["（插入批件坐标、备降点与净空测量摘要。）"]},{"appendixNo":"附录三","title":"法规与标准快表","paragraphs":[],"lawTable":{"caption":"表附3-1 法规快表（示例）","headers":["文件","要点"],"rows":[["临床用血管理办法等","储存温度、运送要求"],["WS 400—2023","运输温度与监测"],["无人驾驶航空器条例","登记、保险、执照、空域"]]}},{"appendixNo":"附录四","title":"边界声明与联络渠道","paragraphs":["边界声明：血液安全零容忍条款与保险背书在招标文件中逐条响应。","联络渠道由编制单位补充。"]}],"figureTableCounterStart":1}}}}</script>
+  <script type="application/json" id="aircrafts-fallback">{"FC100":{"model":"大疆FlyCart 100","emptyWeight":{"slingLoad":"55.2kg","winchLoad":"60.2kg"},"maxTakeoffWeight":"149.9kg","maxTakeoffWeightNote":"【来源：DJI FlyCart 100 说明书/规格页】厂方同时给出性能规格最大起飞重量 170 kg；下列净载重、航时以「149.9 kg」工况测得（见 https://www.dji.com/cn/flycart-100 ）。**境内合规申报起飞重量须以适航与地方法规为准**。","maxPayload":94.7,"maxPayloadNote":"净载重计算与 DJI 公开材料一致：149.9 kg（起飞重）− 55.2 kg（吊具系统自重，含提升系统）≈ 94.7 kg；绞车方案空机 60.2 kg，须重算。【来源：大疆官网产品页】","battery":{"model":"DB2160 智能飞行电池","perBatteryWeight":"约 14.7 kg/块","capacityAh":41,"voltageV":52,"configNote":"支持双电常态作业；单电模式仅作应急。"},"psdkPowerW":3000,"tetherWinch":{"model":"旗舰绞车系统 A2EWH-100A","cableLengthM":"0–30","maxRetractionSpeed":"1.2 m/s"},"tetherLifting":{"model":"双电吊运系统 A2EDL-100A","cableLengthM":"10（推荐作业缆长 10–15 m）"},"windResistance":"12 m/s（大疆规格页「最大抗风速度」；与 149.9 kg、海平面、无风扰动等工况同页给出，细则以说明书为准）","endurance":{"dualBattery":{"maxFlightTime":"14分钟","maxHoverTime":"12分钟","maxDistance":"12km"},"singleBattery":{"maxFlightTime":"7分钟","maxHoverTime":"6分钟","maxDistance":"6km"}},"speed":{"maxAscent":"5m/s","maxDescent":"5m/s","maxHorizontal":"20m/s"},"protectionLevel":"IP55（动力系统除外；IP 等级依 IEC 60529 在受控实验室条件下测得，**非永久性**，磨损或密封老化可导致失效——见大疆产品规格说明）","operatingTemperature":"-20℃至40℃","maxAltitude":"6000m","maxFlightHeight":"1500m","rtkAccuracy":"±10cm（开启RTK），±60cm/30cm（无RTK）【FlyCart 100 公开规格页】","propulsion":{"motorKV":"60rpm/V","propellerSize":"62英寸"},"safetySystem":{"radar":"前毫米波+后视+下视","lidar":"激光雷达","vision":"四目视觉"},"keyConstraint":"149.9kg为监管套利上限；动力系统无防护，雨中飞行后需怠速1分钟排水"},"FC100_Medical":{"model":"大疆FlyCart 100（医疗版）","maxPayload":80,"maxTakeoffWeight":"149.9kg","windResistance":"12m/s","endurance":{"dualBattery":{"maxFlightTime":"14分钟","maxDistance":"12km"}},"payload":{"temperatureControl":"2–8℃智能温控货舱（航线运行温区须与 WS 400—2023《血液运输标准》及医院输血科 SOP 交叉核定，勿仅凭营销口径）","capacity":"可装载4单位红细胞或急救药品箱"},"protectionLevel":"IP55","keyConstraint":"温控货舱需起飞前预冷10分钟；血液运输需全程GPS追踪"},"M400":{"model":"大疆 Matrice 400（M400 RTK）","maxPayload":6,"maxTakeoffWeight":15.8,"weight":{"bare":"5020g","withBattery":"9740g"},"windResistance":"12m/s","endurance":{"maxFlightTime":"59分钟（挂载禅思 H30T，海平面、无风 25℃、双 TB100，来源：https://www.dji.com/cn/matrice-400 ）","maxHoverTime":"53分钟（同上）","maxRange":"49公里（同上）"},"speed":{"maxAscent":"10m/s","maxDescent":"8m/s","maxHorizontal":"25m/s"},"protectionLevel":"IP55","operatingTemperature":"-20℃至50℃","maxAltitude":"7000 m（最大飞行海拔高度为厂方公开指标；高海拔空气密度下降会导致悬停时间与动力余量衰减，须按手册曲线校核）","rtkAccuracy":"水平1cm+1ppm，垂直1.5cm+1ppm","sensing":{"vision":"全向双目视觉","lidar":"环扫激光雷达","radar":"六向毫米波"},"sensingNote":"六向毫米波雷达 + 环扫激光雷达 + 全向视觉融合，适应山林复杂遮挡与夜间低照度（仍须保留安全高度与人工决断）。","transmission":{"system":"DJI O4图传行业增强版","maxRange":"40km(FCC)/20km(CE)"},"battery":{"model":"TB100","capacity":"20254mAh","energy":"977Wh"},"multiPayloadNote":"多路 E 口 / PSDK 架构下可组合多类任务负载（公开资料常述多达 7 路接口能力）；实际搜救编成以最大商载约 6 kg、重心与厂方兼容矩阵为硬约束。","keyConstraint":"最大起飞重量 15.8 kg；防护等级非永久；总载重须预留安全余量。"},"大疆M30T":{"model":"大疆M30T","thermalResolution":"640×512","zoomCapability":"200倍变焦","endurance":"41分钟（理论）","role":"先M30T看，再FC100打——侦查-打击链"},"大疆M30T搜救":{"model":"大疆M30T","thermalResolution":"640×512","zoomCapability":"200倍变焦","endurance":"41分钟（理论）","role":"可选：超大面积首轮低空走廊侦察；主作业链仍以 M400 RTK 与下列 SOP 为准。"}}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="js/generator/workspace-store.js"></script>
+  <script src="js/generator/gov-hub-content.js"></script>
+  <script src="js/generator/gov-hub-ui.js"></script>
+  <script src="js/generator/workbench-ui.js"></script>
+  <script src="js/generator/tog-kpi-bar.js"></script>
+  <script src="js/generator/briefing-app.js"></script>
+</body>
+</html>

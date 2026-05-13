@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/workspace.schema.json",
+  "title": "SongPortfolioWorkspace",
+  "type": "object",
+  "required": ["revision", "projectMeta", "poc", "tender", "delivery"],
+  "properties": {
+    "revision": { "type": "integer", "minimum": 1 },
+    "projectMeta": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "clientSegment": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "selectedScenarioId": { "type": "string" },
+    "briefingDocumentDepth": {
+      "type": "string",
+      "enum": ["overview", "technical", "full"]
+    },
+    "comparison": {
+      "type": ["object", "null"],
+      "properties": {
+        "columns": { "type": "array" },
+        "rows": { "type": "array" },
+        "recommendedRowId": { "type": "string" }
+      }
+    },
+    "poc": { "type": "object" },
+    "tender": { "type": "object" },
+    "delivery": { "type": "object" }
+  }
+}

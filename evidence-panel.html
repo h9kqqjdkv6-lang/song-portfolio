@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>公安执法 · 无人机证据链管理面板</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0b1120;
+        --surface: #1e293b;
+        --border: #334155;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --theme-color: #3b82f6;
+        --theme-glow: rgba(59, 130, 246, 0.18);
+        --accent: #38bdf8;
+        --ok: #4ade80;
+        --warn: #fbbf24;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        padding: clamp(1rem, 3vw, 2rem);
+      }
+
+      .shell {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: clamp(1.35rem, 3.5vw, 1.75rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0 0 0.35rem;
+        color: var(--theme-color);
+        text-align: center;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.875rem;
+        margin: 0 0 1.5rem;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+          align-items: start;
+        }
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid color-mix(in srgb, var(--theme-color) 22%, var(--border));
+        border-radius: 14px;
+        padding: 1.25rem 1.35rem;
+        box-shadow:
+          0 0 0 1px color-mix(in srgb, var(--theme-color) 10%, transparent),
+          0 0 24px color-mix(in srgb, var(--theme-color) 12%, transparent),
+          0 12px 36px rgba(0, 0, 0, 0.35),
+          inset 0 1px 0 rgba(248, 250, 252, 0.04);
+      }
+
+      .card h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 1rem;
+        color: var(--text);
+        padding-bottom: 0.65rem;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+      }
+
+      .dropzone {
+        border: 2px dashed color-mix(in srgb, var(--theme-color) 45%, var(--border));
+        border-radius: 12px;
+        padding: 2rem 1rem;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease,
+          box-shadow 0.2s ease;
+        background: rgba(11, 17, 32, 0.35);
+      }
+
+      .dropzone:hover,
+      .dropzone:focus {
+        outline: none;
+        border-color: color-mix(in srgb, var(--theme-color) 75%, white);
+        background: rgba(59, 130, 246, 0.06);
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--theme-color) 25%, transparent);
+      }
+
+      .dropzone.dragover {
+        border-color: var(--accent);
+        background: rgba(56, 189, 248, 0.08);
+      }
+
+      .evidence-list {
+        margin-top: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+      }
+
+      .evidence-item {
+        background: rgba(11, 17, 32, 0.45);
+        border: 1px solid rgba(51, 65, 85, 0.85);
+        border-radius: 10px;
+        padding: 0.85rem 0.95rem;
+        transition: border-color 0.15s ease;
+      }
+
+      .evidence-item:hover {
+        border-color: color-mix(in srgb, var(--theme-color) 40%, var(--border));
+      }
+
+      .evidence-meta {
+        font-size: 0.8125rem;
+        color: var(--muted);
+        margin-bottom: 0.6rem;
+        word-break: break-all;
+      }
+
+      .evidence-meta strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .field-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        margin-bottom: 0.5rem;
+      }
+
+      @media (min-width: 480px) {
+        .field-row.two {
+          flex-direction: row;
+          gap: 0.65rem;
+        }
+        .field-row.two > * {
+          flex: 1;
+          min-width: 0;
+        }
+      }
+
+      label.mini {
+        font-size: 0.75rem;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 0.2rem;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 0.45rem 0.55rem;
+        font-size: 0.8125rem;
+        color: var(--text);
+        background: rgba(11, 17, 32, 0.55);
+        border: 1px solid color-mix(in srgb, var(--theme-color) 30%, var(--border));
+        border-radius: 6px;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+
+      input[type="text"]:hover {
+        border-color: color-mix(in srgb, var(--theme-color) 50%, var(--border));
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: color-mix(in srgb, var(--theme-color) 70%, white);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-color) 22%, transparent);
+      }
+
+      .btn-remove {
+        margin-top: 0.45rem;
+        padding: 0.35rem 0.65rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        font-family: inherit;
+        color: #fecaca;
+        background: rgba(127, 29, 29, 0.25);
+        border: 1px solid rgba(248, 113, 113, 0.35);
+        border-radius: 6px;
+        cursor: pointer;
+        transition:
+          background 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .btn-remove:hover {
+        background: rgba(185, 28, 28, 0.35);
+        border-color: rgba(248, 113, 113, 0.55);
+      }
+
+      .btn-remove:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.35);
+      }
+
+      .btn-primary {
+        width: 100%;
+        margin-top: 0.75rem;
+        padding: 0.7rem 1rem;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        font-family: inherit;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        background: linear-gradient(180deg, #3b82f6, #2563eb);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.12) inset,
+          0 4px 14px rgba(37, 99, 235, 0.35);
+        transition:
+          filter 0.15s ease,
+          transform 0.1s ease;
+      }
+
+      .btn-primary:hover {
+        filter: brightness(1.06);
+      }
+
+      .btn-primary:active {
+        transform: translateY(1px);
+      }
+
+      .btn-primary:focus {
+        outline: none;
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.12) inset,
+          0 0 0 3px color-mix(in srgb, var(--theme-color) 45%, transparent);
+      }
+
+      .btn-copy {
+        margin-top: 0.75rem;
+        padding: 0.55rem 0.9rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        font-family: inherit;
+        color: var(--text);
+        background: rgba(11, 17, 32, 0.5);
+        border: 1px solid color-mix(in srgb, var(--theme-color) 38%, var(--border));
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+          border-color 0.15s ease,
+          filter 0.15s ease;
+      }
+
+      .btn-copy:hover {
+        border-color: color-mix(in srgb, var(--theme-color) 65%, white);
+        filter: brightness(1.05);
+      }
+
+      .btn-copy:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-color) 28%, transparent);
+      }
+
+      .report-preview {
+        margin-top: 1rem;
+        padding: 1rem 1.1rem;
+        background: rgba(11, 17, 32, 0.5);
+        border: 1px solid rgba(51, 65, 85, 0.75);
+        border-radius: 10px;
+        font-size: 0.875rem;
+        line-height: 1.65;
+        min-height: 120px;
+      }
+
+      .report-preview.empty {
+        color: var(--muted);
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .report-preview h3 {
+        font-size: 1.05rem;
+        margin: 0 0 0.5rem;
+        color: var(--accent);
+      }
+
+      .report-preview .report-time {
+        color: var(--muted);
+        font-size: 0.8125rem;
+        margin-bottom: 0.85rem;
+      }
+
+      .report-preview .summary {
+        margin-bottom: 1rem;
+        padding: 0.65rem 0.75rem;
+        background: rgba(59, 130, 246, 0.08);
+        border-radius: 8px;
+        border-left: 3px solid var(--theme-color);
+      }
+
+      .report-preview table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8125rem;
+        margin-top: 0.5rem;
+      }
+
+      .report-preview th,
+      .report-preview td {
+        border: 1px solid rgba(51, 65, 85, 0.9);
+        padding: 0.45rem 0.5rem;
+        text-align: left;
+      }
+
+      .report-preview th {
+        background: rgba(30, 41, 59, 0.85);
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .report-preview .compliance {
+        margin-top: 1rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid rgba(51, 65, 85, 0.65);
+        font-size: 0.8125rem;
+        color: var(--muted);
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 1.25rem;
+        left: 50%;
+        transform: translateX(-50%) translateY(120%);
+        padding: 0.5rem 1rem;
+        background: var(--surface);
+        border: 1px solid var(--ok);
+        color: var(--ok);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          transform 0.25s ease,
+          opacity 0.25s ease;
+        z-index: 100;
+      }
+
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+
+      .poc-strip {
+        max-width: 1200px;
+        margin: 0 auto 1rem;
+        padding: 0.55rem 0.85rem;
+        font-size: 0.8125rem;
+        color: #a5b4fc;
+        background: rgba(99, 102, 241, 0.12);
+        border: 1px solid rgba(99, 102, 241, 0.35);
+        border-radius: 10px;
+      }
+
+      .poc-strip[hidden] {
+        display: none !important;
+      }
+
+      @media (max-width: 768px) {
+        body { padding: 0.75rem; font-size: 0.875rem; }
+        .card { padding: 1rem; border-radius: 10px; }
+        .dropzone { padding: 1.25rem 0.75rem; font-size: 0.85rem; }
+        .btn-primary { padding: 0.6rem 0.85rem; font-size: 0.875rem; }
+        .btn-copy { padding: 0.45rem 0.75rem; font-size: 0.75rem; }
+        .report-preview { padding: 0.75rem; font-size: 0.8125rem; min-height: 80px; }
+        .report-preview table { font-size: 0.75rem; }
+        .report-preview th, .report-preview td { padding: 0.35rem 0.4rem; }
+        .evidence-meta { font-size: 0.75rem; }
+        .field-row { gap: 0.35rem; }
+        label.mini { font-size: 0.6875rem; }
+        input[type="text"] { font-size: 0.8125rem; padding: 0.4rem 0.5rem; }
+      }
+
+      @media (max-width: 480px) {
+        body { padding: 0.5rem; }
+        h1 { font-size: 1.15rem; }
+        .subtitle { font-size: 0.8rem; margin-bottom: 1rem; }
+        .card { padding: 0.85rem; }
+        .card h2 { font-size: 0.9rem; margin-bottom: 0.75rem; }
+        .dropzone { padding: 1rem 0.6rem; font-size: 0.8rem; border-radius: 8px; }
+        .btn-primary { border-radius: 8px; }
+        .btn-remove { font-size: 0.6875rem; padding: 0.3rem 0.55rem; }
+        .evidence-item { padding: 0.65rem 0.75rem; }
+        .field-row.two { flex-direction: column; gap: 0.35rem; }
+        .report-preview .summary { padding: 0.5rem 0.6rem; }
+        .report-preview table { display: block; overflow-x: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <p id="poc-strip" class="poc-strip" hidden></p>
+    <div class="shell">
+      <h1>公安执法 · 无人机证据链管理面板</h1>
+      <p class="subtitle">模拟采集 · 标记归档 · 报告预览（前端演示，无实际上传）</p>
+
+      <div class="grid">
+        <section class="card" aria-labelledby="sec-collect">
+          <h2 id="sec-collect">证据采集与标记</h2>
+
+          <div
+            class="dropzone"
+            id="dropzone"
+            tabindex="0"
+            role="button"
+            aria-label="点击或拖拽上传航拍文件（模拟）"
+          >
+            📁 点击或拖拽上传航拍文件（模拟）
+          </div>
+
+          <div class="evidence-list" id="evidence-list" aria-live="polite"></div>
+        </section>
+
+        <section class="card" aria-labelledby="sec-report">
+          <h2 id="sec-report">报告生成与预览</h2>
+
+          <button type="button" class="btn-primary" id="btn-generate">📄 生成执法报告</button>
+
+          <div class="report-preview empty" id="report-preview">暂无证据，请先上传文件</div>
+
+          <button type="button" class="btn-copy" id="btn-copy">📋 复制报告</button>
+        </section>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">已复制</div>
+
+    <script>
+      (function () {
+        var evidence = [];
+        var idSeq = 1;
+
+        var dropzone = document.getElementById("dropzone");
+        var listEl = document.getElementById("evidence-list");
+        var reportPreview = document.getElementById("report-preview");
+        var btnGenerate = document.getElementById("btn-generate");
+        var btnCopy = document.getElementById("btn-copy");
+        var toast = document.getElementById("toast");
+
+        var EXT = [".mp4", ".MOV", ".jpg", ".dng", ".insv"];
+        var PREFIX = ["DJI_", "M400_", "EVID_", "UAV_"];
+
+        function randomInt(min, max) {
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function randomFilename() {
+          var p = PREFIX[randomInt(0, PREFIX.length - 1)];
+          var y = randomInt(2024, 2026);
+          var mo = String(randomInt(1, 12)).padStart(2, "0");
+          var d = String(randomInt(1, 28)).padStart(2, "0");
+          var h = String(randomInt(0, 23)).padStart(2, "0");
+          var mi = String(randomInt(0, 59)).padStart(2, "0");
+          var s = String(randomInt(0, 59)).padStart(2, "0");
+          var ext = EXT[randomInt(0, EXT.length - 1)];
+          return p + y + mo + d + "_" + h + mi + s + "_" + randomInt(100, 999) + ext;
+        }
+
+        function randomSizeStr() {
+          var mb = (Math.random() * 480 + 12).toFixed(1);
+          return mb + " MB";
+        }
+
+        function nowTimeStr() {
+          var d = new Date();
+          function z(n) {
+            return n < 10 ? "0" + n : "" + n;
+          }
+          return (
+            d.getFullYear() +
+            "-" +
+            z(d.getMonth() + 1) +
+            "-" +
+            z(d.getDate()) +
+            " " +
+            z(d.getHours()) +
+            ":" +
+            z(d.getMinutes()) +
+            ":" +
+            z(d.getSeconds())
+          );
+        }
+
+        function addMockRecord() {
+          var rec = {
+            id: idSeq++,
+            name: randomFilename(),
+            size: randomSizeStr(),
+            time: nowTimeStr(),
+            tag: "",
+            note: ""
+          };
+          evidence.push(rec);
+          renderList();
+        }
+
+        function renderList() {
+          listEl.innerHTML = "";
+          evidence.forEach(function (rec) {
+            var row = document.createElement("div");
+            row.className = "evidence-item";
+            row.dataset.id = String(rec.id);
+            row.innerHTML =
+              '<div class="evidence-meta"><strong>' +
+              escapeHtml(rec.name) +
+              "</strong><br />" +
+              escapeHtml(rec.size) +
+              " · " +
+              escapeHtml(rec.time) +
+              "</div>" +
+              '<div class="field-row two">' +
+              '<div><label class="mini" for="tag-' +
+              rec.id +
+              '">标签</label>' +
+              '<input type="text" id="tag-' +
+              rec.id +
+              '" placeholder="如：车牌、人脸" value="' +
+              escapeAttr(rec.tag) +
+              '" data-field="tag" /></div>' +
+              '<div><label class="mini" for="note-' +
+              rec.id +
+              '">备注</label>' +
+              '<input type="text" id="note-' +
+              rec.id +
+              '" placeholder="简短说明" value="' +
+              escapeAttr(rec.note) +
+              '" data-field="note" /></div>' +
+              "</div>" +
+              '<button type="button" class="btn-remove" data-remove="' +
+              rec.id +
+              '">移除</button>';
+
+            row.querySelector('[data-field="tag"]').addEventListener("input", function (e) {
+              rec.tag = e.target.value;
+            });
+            row.querySelector('[data-field="note"]').addEventListener("input", function (e) {
+              rec.note = e.target.value;
+            });
+            row.querySelector(".btn-remove").addEventListener("click", function () {
+              evidence = evidence.filter(function (x) {
+                return x.id !== rec.id;
+              });
+              renderList();
+            });
+
+            listEl.appendChild(row);
+          });
+        }
+
+        function escapeHtml(s) {
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        function escapeAttr(s) {
+          return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        function countTagTypes(items) {
+          var plate = 0;
+          var face = 0;
+          items.forEach(function (rec) {
+            var t = rec.tag || "";
+            if (t.indexOf("车牌") !== -1) plate++;
+            if (t.indexOf("人脸") !== -1) face++;
+          });
+          return { plate: plate, face: face };
+        }
+
+        function buildReportHtml() {
+          if (!evidence.length) {
+            return { html: "", plain: "" };
+          }
+          var genTime = nowTimeStr();
+          var stats = countTagTypes(evidence);
+          var rows = evidence
+            .map(function (rec) {
+              return (
+                "<tr><td>" +
+                escapeHtml(rec.name) +
+                "</td><td>" +
+                escapeHtml(rec.tag || "—") +
+                "</td><td>" +
+                escapeHtml(rec.note || "—") +
+                "</td><td>" +
+                escapeHtml(rec.time) +
+                "</td></tr>"
+              );
+            })
+            .join("");
+
+          var html =
+            "<h3>无人机执法证据链报告</h3>" +
+            '<p class="report-time">生成时间：' +
+            escapeHtml(genTime) +
+            "</p>" +
+            '<div class="summary"><strong>证据摘要</strong><br />共 ' +
+            evidence.length +
+            " 个文件。标记统计：车牌 " +
+            stats.plate +
+            " 条，人脸 " +
+            stats.face +
+            " 条。</div>" +
+            "<table><thead><tr><th>文件名</th><th>标签</th><th>备注</th><th>时间戳</th></tr></thead><tbody>" +
+            rows +
+            "</tbody></table>" +
+            '<p class="compliance">本报告由无人机航拍证据链系统自动生成，数据实时加密，符合《公安视频图像信息应用系统》标准。</p>';
+
+          var plain =
+            "无人机执法证据链报告\n" +
+            "生成时间：" +
+            genTime +
+            "\n\n" +
+            "证据摘要：共 " +
+            evidence.length +
+            " 个文件。标记统计：车牌 " +
+            stats.plate +
+            " 条，人脸 " +
+            stats.face +
+            " 条。\n\n" +
+            evidence
+              .map(function (rec) {
+                return (
+                  "- " +
+                  rec.name +
+                  " | 标签：" +
+                  (rec.tag || "—") +
+                  " | 备注：" +
+                  (rec.note || "—") +
+                  " | " +
+                  rec.time
+                );
+              })
+              .join("\n") +
+            "\n\n" +
+            "合规声明：本报告由无人机航拍证据链系统自动生成，数据实时加密，符合《公安视频图像信息应用系统》标准。";
+
+          return { html: html, plain: plain };
+        }
+
+        function showReportEmpty() {
+          reportPreview.className = "report-preview empty";
+          reportPreview.innerHTML = "暂无证据，请先上传文件";
+        }
+
+        dropzone.addEventListener("click", function () {
+          addMockRecord();
+        });
+
+        dropzone.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            addMockRecord();
+          }
+        });
+
+        dropzone.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          dropzone.classList.add("dragover");
+        });
+
+        dropzone.addEventListener("dragleave", function () {
+          dropzone.classList.remove("dragover");
+        });
+
+        dropzone.addEventListener("drop", function (e) {
+          e.preventDefault();
+          dropzone.classList.remove("dragover");
+          addMockRecord();
+        });
+
+        btnGenerate.addEventListener("click", function () {
+          var out = buildReportHtml();
+          if (!out.html) {
+            showReportEmpty();
+            return;
+          }
+          reportPreview.className = "report-preview";
+          reportPreview.innerHTML = out.html;
+        });
+
+        btnCopy.addEventListener("click", function () {
+          var out = buildReportHtml();
+          if (!out.plain) {
+            showToast("暂无内容可复制");
+            return;
+          }
+          copyText(out.plain, function () {
+            showToast("已复制");
+          });
+        });
+
+        function showToast(msg) {
+          toast.textContent = msg || "已复制";
+          toast.classList.add("show");
+          setTimeout(function () {
+            toast.classList.remove("show");
+          }, 2000);
+        }
+
+        function copyText(text, done) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(fallback);
+          } else {
+            fallback();
+          }
+          function fallback() {
+            var ta = document.createElement("textarea");
+            ta.value = text;
+            ta.setAttribute("readonly", "");
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+              document.execCommand("copy");
+              done();
+            } catch (e) {}
+            document.body.removeChild(ta);
+          }
+        }
+
+        (function pocWorkbenchStrip() {
+          var p = new URLSearchParams(location.search);
+          if (p.get("from") !== "workbench") return;
+          var el = document.getElementById("poc-strip");
+          if (!el) return;
+          el.hidden = false;
+          el.textContent =
+            "自解决方案工作台嵌入 · 场景：" +
+            decodeURIComponent(p.get("scenario") || "—") +
+            "。可将取证与合规检查结果对照工作台 POC 清单。";
+        })();
+
+        showReportEmpty();
+      })();
+    </script>
+  </body>
+</html>

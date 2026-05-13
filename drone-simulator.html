@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>无人机应急调度模拟器</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #0f1419;
+        color: #e2e8f0;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        padding: 1rem;
+      }
+      h1 {
+        font-size: clamp(1rem, 3vw, 1.125rem);
+        font-weight: 600;
+        margin: 0 0 0.75rem;
+        color: #94a3b8;
+        text-align: center;
+      }
+      .panel {
+        width: 800px;
+        max-width: 100%;
+        background: #111923;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      }
+      .panel-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: #cbd5e1;
+      }
+      .panel-row label {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        white-space: nowrap;
+      }
+      select, input[type="number"] {
+        background: #1e293b;
+        border: 1px solid #475569;
+        color: #e2e8f0;
+        border-radius: 6px;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.875rem;
+      }
+      input[type="number"] { width: 4.5rem; }
+      .btn-wind {
+        background: linear-gradient(180deg, #334155, #1e293b);
+        border: 1px solid #475569;
+        color: #e2e8f0;
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8125rem;
+      }
+      .btn-wind:hover:not(:disabled) { border-color: #64748b; }
+      .btn-wind:disabled { opacity: 0.55; cursor: not-allowed; }
+      .wind-display {
+        min-width: 5rem;
+        font-variant-numeric: tabular-nums;
+        color: #38bdf8;
+      }
+      .panel-info {
+        margin-top: 0.65rem;
+        padding-top: 0.65rem;
+        border-top: 1px solid rgba(51, 65, 85, 0.6);
+      }
+      .stat-line {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem 1.25rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.8125rem;
+      }
+      .stat-line strong { color: #f1f5f9; }
+      .wind-ok { color: #4ade80; }
+      .wind-bad { color: #f87171; font-weight: 600; }
+      .progress-wrap { margin-top: 0.35rem; }
+      .progress-label {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-bottom: 0.25rem;
+        display: flex;
+        justify-content: space-between;
+      }
+      .progress-track {
+        height: 8px;
+        background: #1e293b;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid #334155;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+        border-radius: 3px;
+        width: 0%;
+        transition: width 0.15s ease-out;
+      }
+      .progress-fill.warn {
+        background: linear-gradient(90deg, #ea580c, #f97316);
+      }
+      .wrap {
+        width: 800px;
+        max-width: 100%;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+      }
+      canvas {
+        display: block;
+        cursor: crosshair;
+        background: #1a2332;
+        width: 100%;
+        height: auto;
+        touch-action: manipulation;
+      }
+      .hud {
+        width: 800px;
+        max-width: 100%;
+        margin-top: 0.5rem;
+        font-size: 0.8125rem;
+        font-variant-numeric: tabular-nums;
+        color: #94a3b8;
+        text-align: center;
+        line-height: 1.6;
+      }
+      .hud strong { color: #38bdf8; font-weight: 600; }
+      .poc-context {
+        width: 800px;
+        max-width: 100%;
+        margin-bottom: 0.65rem;
+        padding: 0.55rem 0.85rem;
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        color: #a5b4fc;
+        background: rgba(99, 102, 241, 0.12);
+        border: 1px solid rgba(99, 102, 241, 0.35);
+        border-radius: 8px;
+      }
+      .poc-context[hidden] { display: none !important; }
+
+      @media (max-width: 768px) {
+        body { padding: 0.5rem; justify-content: flex-start; padding-top: 1rem; }
+        .panel { padding: 0.5rem 0.75rem; border-radius: 6px; }
+        .panel-row { gap: 0.5rem 0.75rem; font-size: 0.8125rem; }
+        .panel-row label { font-size: 0.8rem; }
+        select, input[type="number"] { font-size: 0.8125rem; padding: 0.3rem 0.4rem; }
+        input[type="number"] { width: 3.5rem; }
+        .btn-wind { padding: 0.35rem 0.6rem; font-size: 0.75rem; }
+        .stat-line { font-size: 0.75rem; gap: 0.35rem 0.85rem; }
+        .hud { font-size: 0.75rem; }
+        .hud .hud-hint { display: none; }
+      }
+
+      @media (max-width: 480px) {
+        body { padding: 0.35rem; }
+        h1 { font-size: 0.9375rem; margin-bottom: 0.5rem; }
+        .panel { padding: 0.4rem 0.6rem; margin-bottom: 0.35rem; }
+        .panel-row { gap: 0.4rem 0.5rem; font-size: 0.75rem; }
+        select, input[type="number"] { font-size: 0.8125rem; padding: 0.25rem 0.35rem; }
+        input[type="number"] { width: 3rem; }
+        .btn-wind { padding: 0.3rem 0.5rem; font-size: 0.7rem; border-radius: 5px; }
+        .wind-display { min-width: 3rem; font-size: 0.8rem; }
+        .stat-line { font-size: 0.7rem; gap: 0.25rem 0.6rem; }
+        .progress-label { font-size: 0.6875rem; }
+        .hud { font-size: 0.7rem; line-height: 1.5; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="poc-context" class="poc-context" hidden></div>
+    <h1>无人机应急调度模拟器</h1>
+
+    <div class="panel" id="control-panel">
+      <div class="panel-row">
+        <label>
+          机型
+          <select id="model-select" aria-label="机型">
+            <option value="FC100" selected>FC100</option>
+            <option value="FC30">FC30</option>
+          </select>
+        </label>
+        <label>
+          电池模式
+          <select id="battery-select" aria-label="电池模式">
+            <option value="dual" selected>双电</option>
+            <option value="single">单电</option>
+          </select>
+        </label>
+        <label>
+          当前载重 (kg)
+          <input type="number" id="payload-input" min="0" step="0.1" value="20" />
+        </label>
+        <label>
+          风速 (m/s)
+          <span class="wind-display" id="wind-display">—</span>
+        </label>
+        <button type="button" class="btn-wind" id="btn-wind">🌬️ 获取实时风速</button>
+        <label style="font-size: 0.8rem; color: #64748b">
+          手动
+          <input type="number" id="wind-manual" min="0" step="0.1" placeholder="输入" style="width: 4rem" />
+        </label>
+      </div>
+      <div class="panel-info">
+        <div class="stat-line">
+          <span id="stat-payload">当前载重 <strong id="cur-payload">20</strong> / 最大 <strong id="max-payload">65</strong> kg</span>
+          <span id="stat-range-label">满载航程：<strong id="full-range">12</strong> km</span>
+          <span id="wind-status" class="wind-ok">风速状态：正常（≤12 m/s）</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>已飞距离 / 满载航程</span>
+            <span id="progress-text">0.0 / 12.0 km（0%）</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <canvas id="cv" width="800" height="600" aria-label="调度地图"></canvas>
+    </div>
+    <div class="hud" id="hud">
+      坐标：<strong id="pos">(400, 300)</strong>　|　剩余距离：<strong id="dist">—</strong> px<br />
+      <span class="hud-hint" style="font-size: 0.8rem; opacity: 0.75">点击/轻触画布设定目标；受载重、风速、航程约束</span>
+    </div>
+
+    <script>
+      (function () {
+        var W = 800;
+        var H = 600;
+        var CX = W / 2;
+        var CY = H / 2;
+        var KM_PER_PX = 20 / W;
+        var SPEED_PX_PER_SEC = W * 0.03;
+        var ARRIVE_EPS = 0.8;
+
+        var AIRCRAFT = {
+          FC100: {
+            maxWind: 12,
+            single: { maxPayload: 80, rangeKm: 6 },
+            dual: { maxPayload: 65, rangeKm: 12 }
+          },
+          FC30: {
+            maxWind: 12,
+            single: { maxPayload: 40, rangeKm: null },
+            dual: { maxPayload: 30, rangeKm: 16 }
+          }
+        };
+
+        var QWEATHER_URL =
+          "/api/weather?location=101120201";
+
+        var canvas = document.getElementById("cv");
+        var ctx = canvas.getContext("2d");
+        var elPos = document.getElementById("pos");
+        var elDist = document.getElementById("dist");
+        var modelSelect = document.getElementById("model-select");
+        var batterySelect = document.getElementById("battery-select");
+        var payloadInput = document.getElementById("payload-input");
+        var windDisplay = document.getElementById("wind-display");
+        var windManual = document.getElementById("wind-manual");
+        var btnWind = document.getElementById("btn-wind");
+        var curPayloadEl = document.getElementById("cur-payload");
+        var maxPayloadEl = document.getElementById("max-payload");
+        var fullRangeEl = document.getElementById("full-range");
+        var statRangeLabel = document.getElementById("stat-range-label");
+        var windStatusEl = document.getElementById("wind-status");
+        var progressText = document.getElementById("progress-text");
+        var progressFill = document.getElementById("progress-fill");
+
+        var drone = { x: CX, y: CY };
+        var home = { x: CX, y: CY };
+        var target = null;
+        var lastTime = 0;
+        var rafId = 0;
+
+        var windMs = NaN;
+        var missionFlownKm = 0;
+        var isReturning = false;
+        var returnQueue = [];
+        var anchors = [{ x: home.x, y: home.y }];
+
+        var buildings = (function () {
+          var rnd = function (s) {
+            return function () {
+              s = (s * 1103515245 + 12345) & 0x7fffffff;
+              return s / 0x7fffffff;
+            };
+          };
+          var r = rnd(42);
+          var list = [];
+          for (var i = 0; i < 28; i++) {
+            list.push({
+              x: r() * (W - 60) + 10,
+              y: r() * (H - 80) + 10,
+              w: 25 + r() * 55,
+              h: 40 + r() * 120
+            });
+          }
+          return list;
+        })();
+
+        function getModelKey() {
+          return modelSelect.value === "FC30" ? "FC30" : "FC100";
+        }
+
+        function getBatteryKey() {
+          return batterySelect.value === "single" ? "single" : "dual";
+        }
+
+        function getSpec() {
+          var m = AIRCRAFT[getModelKey()];
+          var b = getBatteryKey();
+          return m[b];
+        }
+
+        function getRangeKm() {
+          var r = getSpec().rangeKm;
+          return r == null ? Infinity : r;
+        }
+
+        function getMaxPayload() {
+          return getSpec().maxPayload;
+        }
+
+        function getMaxWind() {
+          return AIRCRAFT[getModelKey()].maxWind;
+        }
+
+        function syncSpecUi() {
+          var maxP = getMaxPayload();
+          var r = getSpec().rangeKm;
+          maxPayloadEl.textContent = String(maxP);
+          if (r == null) {
+            fullRangeEl.textContent = "—";
+            statRangeLabel.style.opacity = "0.85";
+          } else {
+            fullRangeEl.textContent = String(r);
+            statRangeLabel.style.opacity = "1";
+          }
+          updateProgressUi();
+          updateWindStatusUi();
+        }
+
+        function getPayloadKg() {
+          var v = parseFloat(payloadInput.value, 10);
+          if (isNaN(v) || v < 0) return 0;
+          return v;
+        }
+
+        function getWindForConstraint() {
+          var raw = windManual.value.trim();
+          if (raw !== "") {
+            var m = parseFloat(raw, 10);
+            if (!isNaN(m) && m >= 0) return m;
+          }
+          if (!isNaN(windMs) && windMs >= 0) return windMs;
+          return NaN;
+        }
+
+        function updateWindStatusUi() {
+          var w = getWindForConstraint();
+          var maxW = getMaxWind();
+          if (isNaN(w)) {
+            windStatusEl.className = "";
+            windStatusEl.style.color = "#94a3b8";
+            windStatusEl.textContent = "风速状态：请先获取风速或手动输入（m/s）";
+            progressFill.classList.remove("warn");
+            return;
+          }
+          if (w > maxW) {
+            windStatusEl.className = "wind-bad";
+            windStatusEl.style.color = "";
+            windStatusEl.textContent = "风速状态：超限（>" + maxW + " m/s）";
+          } else {
+            windStatusEl.className = "wind-ok";
+            windStatusEl.style.color = "";
+            windStatusEl.textContent = "风速状态：正常（≤" + maxW + " m/s）";
+          }
+        }
+
+        function updateProgressUi() {
+          var flown = missionFlownKm;
+          var cap = getRangeKm();
+          curPayloadEl.textContent = getPayloadKg().toFixed(1);
+          if (cap === Infinity) {
+            progressText.textContent =
+              "已飞 " + flown.toFixed(2) + " km（本模式未配置满载航程，不触发自动返航）";
+            progressFill.style.width = "0%";
+            progressFill.classList.remove("warn");
+            return;
+          }
+          var pct = cap > 0 ? Math.min(100, (flown / cap) * 100) : 0;
+          progressText.textContent =
+            flown.toFixed(2) + " / " + cap.toFixed(1) + " km（" + pct.toFixed(0) + "%）";
+          progressFill.style.width = pct + "%";
+          if (pct >= 100) progressFill.classList.add("warn");
+          else progressFill.classList.remove("warn");
+        }
+
+        modelSelect.addEventListener("change", syncSpecUi);
+        batterySelect.addEventListener("change", syncSpecUi);
+        payloadInput.addEventListener("input", function () {
+          curPayloadEl.textContent = getPayloadKg().toFixed(1);
+        });
+        windManual.addEventListener("input", updateWindStatusUi);
+
+        btnWind.addEventListener("click", function () {
+          btnWind.disabled = true;
+          var orig = btnWind.textContent;
+          btnWind.textContent = "获取中...";
+          fetch(QWEATHER_URL, { cache: "no-store" })
+            .then(function (r) {
+              if (!r.ok) throw new Error("http");
+              return r.json();
+            })
+            .then(function (data) {
+              if (!data || (data.code !== "200" && data.code !== 200)) throw new Error("code");
+              var now = data.now || {};
+              var ws = now.windSpeed;
+              if (ws === undefined || ws === null || ws === "") throw new Error("wind");
+              var kph = parseFloat(ws, 10);
+              if (isNaN(kph)) throw new Error("parse");
+              windMs = kph / 3.6;
+              windDisplay.textContent = windMs.toFixed(1);
+              updateWindStatusUi();
+            })
+            .catch(function () {
+              alert("获取风速失败，请手动输入");
+            })
+            .finally(function () {
+              btnWind.disabled = false;
+              btnWind.textContent = orig;
+            });
+        });
+
+        function drawCityBackground() {
+          ctx.fillStyle = "#151d2a";
+          ctx.fillRect(0, 0, W, H);
+
+          ctx.strokeStyle = "rgba(51, 65, 85, 0.45)";
+          ctx.lineWidth = 1;
+          var step = 40;
+          for (var x = 0; x <= W; x += step) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, H);
+            ctx.stroke();
+          }
+          for (var y = 0; y <= H; y += step) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y);
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = "rgba(30, 41, 59, 0.95)";
+          ctx.strokeStyle = "rgba(71, 85, 105, 0.35)";
+          for (var i = 0; i < buildings.length; i++) {
+            var b = buildings[i];
+            ctx.fillRect(b.x, b.y - b.h, b.w, b.h);
+            ctx.strokeRect(b.x, b.y - b.h, b.w, b.h);
+          }
+        }
+
+        function activeTarget() {
+          if (isReturning && returnQueue.length) return returnQueue[0];
+          return target;
+        }
+
+        function remainingDist() {
+          var t = activeTarget();
+          if (!t) return null;
+          return Math.hypot(t.x - drone.x, t.y - drone.y);
+        }
+
+        function updateHud() {
+          elPos.textContent = "(" + drone.x.toFixed(1) + ", " + drone.y.toFixed(1) + ")";
+          var d = remainingDist();
+          elDist.textContent = d !== null ? d.toFixed(1) : "—";
+          if (isReturning) {
+            elDist.textContent += "（返航）";
+          }
+        }
+
+        function drawTargetMarker() {
+          var t = activeTarget();
+          if (!t) return;
+          ctx.strokeStyle = isReturning ? "rgba(251, 191, 36, 0.9)" : "rgba(56, 189, 248, 0.85)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 10, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = isReturning ? "rgba(251, 191, 36, 0.45)" : "rgba(56, 189, 248, 0.5)";
+          ctx.fill();
+        }
+
+        function drawHomeMarker() {
+          ctx.strokeStyle = "rgba(148, 163, 184, 0.7)";
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.arc(home.x, home.y, 12, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        function drawDrone(angle) {
+          var size = 14;
+          ctx.save();
+          ctx.translate(drone.x, drone.y);
+          ctx.rotate(angle);
+          ctx.fillStyle = "#fbbf24";
+          ctx.strokeStyle = "#f59e0b";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(0, -size);
+          ctx.lineTo(size * 0.75, size * 0.55);
+          ctx.lineTo(-size * 0.75, size * 0.55);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        function dist2(a, b) {
+          return Math.hypot(a.x - b.x, a.y - b.y);
+        }
+
+        function pushAnchorIfNew(pt) {
+          var last = anchors[anchors.length - 1];
+          if (dist2(last, pt) > ARRIVE_EPS) anchors.push({ x: pt.x, y: pt.y });
+        }
+
+        function beginReturnFromCurrentPosition() {
+          isReturning = true;
+          target = null;
+          var rev = [];
+          for (var i = anchors.length - 1; i >= 0; i--) {
+            rev.push({ x: anchors[i].x, y: anchors[i].y });
+          }
+          returnQueue = rev;
+          if (returnQueue.length && dist2(drone, returnQueue[0]) <= ARRIVE_EPS) {
+            returnQueue.shift();
+          }
+          if (!returnQueue.length) {
+            isReturning = false;
+            missionFlownKm = 0;
+            anchors = [{ x: home.x, y: home.y }];
+          }
+        }
+
+        function tryConsumeRangeThisFrame(ddPx) {
+          if (isReturning) return;
+          missionFlownKm += ddPx * KM_PER_PX;
+          updateProgressUi();
+          var cap = getRangeKm();
+          if (cap === Infinity) return;
+          if (missionFlownKm >= cap) beginReturnFromCurrentPosition();
+        }
+
+        function onArrivedAt(pt) {
+          drone.x = pt.x;
+          drone.y = pt.y;
+        }
+
+        function frame(now) {
+          if (!lastTime) lastTime = now;
+          var dt = (now - lastTime) / 1000;
+          lastTime = now;
+          if (dt > 0.1) dt = 0.1;
+
+          var angle = -Math.PI / 2;
+          var t = activeTarget();
+
+          if (t) {
+            var dx = t.x - drone.x;
+            var dy = t.y - drone.y;
+            var dist = Math.hypot(dx, dy);
+            var step = SPEED_PX_PER_SEC * dt;
+
+            if (dist <= ARRIVE_EPS || step >= dist) {
+              if (isReturning) {
+                onArrivedAt(t);
+                returnQueue.shift();
+                if (!returnQueue.length) {
+                  isReturning = false;
+                  missionFlownKm = 0;
+                  anchors = [{ x: home.x, y: home.y }];
+                  target = null;
+                  updateProgressUi();
+                }
+              } else {
+                var move = dist;
+                tryConsumeRangeThisFrame(move);
+                if (isReturning) {
+                  // 航程已满触发返航：不落到原用户目标点
+                } else {
+                  onArrivedAt(t);
+                  pushAnchorIfNew(t);
+                  target = null;
+                }
+              }
+            } else {
+              angle = Math.atan2(dy, dx) + Math.PI / 2;
+              if (isReturning) {
+                drone.x += (dx / dist) * step;
+                drone.y += (dy / dist) * step;
+              } else {
+                tryConsumeRangeThisFrame(step);
+                if (!isReturning) {
+                  drone.x += (dx / dist) * step;
+                  drone.y += (dy / dist) * step;
+                }
+              }
+            }
+          }
+
+          drawCityBackground();
+          drawHomeMarker();
+          drawTargetMarker();
+
+          t = activeTarget();
+          if (t) {
+            var ddx = t.x - drone.x;
+            var ddy = t.y - drone.y;
+            angle = Math.atan2(ddy, ddx) + Math.PI / 2;
+          }
+          drawDrone(angle);
+
+          updateHud();
+        }
+
+        function startLoop() {
+          function tick(now) {
+            frame(now);
+            if (activeTarget()) {
+              rafId = requestAnimationFrame(tick);
+            } else {
+              rafId = 0;
+            }
+          }
+          lastTime = 0;
+          rafId = requestAnimationFrame(tick);
+        }
+
+        canvas.addEventListener("click", function (e) {
+          var payload = getPayloadKg();
+          if (payload > getMaxPayload()) {
+            alert("载重超限，无法起飞");
+            return;
+          }
+          var w = getWindForConstraint();
+          if (isNaN(w)) {
+            alert("请先获取实时风速或在「手动」栏输入风速（m/s）");
+            return;
+          }
+          if (w > getMaxWind()) {
+            alert("风速超限，无法起飞");
+            return;
+          }
+          if (isReturning) {
+            return;
+          }
+
+          var rect = canvas.getBoundingClientRect();
+          var scaleX = canvas.width / rect.width;
+          var scaleY = canvas.height / rect.height;
+          var mx = (e.clientX - rect.left) * scaleX;
+          var my = (e.clientY - rect.top) * scaleY;
+
+          if (rafId) cancelAnimationFrame(rafId);
+          rafId = 0;
+          lastTime = 0;
+          target = { x: mx, y: my };
+          startLoop();
+        });
+
+        canvas.addEventListener("touchend", function (e) {
+          e.preventDefault();
+          var payload = getPayloadKg();
+          if (payload > getMaxPayload()) {
+            alert("载重超限，无法起飞");
+            return;
+          }
+          var w = getWindForConstraint();
+          if (isNaN(w)) {
+            alert("请先获取实时风速或在「手动」栏输入风速（m/s）");
+            return;
+          }
+          if (w > getMaxWind()) {
+            alert("风速超限，无法起飞");
+            return;
+          }
+          if (isReturning) {
+            return;
+          }
+          if (!e.changedTouches || !e.changedTouches.length) return;
+
+          var touch = e.changedTouches[0];
+          var rect = canvas.getBoundingClientRect();
+          var scaleX = canvas.width / rect.width;
+          var scaleY = canvas.height / rect.height;
+          var mx = (touch.clientX - rect.left) * scaleX;
+          var my = (touch.clientY - rect.top) * scaleY;
+
+          if (rafId) cancelAnimationFrame(rafId);
+          rafId = 0;
+          lastTime = 0;
+          target = { x: mx, y: my };
+          startLoop();
+        }, { passive: false });
+
+        function initialDraw() {
+          drawCityBackground();
+          drawHomeMarker();
+          drawDrone(-Math.PI / 2);
+          updateHud();
+        }
+
+        function pocWorkbenchBanner() {
+          var params = new URLSearchParams(window.location.search);
+          if (params.get("from") !== "workbench") return;
+          var scenario = params.get("scenario") || "";
+          var el = document.getElementById("poc-context");
+          if (!el) return;
+          el.hidden = false;
+          function refresh() {
+            var w = getWindForConstraint();
+            var wtxt = isNaN(w) ? "未设" : w.toFixed(1) + " m/s";
+            el.textContent =
+              "自解决方案工作台嵌入 · 场景：" +
+              decodeURIComponent(scenario || "—") +
+              " · 机型 " +
+              getModelKey() +
+              " · 风速 " +
+              wtxt +
+              " · 请将航程进度与风速结论抄录到工作台「性能记录」。";
+          }
+          refresh();
+          modelSelect.addEventListener("change", refresh);
+          batterySelect.addEventListener("change", refresh);
+          payloadInput.addEventListener("input", refresh);
+          windManual.addEventListener("input", refresh);
+          btnWind.addEventListener("click", function () {
+            setTimeout(refresh, 800);
+          });
+        }
+
+        syncSpecUi();
+        pocWorkbenchBanner();
+        initialDraw();
+      })();
+    </script>
+  </body>
+</html>

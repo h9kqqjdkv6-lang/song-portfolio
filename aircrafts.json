@@ -1,0 +1,89 @@
+{
+  "FC100": {
+    "model": "大疆FlyCart 100",
+    "emptyWeight": { "slingLoad": "55.2kg", "winchLoad": "60.2kg" },
+    "maxTakeoffWeight": "149.9kg",
+    "maxTakeoffWeightNote": "【来源：DJI FlyCart 100 说明书/规格页】厂方同时给出性能规格最大起飞重量 170 kg；下列净载重、航时以「149.9 kg」工况测得（见 https://www.dji.com/cn/flycart-100 ）。**境内合规申报起飞重量须以适航与地方法规为准**。",
+    "maxPayload": 94.7,
+    "maxPayloadNote": "净载重计算与 DJI 公开材料一致：149.9 kg（起飞重）− 55.2 kg（吊具系统自重，含提升系统）≈ 94.7 kg；绞车方案空机 60.2 kg，须重算。【来源：大疆官网产品页】",
+    "battery": {
+      "model": "DB2160 智能飞行电池",
+      "perBatteryWeight": "约 14.7 kg/块",
+      "capacityAh": 41,
+      "voltageV": 52,
+      "configNote": "支持双电常态作业；单电模式仅作应急。"
+    },
+    "psdkPowerW": 3000,
+    "tetherWinch": {
+      "model": "旗舰绞车系统 A2EWH-100A",
+      "cableLengthM": "0–30",
+      "maxRetractionSpeed": "1.2 m/s"
+    },
+    "tetherLifting": {
+      "model": "双电吊运系统 A2EDL-100A",
+      "cableLengthM": "10（推荐作业缆长 10–15 m）"
+    },
+    "windResistance": "12 m/s（大疆规格页「最大抗风速度」；与 149.9 kg、海平面、无风扰动等工况同页给出，细则以说明书为准）",
+    "endurance": {
+      "dualBattery": { "maxFlightTime": "14分钟", "maxHoverTime": "12分钟", "maxDistance": "12km" },
+      "singleBattery": { "maxFlightTime": "7分钟", "maxHoverTime": "6分钟", "maxDistance": "6km" }
+    },
+    "speed": { "maxAscent": "5m/s", "maxDescent": "5m/s", "maxHorizontal": "20m/s" },
+    "protectionLevel": "IP55（动力系统除外；IP 等级依 IEC 60529 在受控实验室条件下测得，**非永久性**，磨损或密封老化可导致失效——见大疆产品规格说明）",
+    "operatingTemperature": "-20℃至40℃",
+    "maxAltitude": "6000m",
+    "maxFlightHeight": "1500m",
+    "rtkAccuracy": "±10cm（开启RTK），±60cm/30cm（无RTK）【FlyCart 100 公开规格页】",
+    "propulsion": { "motorKV": "60rpm/V", "propellerSize": "62英寸" },
+    "safetySystem": { "radar": "前毫米波+后视+下视", "lidar": "激光雷达", "vision": "四目视觉" },
+    "keyConstraint": "149.9kg为监管套利上限；动力系统无防护，雨中飞行后需怠速1分钟排水"
+  },
+  "FC100_Medical": {
+    "model": "大疆FlyCart 100（医疗版）",
+    "maxPayload": 80,
+    "maxTakeoffWeight": "149.9kg",
+    "windResistance": "12m/s",
+    "endurance": {
+      "dualBattery": { "maxFlightTime": "14分钟", "maxDistance": "12km" }
+    },
+    "payload": {
+      "temperatureControl": "2–8℃智能温控货舱（航线运行温区须与 WS 400—2023《血液运输标准》及医院输血科 SOP 交叉核定，勿仅凭营销口径）",
+      "capacity": "可装载4单位红细胞或急救药品箱"
+    },
+    "protectionLevel": "IP55",
+    "keyConstraint": "温控货舱需起飞前预冷10分钟；血液运输需全程GPS追踪"
+  },
+  "M400": {
+    "model": "大疆 Matrice 400（M400 RTK）",
+    "maxPayload": 6,
+    "maxTakeoffWeight": 15.8,
+    "weight": { "bare": "5020g", "withBattery": "9740g" },
+    "windResistance": "12m/s",
+    "endurance": { "maxFlightTime": "59分钟（挂载禅思 H30T，海平面、无风 25℃、双 TB100，来源：https://www.dji.com/cn/matrice-400 ）", "maxHoverTime": "53分钟（同上）", "maxRange": "49公里（同上）" },
+    "speed": { "maxAscent": "10m/s", "maxDescent": "8m/s", "maxHorizontal": "25m/s" },
+    "protectionLevel": "IP55",
+    "operatingTemperature": "-20℃至50℃",
+    "maxAltitude": "7000 m（最大飞行海拔高度为厂方公开指标；高海拔空气密度下降会导致悬停时间与动力余量衰减，须按手册曲线校核）",
+    "rtkAccuracy": "水平1cm+1ppm，垂直1.5cm+1ppm",
+    "sensing": { "vision": "全向双目视觉", "lidar": "环扫激光雷达", "radar": "六向毫米波" },
+    "sensingNote": "六向毫米波雷达 + 环扫激光雷达 + 全向视觉融合，适应山林复杂遮挡与夜间低照度（仍须保留安全高度与人工决断）。",
+    "transmission": { "system": "DJI O4图传行业增强版", "maxRange": "40km(FCC)/20km(CE)" },
+    "battery": { "model": "TB100", "capacity": "20254mAh", "energy": "977Wh" },
+    "multiPayloadNote": "多路 E 口 / PSDK 架构下可组合多类任务负载（公开资料常述多达 7 路接口能力）；实际搜救编成以最大商载约 6 kg、重心与厂方兼容矩阵为硬约束。",
+    "keyConstraint": "最大起飞重量 15.8 kg；防护等级非永久；总载重须预留安全余量。"
+  },
+  "大疆M30T": {
+    "model": "大疆M30T",
+    "thermalResolution": "640×512",
+    "zoomCapability": "200倍变焦",
+    "endurance": "41分钟（理论）",
+    "role": "先M30T看，再FC100打——侦查-打击链"
+  },
+  "大疆M30T搜救": {
+    "model": "大疆M30T",
+    "thermalResolution": "640×512",
+    "zoomCapability": "200倍变焦",
+    "endurance": "41分钟（理论）",
+    "role": "可选：超大面积首轮低空走廊侦察；主作业链仍以 M400 RTK 与下列 SOP 为准。"
+  }
+}

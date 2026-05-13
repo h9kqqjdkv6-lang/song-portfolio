@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="个人能力养成 · 打卡记录与六维雷达（与主页一致的视觉系统）" />
+  <title>宋宗源 · 能力养成</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #000000;
+      --surface: #0d0d0d;
+      --surface-raised: #111111;
+      --border: rgba(255, 255, 255, 0.1);
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --text: rgba(255, 255, 255, 0.72);
+      --text-heading: #ffffff;
+      --muted: #a1a1aa;
+      --muted-faint: #71717a;
+      --accent: #6d28d9;
+      --accent-hover: #7c3aed;
+      --accent-glow: rgba(109, 40, 217, 0.35);
+      --accent-soft: rgba(109, 40, 217, 0.12);
+      --violet-mid: rgba(167, 139, 250, 0.55);
+      --focus: rgba(167, 139, 250, 0.55);
+      --success: #86efac;
+      --danger: #fca5a5;
+      --highlight: #c4b5fd;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --content-max: 1080px;
+      --section-pad-x: clamp(1.25rem, 5vw, 2.5rem);
+      --space-xs: 0.5rem;
+      --space-sm: 0.875rem;
+      --space-md: 1.25rem;
+      --space-lg: 1.75rem;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    .noise-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% 35%, rgba(109, 40, 217, 0.14), transparent 55%),
+        radial-gradient(1px 1px at 8% 12%, rgba(255, 255, 255, 0.35), transparent),
+        radial-gradient(1px 1px at 22% 68%, rgba(255, 255, 255, 0.22), transparent),
+        radial-gradient(1px 1px at 41% 24%, rgba(255, 255, 255, 0.28), transparent),
+        radial-gradient(1px 1px at 56% 82%, rgba(255, 255, 255, 0.18), transparent),
+        radial-gradient(1px 1px at 71% 41%, rgba(255, 255, 255, 0.26), transparent),
+        radial-gradient(1px 1px at 88% 16%, rgba(255, 255, 255, 0.2), transparent),
+        radial-gradient(1px 1px at 93% 73%, rgba(255, 255, 255, 0.24), transparent),
+        radial-gradient(1.5px 1.5px at 17% 91%, rgba(255, 255, 255, 0.35), transparent),
+        radial-gradient(1px 1px at 66% 11%, rgba(255, 255, 255, 0.22), transparent),
+        radial-gradient(1px 1px at 77% 54%, rgba(255, 255, 255, 0.18), transparent);
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Inter",
+        "SF Pro Text",
+        ui-sans-serif,
+        system-ui,
+        "Segoe UI",
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-bottom: clamp(2rem, 6vw, 3.5rem);
+    }
+
+    .mono,
+    .stat-num {
+      font-family: var(--mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* 顶栏（对齐主页 site-nav） */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding: max(env(safe-area-inset-top, 0px), 0.65rem) max(var(--section-pad-x), env(safe-area-inset-right, 0px)) 0.65rem
+        max(var(--section-pad-x), env(safe-area-inset-left, 0px));
+      min-height: 56px;
+      box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(16px) saturate(1.1);
+      -webkit-backdrop-filter: blur(16px) saturate(1.1);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .topbar__brand {
+      font-size: clamp(0.6875rem, 2.8vw, 0.8125rem);
+      font-weight: 600;
+      color: var(--text-heading);
+      letter-spacing: -0.01em;
+      min-width: 0;
+    }
+
+    .topbar__brand span {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .topbar__back {
+      flex-shrink: 0;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-heading);
+      text-decoration: none;
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .topbar__back:hover {
+      border-color: rgba(167, 139, 250, 0.35);
+      background: rgba(109, 40, 217, 0.1);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px rgba(109, 40, 217, 0.15);
+    }
+
+    main {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-lg) var(--section-pad-x) 0;
+    }
+
+    .section-title {
+      font-size: clamp(1rem, 2.4vw, 1.125rem);
+      font-weight: 600;
+      color: var(--text-heading);
+      margin: var(--space-lg) 0 var(--space-xs);
+      letter-spacing: -0.02em;
+    }
+
+    .overview-block + .layout-hud .layout-hud__main > .section-title:first-of-type {
+      margin-top: var(--space-md);
+    }
+
+    .section-lead {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin: 0 0 var(--space-md);
+      max-width: 38rem;
+      line-height: 1.55;
+    }
+
+    /* 总览三卡 */
+    .overview-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+    }
+
+    @media (max-width: 767px) {
+      .overview-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-card {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: clamp(1rem, 2vw, 1.2rem);
+      box-shadow: none;
+      transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+    }
+
+    .panel-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.75;
+      background:
+        radial-gradient(ellipse 85% 55% at 50% -10%, rgba(167, 139, 250, 0.09), transparent 55%),
+        radial-gradient(ellipse 50% 45% at 100% 100%, rgba(109, 40, 217, 0.06), transparent 50%);
+    }
+
+    .panel-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-card:hover {
+      border-color: rgba(167, 139, 250, 0.22);
+      box-shadow:
+        0 0 0 1px rgba(109, 40, 217, 0.1),
+        0 14px 40px rgba(109, 40, 217, 0.08);
+    }
+
+    .stat-card__label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted-faint);
+      margin-bottom: 0.45rem;
+    }
+
+    .stat-card__value {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      letter-spacing: -0.03em;
+    }
+
+    .stat-card__value--level {
+      display: flex;
+      align-items: baseline;
+      gap: 0.2rem;
+      font-size: 1.25rem;
+    }
+
+    .level-prefix {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .level-num {
+      font-family: var(--mono);
+      font-size: clamp(2rem, 5vw, 2.5rem);
+      font-weight: 700;
+      color: var(--text-heading);
+      line-height: 1;
+      text-shadow: 0 0 48px rgba(109, 40, 217, 0.35);
+    }
+
+    .stat-card__value small {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .progress-track {
+      position: relative;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      margin-top: 0.65rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(90deg, #5b21b6 0%, var(--accent) 45%, #a78bfa 100%);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .stat-grid-mini {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.45rem 0.85rem;
+      font-size: 0.8125rem;
+      margin-top: 0.35rem;
+    }
+
+    .stat-grid-mini span {
+      color: var(--muted);
+    }
+
+    .stat-grid-mini strong {
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--text-heading);
+    }
+
+    .stat-grid-mini strong.stat-amber {
+      color: var(--highlight);
+    }
+
+    .stat-grid-mini strong.stat-done {
+      color: var(--success);
+    }
+
+    .stat-grid-mini strong.stat-undone {
+      color: var(--danger);
+    }
+
+    /* 主区 + 侧栏 */
+    .layout-hud {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(200px, 260px);
+      gap: var(--space-md);
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .layout-hud {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 雷达 */
+    .radar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-sm) 0 var(--space-xs);
+    }
+
+    .radar-svg {
+      width: min(100%, 400px);
+      height: auto;
+      filter: drop-shadow(0 8px 36px rgba(109, 40, 217, 0.12));
+    }
+
+    .radar-grid {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 1;
+    }
+
+    .radar-poly {
+      stroke: rgba(167, 139, 250, 0.85);
+      stroke-width: 1.5;
+    }
+
+    .radar-label {
+      font-size: 11px;
+      fill: rgba(255, 255, 255, 0.72);
+      font-weight: 600;
+      font-family:
+        "Inter",
+        -apple-system,
+        system-ui,
+        sans-serif;
+    }
+
+    .radar-vertex {
+      fill: #ddd6fe;
+      stroke: rgba(255, 255, 255, 0.45);
+      stroke-width: 1;
+      filter: url(#radar-vertex-glow);
+    }
+
+    /* 技能网格 */
+    .skill-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+    }
+
+    @media (max-width: 767px) {
+      .skill-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .skill-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      padding: clamp(0.95rem, 2vw, 1.1rem);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      transition:
+        transform 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease;
+    }
+
+    .skill-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.65;
+      background: radial-gradient(ellipse 80% 50% at 0% 0%, rgba(109, 40, 217, 0.07), transparent 55%);
+    }
+
+    .skill-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .skill-card:hover {
+      border-color: rgba(167, 139, 250, 0.28);
+      transform: translateY(-2px);
+      box-shadow:
+        0 0 0 1px rgba(109, 40, 217, 0.08),
+        0 14px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    .skill-card__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      min-width: 0;
+    }
+
+    .skill-card__name {
+      font-weight: 600;
+      color: var(--text-heading);
+      font-size: 0.9375rem;
+      letter-spacing: -0.02em;
+    }
+
+    .skill-card__lv {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+
+    .skill-card__bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .skill-card__track {
+      position: relative;
+      flex: 1;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+    }
+
+    .skill-card__track .skill-fill {
+      height: 100%;
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.4s ease;
+      background: linear-gradient(90deg, #5b21b6, var(--accent) 55%, #c4b5fd);
+      box-shadow: 0 0 14px rgba(109, 40, 217, 0.35);
+    }
+
+    .skill-card__xp {
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted);
+      min-width: 4.25rem;
+      text-align: right;
+    }
+
+    .skill-card__status {
+      display: inline-block;
+      margin-top: 0.2rem;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      padding: 0.2rem 0.45rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .skill-card__status--ok {
+      background: rgba(134, 239, 172, 0.1);
+      border: 1px solid rgba(134, 239, 172, 0.28);
+      color: var(--success);
+    }
+
+    .skill-card__status--wait {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      color: var(--muted);
+    }
+
+    /* 表单 */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 140px;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+
+    @media (max-width: 640px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+    }
+
+    select,
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface-raised);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    select:focus,
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: rgba(167, 139, 250, 0.45);
+      box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.2);
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .btn-submit {
+      margin-top: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.7rem 1.5rem;
+      font-weight: 600;
+      font-size: 0.8125rem;
+      letter-spacing: 0.02em;
+      color: #fafafa;
+      border: 1px solid rgba(109, 40, 217, 0.9);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      background: var(--accent);
+      font-family: inherit;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        0 8px 32px rgba(109, 40, 217, 0.28);
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 12px 40px rgba(109, 40, 217, 0.35);
+    }
+
+    .toast {
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--highlight);
+      min-height: 1.25em;
+    }
+
+    /* 表格 */
+    .table-scroll {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+
+    th,
+    td {
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.6875rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr {
+      animation: recordFade 0.4s ease both;
+    }
+
+    @keyframes recordFade {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    td.xp-cell {
+      font-family: var(--mono);
+      font-weight: 700;
+      color: var(--highlight);
+    }
+
+    /* 成长日志侧栏 */
+    .battle-log {
+      position: sticky;
+      top: 4.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: clamp(0.85rem, 2vw, 1rem);
+      box-shadow: none;
+      max-height: min(68vh, 480px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (max-width: 960px) {
+      .battle-log {
+        position: relative;
+        top: 0;
+        max-height: min(40vh, 320px);
+      }
+    }
+
+    .battle-log__head {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 0.55rem;
+      padding-bottom: 0.45rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .battle-log__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.2);
+    }
+
+    .battle-log__title {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .battle-log__scroll {
+      flex: 1;
+      overflow-y: auto;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      line-height: 1.55;
+      color: rgba(161, 161, 170, 0.92);
+      padding-right: 0.2rem;
+      mask-image: linear-gradient(to bottom, #000 85%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, #000 85%, transparent);
+    }
+
+    .battle-log__scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .battle-log__scroll::-webkit-scrollbar-thumb {
+      background: rgba(109, 40, 217, 0.28);
+      border-radius: 99px;
+    }
+
+    .battle-log__line {
+      padding: 0.32rem 0;
+      border-bottom: 1px dashed var(--border-subtle);
+      animation: logLineIn 0.35s ease both;
+    }
+
+    .battle-log__line:last-child {
+      border-bottom: none;
+    }
+
+    @keyframes logLineIn {
+      from {
+        opacity: 0;
+        transform: translateX(-4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .battle-log__time {
+      color: var(--muted-faint);
+      margin-right: 0.35rem;
+    }
+
+    .battle-log__xp {
+      color: var(--highlight);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="noise-bg" aria-hidden="true"></div>
+  <div class="page-wrap">
+  <header class="topbar">
+    <span class="topbar__brand">宋宗源 <span>· 能力养成</span></span>
+    <a class="topbar__back" href="index.html">← 返回主页</a>
+  </header>
+
+  <main>
+    <div class="overview-block">
+    <div class="overview-row">
+      <div class="panel-card stat-card" id="card-level">
+        <div class="stat-card__label">当前等级</div>
+        <div class="stat-card__value stat-card__value--level">
+          <span class="level-prefix">LV.</span><span id="global-level-display" class="level-num">—</span>
+        </div>
+      </div>
+      <div class="panel-card stat-card" id="card-xp">
+        <div class="stat-card__label">经验槽</div>
+        <div class="stat-card__value mono">
+          <span id="global-xp-current">0</span> <small>/</small> <span id="global-xp-next">200</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="global-xp-bar"></div>
+        </div>
+      </div>
+      <div class="panel-card stat-card" id="card-stats">
+        <div class="stat-card__label">任务统计</div>
+        <div class="stat-grid-mini">
+          <div><span>总打卡</span> <strong id="stat-total" class="stat-amber">0</strong></div>
+          <div><span>已完成</span> <strong id="stat-done" class="stat-done">0</strong></div>
+          <div><span>未完成</span> <strong id="stat-undone" class="stat-undone">0</strong></div>
+          <div><span>今日完成</span> <strong id="stat-today" class="stat-amber">0</strong></div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="layout-hud">
+      <div class="layout-hud__main">
+        <h2 class="section-title">六维能力雷达</h2>
+        <p class="section-lead">各维度数值对应当前等级段内进度（维度内经验 ÷ 200），随打卡与本地存档实时更新。</p>
+
+        <div class="panel-card radar-wrap">
+          <svg class="radar-svg" id="radar-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
+        </div>
+
+        <h2 class="section-title">技能进度</h2>
+
+        <div class="skill-grid" id="skill-grid"></div>
+
+        <h2 class="section-title">新增打卡</h2>
+        <div class="panel-card">
+          <form id="checkin-form" autocomplete="off">
+            <div class="form-row">
+              <div>
+                <label for="field-skill">技能维度</label>
+                <select id="field-skill" required></select>
+              </div>
+              <div>
+                <label for="field-hours">投入时长（小时）</label>
+                <input id="field-hours" type="number" min="0.1" step="0.1" required placeholder="例如 1.5" />
+              </div>
+            </div>
+            <div>
+              <label for="field-note">战报摘要</label>
+              <textarea id="field-note" placeholder="今日推进……"></textarea>
+            </div>
+            <button type="submit" class="btn-submit">写入日志</button>
+            <p class="toast" id="toast" role="status"></p>
+          </form>
+        </div>
+
+        <h2 class="section-title">最近记录</h2>
+        <p class="section-lead">每 1 小时 = <strong id="xp-rate-label" class="mono">60</strong> 经验。</p>
+
+        <div class="panel-card" style="padding: 0; overflow: hidden">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>技能</th>
+                  <th>时长</th>
+                  <th>描述</th>
+                  <th>经验</th>
+                </tr>
+              </thead>
+              <tbody id="records-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <aside class="battle-log" aria-label="成长日志">
+        <div class="battle-log__head">
+          <span class="battle-log__dot" aria-hidden="true"></span>
+          <span class="battle-log__title">成长日志</span>
+        </div>
+        <div class="battle-log__scroll" id="battle-log-body"></div>
+      </aside>
+    </div>
+  </main>
+  </div>
+
+  <script>
+    (function () {
+      var STORAGE_KEY = "song-skills-dashboard-v1";
+      var XP_PER_HOUR = 60;
+      var XP_PER_LEVEL = 200;
+
+      var DEFAULT_SKILLS = [
+        { id: "learn", name: "学习", level: 8, prog: 170 },
+        { id: "media", name: "自媒体", level: 4, prog: 29 },
+        { id: "fitness", name: "运动健身", level: 1, prog: 10 },
+        { id: "express", name: "表达能力", level: 3, prog: 133 },
+        { id: "code", name: "编程能力", level: 4, prog: 60 },
+        { id: "ai", name: "AI技能", level: 5, prog: 100 },
+      ];
+
+      function skillTotalXp(sk) {
+        return (sk.level - 1) * XP_PER_LEVEL + sk.prog;
+      }
+
+      function addSkillXp(skill, delta) {
+        var t = skillTotalXp(skill) + delta;
+        if (t < 0) t = 0;
+        skill.level = Math.floor(t / XP_PER_LEVEL) + 1;
+        skill.prog = t % XP_PER_LEVEL;
+      }
+
+      function xpToGlobalLevel(totalXp) {
+        return Math.floor(totalXp / XP_PER_LEVEL) + 1;
+      }
+
+      function loadState() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function saveState(state) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function initState() {
+        var saved = loadState();
+        if (saved && saved.skills && saved.skills.length === 6) {
+          return saved;
+        }
+        var skills = DEFAULT_SKILLS.map(function (s) {
+          return { id: s.id, name: s.name, level: s.level, prog: s.prog };
+        });
+        var initialGlobalXp = 3412;
+        return {
+          skills: skills,
+          globalXp: initialGlobalXp,
+          checkinsTotal: 34,
+          checkinsCompleted: 34,
+          checkinsUndone: 0,
+          todayCompleted: 3,
+          lastDayKey: todayKey(),
+          records: seedRecords(),
+        };
+      }
+
+      function seedRecords() {
+        return [
+          {
+            date: "2026-04-25",
+            skillId: "media",
+            hours: 4,
+            note: "内容创作",
+            xp: 240,
+          },
+          {
+            date: "2026-04-24",
+            skillId: "learn",
+            hours: 2,
+            note: "文献阅读",
+            xp: 120,
+          },
+        ];
+      }
+
+      function todayKey() {
+        var d = new Date();
+        return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+      }
+
+      function pad(n) {
+        return n < 10 ? "0" + n : String(n);
+      }
+
+      var state = initState();
+
+      if (!loadState()) {
+        saveState(state);
+      }
+
+      function radarValue(sk) {
+        return Math.max(0, Math.min(100, (sk.prog / XP_PER_LEVEL) * 100));
+      }
+
+      function drawRadar() {
+        var svg = document.getElementById("radar-svg");
+        var skills = state.skills;
+        var cx = 200;
+        var cy = 200;
+        var R = 150;
+        var n = 6;
+        var angles = [];
+        for (var i = 0; i < n; i++) {
+          angles.push((-90 + (360 / n) * i) * (Math.PI / 180));
+        }
+
+        var defs =
+          "<defs>" +
+          '<linearGradient id="radarFillGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+          '<stop offset="0%" stop-color="#a78bfa" stop-opacity="0.38"/>' +
+          '<stop offset="55%" stop-color="#7c3aed" stop-opacity="0.22"/>' +
+          '<stop offset="100%" stop-color="#6d28d9" stop-opacity="0.1"/>' +
+          "</linearGradient>" +
+          '<filter id="radar-vertex-glow" x="-40%" y="-40%" width="180%" height="180%">' +
+          '<feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="b"/>' +
+          '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+          "</filter>" +
+          "</defs>";
+
+        var layers = 4;
+        var parts = [];
+        for (var L = 1; L <= layers; L++) {
+          var r = (R * L) / layers;
+          var pts = [];
+          for (var j = 0; j < n; j++) {
+            pts.push(cx + r * Math.cos(angles[j]) + "," + (cy + r * Math.sin(angles[j])));
+          }
+          parts.push("<polygon class='radar-grid' points='" + pts.join(" ") + "' />");
+        }
+
+        var labelR = R + 24;
+        var labelParts = [];
+        for (var k = 0; k < n; k++) {
+          var lx = cx + labelR * Math.cos(angles[k]);
+          var ly = cy + labelR * Math.sin(angles[k]);
+          labelParts.push(
+            "<text class='radar-label' text-anchor='middle' dominant-baseline='middle' x='" +
+              lx +
+              "' y='" +
+              ly +
+              "'>" +
+              skills[k].name +
+              "</text>"
+          );
+        }
+
+        var valPts = [];
+        var dotParts = [];
+        for (var m = 0; m < n; m++) {
+          var v = radarValue(skills[m]) / 100;
+          var rr = R * v;
+          var dx = cx + rr * Math.cos(angles[m]);
+          var dy = cy + rr * Math.sin(angles[m]);
+          valPts.push(dx.toFixed(2) + "," + dy.toFixed(2));
+          dotParts.push(
+            "<circle class='radar-vertex' cx='" + dx + "' cy='" + dy + "' r='5.5' />"
+          );
+        }
+
+        svg.innerHTML =
+          defs +
+          parts.join("") +
+          "<polygon class='radar-poly' fill='url(#radarFillGrad)' points='" +
+          valPts.join(" ") +
+          "' />" +
+          dotParts.join("") +
+          labelParts.join("");
+      }
+
+      function renderSkills() {
+        var el = document.getElementById("skill-grid");
+        el.innerHTML = "";
+        state.skills.forEach(function (sk) {
+          var pct = Math.min(100, (sk.prog / XP_PER_LEVEL) * 100);
+          var done = pct >= 99.5;
+          var div = document.createElement("div");
+          div.className = "skill-card";
+          div.innerHTML =
+            '<div class="skill-card__head">' +
+            '<span class="skill-card__name">' +
+            sk.name +
+            "</span>" +
+            '<span class="skill-card__lv">LV.' +
+            sk.level +
+            "</span></div>" +
+            '<div class="skill-card__bar-row">' +
+            '<div class="skill-card__track"><div class="skill-fill" style="width:' +
+            pct +
+            '%"></div></div>' +
+            '<span class="skill-card__xp">' +
+            sk.prog +
+            "/" +
+            XP_PER_LEVEL +
+            "</span></div>" +
+            '<span class="skill-card__status ' +
+            (done ? "skill-card__status--ok" : "skill-card__status--wait") +
+            '">' +
+            (done ? "本段已满 · 即将升级" : "升级进行中") +
+            "</span>";
+          el.appendChild(div);
+        });
+      }
+
+      function renderOverview() {
+        var gxp = state.globalXp;
+        var lvl = xpToGlobalLevel(gxp);
+        document.getElementById("global-level-display").textContent = String(lvl);
+
+        var floorLv = lvl;
+        var xpBase = (floorLv - 1) * XP_PER_LEVEL;
+        var xpInLevel = gxp - xpBase;
+        var nextCeil = floorLv * XP_PER_LEVEL;
+        document.getElementById("global-xp-current").textContent = String(gxp);
+        document.getElementById("global-xp-next").textContent = String(nextCeil);
+
+        var barPct = Math.min(100, Math.max(0, (xpInLevel / XP_PER_LEVEL) * 100));
+        document.getElementById("global-xp-bar").style.width = barPct + "%";
+
+        document.getElementById("stat-total").textContent = String(state.checkinsTotal);
+        document.getElementById("stat-done").textContent = String(state.checkinsCompleted);
+        document.getElementById("stat-undone").textContent = String(state.checkinsUndone);
+
+        dayRollover();
+        document.getElementById("stat-today").textContent = String(state.todayCompleted);
+      }
+
+      function dayRollover() {
+        var k = todayKey();
+        if (!state.lastDayKey) {
+          state.lastDayKey = k;
+          saveState(state);
+          return;
+        }
+        if (state.lastDayKey !== k) {
+          state.todayCompleted = 0;
+          state.lastDayKey = k;
+          saveState(state);
+        }
+      }
+
+      function renderRecords() {
+        var tbody = document.getElementById("records-body");
+        tbody.innerHTML = "";
+        var list = (state.records || []).slice().reverse();
+        list.forEach(function (r, idx) {
+          var tr = document.createElement("tr");
+          tr.style.animationDelay = Math.min(idx * 0.04, 0.4) + "s";
+          var name = state.skills.find(function (s) {
+            return s.id === r.skillId;
+          });
+          tr.innerHTML =
+            "<td>" +
+            r.date +
+            "</td><td>" +
+            (name ? name.name : r.skillId) +
+            "</td><td>" +
+            (typeof r.hours === "number" && r.hours % 1 ? r.hours.toFixed(1) : r.hours) +
+            " 小时</td><td>" +
+            escapeHtml(r.note || "—") +
+            "</td><td class=\"xp-cell\">+" +
+            r.xp +
+            "</td>";
+          tbody.appendChild(tr);
+        });
+        if (!list.length) {
+          var tr0 = document.createElement("tr");
+          tr0.innerHTML =
+            '<td colspan="5" style="color:#71717a;padding:1rem;">暂无记录，完成一次打卡后将显示在此。</td>';
+          tbody.appendChild(tr0);
+        }
+      }
+
+      function renderBattleLog() {
+        var box = document.getElementById("battle-log-body");
+        if (!box) return;
+        box.innerHTML = "";
+        var list = (state.records || []).slice().reverse().slice(0, 12);
+        list.forEach(function (r, idx) {
+          var name = state.skills.find(function (s) {
+            return s.id === r.skillId;
+          });
+          var line = document.createElement("div");
+          line.className = "battle-log__line";
+          line.style.animationDelay = Math.min(idx * 0.05, 0.45) + "s";
+          line.innerHTML =
+            '<span class="battle-log__time">[' +
+            r.date +
+            "]</span>" +
+            (name ? name.name : r.skillId) +
+            " <span class=\"battle-log__xp\">+" +
+            r.xp +
+            " XP</span> · " +
+            escapeHtml((r.note || "").slice(0, 42)) +
+            (r.note && r.note.length > 42 ? "…" : "");
+          box.appendChild(line);
+        });
+        if (!list.length) {
+          box.innerHTML =
+            '<div class="battle-log__line" style="border:none;opacity:0.65">// 系统：等待首次行动记录…</div>';
+        }
+      }
+
+      function escapeHtml(s) {
+        var d = document.createElement("div");
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      function fillFormOptions() {
+        var sel = document.getElementById("field-skill");
+        sel.innerHTML = "";
+        state.skills.forEach(function (sk) {
+          var o = document.createElement("option");
+          o.value = sk.id;
+          o.textContent = sk.name;
+          sel.appendChild(o);
+        });
+      }
+
+      document.getElementById("checkin-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var skillId = document.getElementById("field-skill").value;
+        var hours = parseFloat(String(document.getElementById("field-hours").value).replace(",", "."), 10);
+        var note = document.getElementById("field-note").value.trim() || "打卡";
+        if (!hours || hours <= 0 || isNaN(hours)) {
+          document.getElementById("toast").textContent = "请输入有效时长。";
+          return;
+        }
+
+        var xp = Math.round(hours * XP_PER_HOUR);
+        var sk = state.skills.find(function (s) {
+          return s.id === skillId;
+        });
+        if (!sk) return;
+
+        addSkillXp(sk, xp);
+        state.globalXp += xp;
+
+        state.checkinsTotal += 1;
+        state.checkinsCompleted += 1;
+        dayRollover();
+        state.todayCompleted += 1;
+
+        var rec = {
+          date: todayKey(),
+          skillId: skillId,
+          hours: hours,
+          note: note,
+          xp: xp,
+        };
+        state.records = state.records || [];
+        state.records.push(rec);
+
+        saveState(state);
+        document.getElementById("toast").textContent = "已写入 +" + xp + " EXP";
+
+        drawRadar();
+        renderSkills();
+        renderOverview();
+        renderRecords();
+        renderBattleLog();
+        document.getElementById("field-note").value = "";
+        document.getElementById("field-hours").value = "";
+      });
+
+      fillFormOptions();
+      drawRadar();
+      renderSkills();
+      renderOverview();
+      renderRecords();
+      renderBattleLog();
+      document.getElementById("xp-rate-label").textContent = String(XP_PER_HOUR);
+    })();
+  </script>
+</body>
+</html>

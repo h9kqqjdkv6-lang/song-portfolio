@@ -1,0 +1,170 @@
+{
+  "nodes": [
+    {
+      "id": "knowledge-to-demo",
+      "title": "从知识库到可演示作品",
+      "category": "AI产品化",
+      "stage": "evergreen",
+      "summary": "把沉淀的笔记做成别人能点开的 Demo，是检验是否真的「讲得清楚」的快捷方式。",
+      "type": ""
+    },
+    {
+      "id": "low-altitude-narrative-moc",
+      "title": "低空经济叙事地图",
+      "category": "低空经济",
+      "stage": "budding",
+      "summary": "按主题串联的笔记地图（MOC），把分散条目收成一张可读「地图」。",
+      "type": "moc"
+    },
+    {
+      "id": "low-altitude-ops-emergency",
+      "title": "低空运营与应急场景的交集",
+      "category": "低空经济",
+      "stage": "budding",
+      "summary": "应急关注「到达—侦察—回传—协同」，低空运营要嵌进这条时间轴才有采购说服力。",
+      "type": ""
+    },
+    {
+      "id": "hanxin-job-seeking",
+      "title": "韩信兵法与求职博弈 · 方案人的战略隐喻",
+      "category": "成长",
+      "stage": "evergreen",
+      "summary": "将韩信「明修栈道，暗度陈仓」「背水一战」等战法，映射到方案工程师入职破局、客户质疑与内部博弈中的打法；并与政府决策链、职场心智地图衔接。",
+      "type": "笔记"
+    },
+    {
+      "id": "welcome",
+      "title": "欢迎来到数字花园",
+      "category": "元笔记",
+      "stage": "evergreen",
+      "summary": "这片花园用 Markdown 维护，记录低空经济、产品与 AI 相关的持续思考。",
+      "type": ""
+    },
+    {
+      "id": "five-layer-framework",
+      "title": "五层框架 · 从地基到演进",
+      "category": "方法论",
+      "stage": "evergreen",
+      "summary": "五层框架是我拆解任何复杂问题的默认操作系统。本文阐述其核心逻辑，并展示如何将其迁移到求职、方案设计与个人成长领域。",
+      "type": "moc"
+    },
+    {
+      "id": "government-procurement-lines",
+      "title": "政府侧采购话术的几条主线",
+      "category": "低空经济",
+      "stage": "seedling",
+      "summary": "把「讲清楚价值」拆成采购端常问的几类问题，避免只堆技术参数。",
+      "type": ""
+    },
+    {
+      "id": "government-decision-chain",
+      "title": "政府决策链三重门 · 采购、业务与领导的三层穿透",
+      "category": "方法论",
+      "stage": "evergreen",
+      "summary": "政府客户不是一个人决策，而是三层各自守门。采购看合规，业务看政绩，领导看试点背书。本文拆解每层的显性需求与隐形 KPI，并给出可复用的沟通话术模板。",
+      "type": "笔记"
+    },
+    {
+      "id": "ai-agent-robot-landscape",
+      "title": "AI时代的全栈架构师 · 从Agent到机器人的技术版图",
+      "category": "行业洞察",
+      "stage": "budding",
+      "summary": "将AI行业类比传统Web开发的全栈分工，拆解AI Agent与机器人行业的核心类别、典型角色与成长路径。这是一份帮助自己理解行业边界、定位自身发展的全景图。",
+      "type": "笔记"
+    },
+    {
+      "id": "moc-architecture-thinking",
+      "title": "MOC · 解决方案架构思维",
+      "category": "方法论",
+      "stage": "evergreen",
+      "summary": "从政府业务理解到产品化交付的完整方法体系。",
+      "type": "moc"
+    },
+    {
+      "id": "moc-career-mental-models",
+      "title": "MOC · 职场心智与博弈",
+      "category": "成长",
+      "stage": "budding",
+      "summary": "求职博弈、职业决策、向上管理等职场心智模型。",
+      "type": "moc"
+    }
+  ],
+  "links": [
+    {
+      "source": "knowledge-to-demo",
+      "target": "welcome"
+    },
+    {
+      "source": "knowledge-to-demo",
+      "target": "government-procurement-lines"
+    },
+    {
+      "source": "low-altitude-narrative-moc",
+      "target": "government-procurement-lines"
+    },
+    {
+      "source": "low-altitude-narrative-moc",
+      "target": "low-altitude-ops-emergency"
+    },
+    {
+      "source": "low-altitude-narrative-moc",
+      "target": "welcome"
+    },
+    {
+      "source": "low-altitude-ops-emergency",
+      "target": "low-altitude-narrative-moc"
+    },
+    {
+      "source": "low-altitude-ops-emergency",
+      "target": "government-procurement-lines"
+    },
+    {
+      "source": "hanxin-job-seeking",
+      "target": "government-decision-chain"
+    },
+    {
+      "source": "hanxin-job-seeking",
+      "target": "moc-career-mental-models"
+    },
+    {
+      "source": "welcome",
+      "target": "low-altitude-narrative-moc"
+    },
+    {
+      "source": "welcome",
+      "target": "knowledge-to-demo"
+    },
+    {
+      "source": "five-layer-framework",
+      "target": "moc-architecture-thinking"
+    },
+    {
+      "source": "five-layer-framework",
+      "target": "moc-career-mental-models"
+    },
+    {
+      "source": "government-procurement-lines",
+      "target": "low-altitude-narrative-moc"
+    },
+    {
+      "source": "government-procurement-lines",
+      "target": "knowledge-to-demo"
+    },
+    {
+      "source": "government-decision-chain",
+      "target": "five-layer-framework"
+    },
+    {
+      "source": "government-decision-chain",
+      "target": "moc-architecture-thinking"
+    },
+    {
+      "source": "ai-agent-robot-landscape",
+      "target": "moc-architecture-thinking"
+    },
+    {
+      "source": "ai-agent-robot-landscape",
+      "target": "five-layer-framework"
+    }
+  ]
+}
