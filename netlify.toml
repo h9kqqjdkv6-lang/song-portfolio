@@ -1,12 +1,16 @@
-# Netlify build config
 [build]
   publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
 
 [[redirects]]
-  from = "/api/weather"
-  to = "/.netlify/functions/weather"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
 
-# Set these in Netlify Dashboard > Site > Environment variables:
-#   QWEATHER_KEY = your-qweather-api-key
-#   AMAP_KEY     = your-amap-web-api-key
+# Environment variables (set in Netlify Dashboard):
+#   SUPABASE_URL, SUPABASE_KEY, SUPABASE_SERVICE_KEY
+#   DEEPSEEK_API_KEY, DEEPSEEK_GENERATION_MODEL, DEEPSEEK_MONTHLY_BUDGET_CNY
+#   AMAP_KEY, QWEATHER_KEY

@@ -12,8 +12,10 @@
 
     /** AI Hub 连接 —— 获取场景相关的实时情报（政策更新、行业事件、人物动态） */
     var AI_HUB_URL = (typeof window !== "undefined" && window.AI_HUB_URL) || "http://localhost:8787";
-    /** Vercel API 基地址 —— 生产环境同源，开发环境指向 AI Hub 或 Vercel 部署地址 */
-    var API_BASE = (typeof window !== "undefined" && window.API_BASE) || AI_HUB_URL;
+    /** Netlify API（同源）—— 静态文件 + 轻 API（scenes/intel/mentors/health/usage） */
+    var API_BASE = (typeof window !== "undefined" && window.API_BASE) || "";
+    /** Vercel API —— AI 生成端点（需要长超时，Netlify 10s 不够） */
+    var GENERATE_API_BASE = (typeof window !== "undefined" && window.GENERATE_API_BASE) || "https://song-portfolio-beige.vercel.app";
     var SCENE_INTEL_CACHE = {};  // { sceneKey: { items, timeline, updated_at } }
     var INTEL_FETCH_IN_FLIGHT = null;
 
@@ -2572,7 +2574,7 @@
       btn.innerHTML =
         '<span class="btn-generate-inner" role="status" aria-live="polite"><span class="btn-spinner" aria-hidden="true"></span><span>AI 生成中...</span></span>';
 
-      fetch(API_BASE + "/api/generate", {
+      fetch(GENERATE_API_BASE + "/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
