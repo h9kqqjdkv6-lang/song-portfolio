@@ -5,6 +5,9 @@
 [functions]
   node_bundler = "esbuild"
 
+  [functions."cron-intel"]
+    schedule = "0 1 * * *"
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"

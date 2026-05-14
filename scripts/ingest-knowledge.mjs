@@ -17,7 +17,7 @@ import { readFileSync, readdirSync, statSync } from "fs";
 import { extname, join, basename } from "path";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   console.error("请设置 SUPABASE_URL 和 SUPABASE_KEY 环境变量");

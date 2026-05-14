@@ -1,7 +1,96 @@
 {
+  "FC200": {
+    "model": "大疆FlyCart 200",
+    "releaseDate": "2026-04-21",
+    "emptyWeight": {
+      "slingLoad": "待核实",
+      "winchLoad": "待核实"
+    },
+    "maxTakeoffWeight": ">150kg（大型无人机类别，适航申报门槛更高）",
+    "maxPayload": 200,
+    "maxPayloadNote": "单机最大载重200kg；4机智能联吊可达600kg（单件超大件空中运输）。2机协同360kg。来源：DJI 2026.04.21 佛山发布会",
+    "battery": {
+      "model": "DB2400 智能飞行电池",
+      "capacityAh": 46,
+      "voltagePlatform": "120V 高压动力平台",
+      "fastCharge": "7-8分钟（C12000充电器）",
+      "hotSwap": true,
+      "configNote": "支持双电/四电模式；双电满载航程6km/16-18min，四电满载航程10km/32min"
+    },
+    "propulsion": {
+      "architecture": "6轴12桨共轴双旋翼",
+      "motorType": "全新扁线电机（槽满率↑41%）",
+      "singleAxisThrust": "183 kg",
+      "propellerSize": "68英寸碳纤维",
+      "efficiencyGain": "综合力效提升10%"
+    },
+    "tetherWinch": {
+      "model": "旗舰空吊系统（30m绳长）/ DL200系统（15m）",
+      "maxRetractionSpeed": "重载1.2 m/s",
+      "maxLoad": "200 kg"
+    },
+    "cargoBox": {
+      "capacity": "120L",
+      "feature": "防水，支持自动装卸"
+    },
+    "windResistance": "8级",
+    "endurance": {
+      "dualBattery": {
+        "maxFlightTime": "16-18分钟",
+        "maxDistance": "6km"
+      },
+      "quadBattery": {
+        "maxFlightTime": "32分钟",
+        "maxDistance": "10km"
+      }
+    },
+    "speed": {
+      "maxAscent": "5m/s",
+      "maxDescent": "5m/s",
+      "maxHorizontal": "20m/s"
+    },
+    "protectionLevel": "IP56",
+    "operatingTemperature": "-25℃至45℃",
+    "maxAltitude": "6000m",
+    "highAltitudePerformance": {
+      "3000m": "200kg（不减载）",
+      "4500m": "170kg",
+      "6000m": "140kg"
+    },
+    "transmission": {
+      "system": "DJI O4运载增强版",
+      "maxRange": "40km（8天线）",
+      "features": ["Sub-2G频段", "双卡4G中继"]
+    },
+    "safetySystem": {
+      "sensors": "11个核心传感器",
+      "lidar": "256线激光雷达（点云密度↑156%）",
+      "radar": "毫米波雷达（25万点/秒）",
+      "vision": "五目视觉 + 双FPV",
+      "parachute": "整机降落伞（标配，满载触地速度~7m/s）",
+      "adsb": "ADS-B Group C"
+    },
+    "ecosystem": {
+      "psdk": "双PSDK接口，可同时挂载禅思H30相机+S1探照灯",
+      "software": "Delivery 2.0 + 大疆司运云平台 + 大疆运服App"
+    },
+    "price": {
+      "standardSling": "¥133,999起",
+      "flagshipWinch": "¥166,999起",
+      "insurance": "赠130万第三者责任险",
+      "warranty": "整机1年/电池24个月或1500次循环",
+      "serviceNetwork": "~300家服务网点，覆盖90%+区域",
+      "financing": "飞手贷：首付2成起"
+    },
+    "cumulativeStats": "截至2026.04，大疆无人机累计1.8亿趟次、运输1150万吨物资",
+    "keyConstraint": "最大起飞重量>150kg属于大型无人机，适航审定与空域审批流程复杂于150kg以下机型；运营须配备持证飞手"
+  },
   "FC100": {
     "model": "大疆FlyCart 100",
-    "emptyWeight": { "slingLoad": "55.2kg", "winchLoad": "60.2kg" },
+    "emptyWeight": {
+      "slingLoad": "55.2kg",
+      "winchLoad": "60.2kg"
+    },
     "maxTakeoffWeight": "149.9kg",
     "maxTakeoffWeightNote": "【来源：DJI FlyCart 100 说明书/规格页】厂方同时给出性能规格最大起飞重量 170 kg；下列净载重、航时以「149.9 kg」工况测得（见 https://www.dji.com/cn/flycart-100 ）。**境内合规申报起飞重量须以适航与地方法规为准**。",
     "maxPayload": 94.7,
@@ -25,17 +114,36 @@
     },
     "windResistance": "12 m/s（大疆规格页「最大抗风速度」；与 149.9 kg、海平面、无风扰动等工况同页给出，细则以说明书为准）",
     "endurance": {
-      "dualBattery": { "maxFlightTime": "14分钟", "maxHoverTime": "12分钟", "maxDistance": "12km" },
-      "singleBattery": { "maxFlightTime": "7分钟", "maxHoverTime": "6分钟", "maxDistance": "6km" }
+      "dualBattery": {
+        "maxFlightTime": "14分钟",
+        "maxHoverTime": "12分钟",
+        "maxDistance": "12km"
+      },
+      "singleBattery": {
+        "maxFlightTime": "7分钟",
+        "maxHoverTime": "6分钟",
+        "maxDistance": "6km"
+      }
     },
-    "speed": { "maxAscent": "5m/s", "maxDescent": "5m/s", "maxHorizontal": "20m/s" },
+    "speed": {
+      "maxAscent": "5m/s",
+      "maxDescent": "5m/s",
+      "maxHorizontal": "20m/s"
+    },
     "protectionLevel": "IP55（动力系统除外；IP 等级依 IEC 60529 在受控实验室条件下测得，**非永久性**，磨损或密封老化可导致失效——见大疆产品规格说明）",
     "operatingTemperature": "-20℃至40℃",
     "maxAltitude": "6000m",
     "maxFlightHeight": "1500m",
     "rtkAccuracy": "±10cm（开启RTK），±60cm/30cm（无RTK）【FlyCart 100 公开规格页】",
-    "propulsion": { "motorKV": "60rpm/V", "propellerSize": "62英寸" },
-    "safetySystem": { "radar": "前毫米波+后视+下视", "lidar": "激光雷达", "vision": "四目视觉" },
+    "propulsion": {
+      "motorKV": "60rpm/V",
+      "propellerSize": "62英寸"
+    },
+    "safetySystem": {
+      "radar": "前毫米波+后视+下视",
+      "lidar": "激光雷达",
+      "vision": "四目视觉"
+    },
     "keyConstraint": "149.9kg为监管套利上限；动力系统无防护，雨中飞行后需怠速1分钟排水"
   },
   "FC100_Medical": {
@@ -44,7 +152,10 @@
     "maxTakeoffWeight": "149.9kg",
     "windResistance": "12m/s",
     "endurance": {
-      "dualBattery": { "maxFlightTime": "14分钟", "maxDistance": "12km" }
+      "dualBattery": {
+        "maxFlightTime": "14分钟",
+        "maxDistance": "12km"
+      }
     },
     "payload": {
       "temperatureControl": "2–8℃智能温控货舱（航线运行温区须与 WS 400—2023《血液运输标准》及医院输血科 SOP 交叉核定，勿仅凭营销口径）",
@@ -57,18 +168,40 @@
     "model": "大疆 Matrice 400（M400 RTK）",
     "maxPayload": 6,
     "maxTakeoffWeight": 15.8,
-    "weight": { "bare": "5020g", "withBattery": "9740g" },
+    "weight": {
+      "bare": "5020g",
+      "withBattery": "9740g"
+    },
     "windResistance": "12m/s",
-    "endurance": { "maxFlightTime": "59分钟（挂载禅思 H30T，海平面、无风 25℃、双 TB100，来源：https://www.dji.com/cn/matrice-400 ）", "maxHoverTime": "53分钟（同上）", "maxRange": "49公里（同上）" },
-    "speed": { "maxAscent": "10m/s", "maxDescent": "8m/s", "maxHorizontal": "25m/s" },
+    "endurance": {
+      "maxFlightTime": "59分钟（挂载禅思 H30T，海平面、无风 25℃、双 TB100，来源：https://www.dji.com/cn/matrice-400 ）",
+      "maxHoverTime": "53分钟（同上）",
+      "maxRange": "49公里（同上）"
+    },
+    "speed": {
+      "maxAscent": "10m/s",
+      "maxDescent": "8m/s",
+      "maxHorizontal": "25m/s"
+    },
     "protectionLevel": "IP55",
     "operatingTemperature": "-20℃至50℃",
     "maxAltitude": "7000 m（最大飞行海拔高度为厂方公开指标；高海拔空气密度下降会导致悬停时间与动力余量衰减，须按手册曲线校核）",
     "rtkAccuracy": "水平1cm+1ppm，垂直1.5cm+1ppm",
-    "sensing": { "vision": "全向双目视觉", "lidar": "环扫激光雷达", "radar": "六向毫米波" },
+    "sensing": {
+      "vision": "全向双目视觉",
+      "lidar": "环扫激光雷达",
+      "radar": "六向毫米波"
+    },
     "sensingNote": "六向毫米波雷达 + 环扫激光雷达 + 全向视觉融合，适应山林复杂遮挡与夜间低照度（仍须保留安全高度与人工决断）。",
-    "transmission": { "system": "DJI O4图传行业增强版", "maxRange": "40km(FCC)/20km(CE)" },
-    "battery": { "model": "TB100", "capacity": "20254mAh", "energy": "977Wh" },
+    "transmission": {
+      "system": "DJI O4图传行业增强版",
+      "maxRange": "40km(FCC)/20km(CE)"
+    },
+    "battery": {
+      "model": "TB100",
+      "capacity": "20254mAh",
+      "energy": "977Wh"
+    },
     "multiPayloadNote": "多路 E 口 / PSDK 架构下可组合多类任务负载（公开资料常述多达 7 路接口能力）；实际搜救编成以最大商载约 6 kg、重心与厂方兼容矩阵为硬约束。",
     "keyConstraint": "最大起飞重量 15.8 kg；防护等级非永久；总载重须预留安全余量。"
   },
@@ -85,5 +218,22 @@
     "zoomCapability": "200倍变焦",
     "endurance": "41分钟（理论）",
     "role": "可选：超大面积首轮低空走廊侦察；主作业链仍以 M400 RTK 与下列 SOP 为准。"
+  },
+  "_emergingTech": {
+    "note": "以下为2026年5月前沿技术动态，尚未进入量产产品，但可能影响方案选型",
+    "hydrogenFuelCell": {
+      "name": "风冷氢燃料电池堆",
+      "source": "中科院大连化学物理研究所（2026年5月12日新华社英文版报道）",
+      "powerDensity": "1970 W/kg",
+      "impact": "可使工业无人机续航翻倍，已用于林业、农业、应急领域",
+      "status": "已部署示范应用，未进入DJI供应链"
+    },
+    "lithiumSulfurBattery": {
+      "name": "锂硫电池",
+      "source": "清华大学深圳国际研究生院（2026年5月《Nature》发表）",
+      "energyDensity": "549 Wh/kg（接近标准无人机电池两倍）",
+      "impact": "显著延长配送、巡检、搜救无人机飞行时间",
+      "status": "实验室阶段"
+    }
   }
 }

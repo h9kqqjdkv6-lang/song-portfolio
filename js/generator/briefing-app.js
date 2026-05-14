@@ -14,8 +14,8 @@
     var AI_HUB_URL = (typeof window !== "undefined" && window.AI_HUB_URL) || "http://localhost:8787";
     /** Netlify API（同源）—— 静态文件 + 轻 API（scenes/intel/mentors/health/usage） */
     var API_BASE = (typeof window !== "undefined" && window.API_BASE) || "";
-    /** Vercel API —— AI 生成端点（需要长超时，Netlify 10s 不够） */
-    var GENERATE_API_BASE = (typeof window !== "undefined" && window.GENERATE_API_BASE) || "https://song-portfolio-beige.vercel.app";
+    /** AI 生成端点（同源 Netlify Function，流式输出避免超时） */
+    var GENERATE_API_BASE = (typeof window !== "undefined" && window.GENERATE_API_BASE) || "";
     var SCENE_INTEL_CACHE = {};  // { sceneKey: { items, timeline, updated_at } }
     var INTEL_FETCH_IN_FLIGHT = null;
 
@@ -661,6 +661,18 @@
     }
 
     function applyHeaderFromScenario() {
+      /** 自定义场景：不依赖 scenes.json */
+      if (getScenarioKey() === "__custom__") {
+        var customName = (document.getElementById("custom-scene-name") || {}).value || "自定义场景";
+        var t = document.getElementById("page-title");
+        var s = document.getElementById("page-subtitle");
+        if (t) t.textContent = customName;
+        if (s) s.textContent = "基于大疆行业生态的低空经济解决方案";
+        document.title = customName + " · 解决方案工作台";
+        updateMedicalMapSectionVisibility();
+        syncSpatialFieldWithScenario();
+        return;
+      }
       var d = getData();
       if (!d) {
         updateMedicalMapSectionVisibility();
@@ -2550,29 +2562,228 @@
       });
     }
 
+
+    /** 从场景数据中提取关键参数，注入 AI prompt 以避免模型凭空编造 */
+    function buildAIContext(DATA) {
+      var blocks = [];
+      var ac = DATA.aircraft;
+      if (ac) {
+        var prim = ac.primary;
+        if (prim && prim.model) {
+          blocks.push("【主力机型】" + prim.model +
+            "，最大起飞重量" + (prim.maxTakeoffWeight || "?") +
+            "，最大载荷" + (prim.maxPayload || "?") + "kg" +
+            "，续航" + (prim.endurance && prim.endurance.dualBattery ? prim.endurance.dualBattery.maxFlightTime : (prim.endurance ? prim.endurance.maxFlightTime : "?")) +
+            "，抗风" + (prim.windResistance || "?") +
+            (prim.keyConstraint ? "，关键约束：" + String(prim.keyConstraint).slice(0, 200) : ""));
+        }
+        var recon = ac.reconnaissance;
+        if (recon && recon.model) {
+          blocks.push("【侦察机型】" + recon.model +
+            "，载荷" + (recon.maxPayload || "?") + "kg" +
+            "，续航" + (recon.endurance ? recon.endurance.maxFlightTime : "?") +
+            (recon.keyConstraint ? "，关键约束：" + String(recon.keyConstraint).slice(0, 200) : ""));
+        }
+      }
+      var sp = DATA.strategyPrinciples;
+      if (sp) {
+        var stratLines = [];
+        if (sp.modularPayload) stratLines.push("模块化载荷：" + String(sp.modularPayload).replace(/【.*?】/g, "").slice(0, 250));
+        if (sp.relayMode) stratLines.push("中继/系留：" + String(sp.relayMode).replace(/【.*?】/g, "").slice(0, 250));
+        if (sp.obliquePath) stratLines.push("路径策略：" + String(sp.obliquePath).replace(/【.*?】/g, "").slice(0, 150));
+        if (sp.precisionDelivery) stratLines.push("精准投送：" + String(sp.precisionDelivery).replace(/【.*?】/g, "").slice(0, 200));
+        if (stratLines.length) blocks.push("【策略原则】\n" + stratLines.join("\n"));
+      }
+      var comp = DATA.complianceRequirements || DATA.compliance;
+      if (comp && comp.length) {
+        var compLines = [];
+        comp.slice(0, 4).forEach(function (c) {
+          compLines.push(String(c).replace(/【.*?】/g, "").slice(0, 180));
+        });
+        if (compLines.length) blocks.push("【合规要求（摘要）】\n" + compLines.join("\n"));
+      }
+      var impl = DATA.implementationChecklist;
+      if (impl && impl.length) {
+        var implLines = [];
+        impl.slice(0, 4).forEach(function (item) {
+          implLines.push(String(item).replace(/【.*?】/g, "").slice(0, 150));
+        });
+        if (implLines.length) blocks.push("【实施路径参考】\n" + implLines.join("\n"));
+      }
+      var risk = DATA.riskWarning;
+      if (risk) {
+        var riskKeys = Object.keys(risk);
+        if (riskKeys.length) {
+          var riskLines = [];
+          riskKeys.forEach(function (k) {
+            riskLines.push(k + "：" + String(risk[k]).slice(0, 150));
+          });
+          blocks.push("【风险提示】\n" + riskLines.join("\n"));
+        }
+      }
+      var hints = DATA.tenderHints;
+      if (hints && hints.length) {
+        var hintLines = [];
+        hints.slice(0, 3).forEach(function (h) {
+          hintLines.push(String(h).replace(/【.*?】/g, "").slice(0, 150));
+        });
+        if (hintLines.length) blocks.push("【招投标提示】\n" + hintLines.join("\n"));
+      }
+      var cs = DATA.customerConcerns;
+      if (cs) {
+        var csLines = [];
+        if (cs.procurement && cs.procurement.script) csLines.push("采购关注：" + String(cs.procurement.script).slice(0, 200));
+        if (cs.business && cs.business.script) csLines.push("业务关注：" + String(cs.business.script).slice(0, 200));
+        if (cs.leadership && cs.leadership.script) csLines.push("领导关注：" + String(cs.leadership.script).slice(0, 200));
+        if (csLines.length) blocks.push("【客户关切】\n" + csLines.join("\n"));
+      }
+      // 前沿技术动态
+      if (AIRCRAFTS && AIRCRAFTS._emergingTech) {
+        var et = AIRCRAFTS._emergingTech;
+        var etLines = ["【前沿技术动态（2026年5月）】"];
+        var hfc = et.hydrogenFuelCell;
+        if (hfc) {
+          etLines.push("氢燃料电池：" + hfc.name + "，功率密度" + hfc.powerDensity + "，" + hfc.impact + "。来源：" + hfc.source + "。状态：" + hfc.status);
+        }
+        var lsb = et.lithiumSulfurBattery;
+        if (lsb) {
+          etLines.push("锂硫电池：" + lsb.name + "，能量密度" + lsb.energyDensity + "，" + lsb.impact + "。来源：" + lsb.source + "。状态：" + lsb.status);
+        }
+        if (etLines.length > 1) blocks.push(etLines.join("\n"));
+      }
+      return blocks.length ? blocks.join("\n\n") : "";
+    }
+
+    /** 为自定义场景提供可用机型目录参考 */
+    function buildAircraftCatalogForAI() {
+      if (!AIRCRAFTS || !Object.keys(AIRCRAFTS).length) return "";
+      var lines = ["【可用机型参考（大疆行业生态）】"];
+      Object.keys(AIRCRAFTS).forEach(function (k) {
+        var a = AIRCRAFTS[k];
+        if (!a || !a.model) return;
+        var info = a.model;
+        if (a.maxPayload !== undefined) info += "，载荷" + a.maxPayload + "kg";
+        if (a.endurance) {
+          if (a.endurance.maxFlightTime) info += "，续航" + a.endurance.maxFlightTime;
+          else if (a.endurance.dualBattery) info += "，续航" + a.endurance.dualBattery.maxFlightTime;
+        }
+        if (a.role) info += "，角色：" + a.role;
+        lines.push("- " + info);
+      });
+      // 前沿技术动态
+      if (AIRCRAFTS && AIRCRAFTS._emergingTech) {
+        var et2 = AIRCRAFTS._emergingTech;
+        lines.push("");
+        lines.push("【前沿技术动态（2026年5月·待机型厂商采纳）】");
+        if (et2.hydrogenFuelCell) {
+          lines.push("- 氢燃料电池：" + et2.hydrogenFuelCell.name + "，" + et2.hydrogenFuelCell.powerDensity + "，" + et2.hydrogenFuelCell.impact + "（状态：" + et2.hydrogenFuelCell.status + "）");
+        }
+        if (et2.lithiumSulfurBattery) {
+          lines.push("- 锂硫电池：" + et2.lithiumSulfurBattery.energyDensity + "，" + et2.lithiumSulfurBattery.impact + "（状态：" + et2.lithiumSulfurBattery.status + "）");
+        }
+      }
+      return lines.join("\n");
+    }
+
+    /** 修复 DeepSeek 输出中常见的 HTML 表格错误：
+     *  - <>text</th>  →  <td>text</td>  (空标签名)
+     *  - </>  →  删除
+     *  - <td15</td>  →  <td>15</td>  (缺失 >)
+     *  - <td10  →  <td>10</td>  (缺失 > 和结束标签)
+     *  - </th/>  →  </th>  (畸形自闭合)
+     */
+    function sanitizeAIHtml(html) {
+        if (!html) return html;
+        var s = html;
+        // 1. 删除 </> 空闭合标签
+        s = s.replace(/<\/>/g, '');
+        // 2. 删除 </th/> 畸形闭合
+        s = s.replace(/<\/th\/>/g, '</th>');
+        // 3. 修复 <> 开头的空标签名 → 替换为 <td>
+        s = s.replace(/<>/g, '<td>');
+        // 4. 修复 <td数字 模式：<td15</td> → <td>15</td>、<td110 → <td>110</td>
+        s = s.replace(/<td(\d+(?:\.\d+)?)([^>])/g, '<td>$1</td>$2');
+        // 5. 修复 <td数字> 模式：<td15> → <td>15</td>
+        s = s.replace(/<td(\d+(?:\.\d+)?)>/g, '<td>$1</td>');
+        // 6. 修复 <th数字 模式：<th15</th> → <th>15</th>
+        s = s.replace(/<th(\d+(?:\.\d+)?)([^>])/g, '<th>$1</th>$2');
+        s = s.replace(/<th(\d+(?:\.\d+)?)>/g, '<th>$1</th>');
+        // 7. 修复 <tr数字> 或 <tr数字 模式
+        s = s.replace(/<tr(\d+)([^>])/g, '<tr>$2');
+        s = s.replace(/<tr(\d+)>/g, '<tr>');
+        // 8. 修复缺失 > 的起始标签：<tag 后跟字母数字但没有 >
+        // 例如 <tdmodel → <td>model
+        s = s.replace(/<(td|th|tr)([a-zA-Z])/g, '<$1>$2');
+        // 9. 删除多余的 </td> 结束标签（如果前面没有对应的开始标签）
+        // 这一步保守处理：只删除紧跟在另一个 </td> 后面的 </td>
+        // 10. 修复常见缺失引号的属性（不影响表格渲染，跳过）
+        return s;
+    }
+
     function generateWithAI() {
       var btn = document.getElementById("btn-ai");
       if (!btn || btn.getAttribute("aria-busy") === "true") return;
 
-      var DATA = getData();
-      if (!DATA) return;
+      var isCustom = getScenarioKey() === "__custom__";
+      var customSceneName = "";
+      if (isCustom) {
+        customSceneName = (document.getElementById("custom-scene-name") || {}).value || "";
+        if (!customSceneName.trim()) {
+          alert("请输入自定义场景名称");
+          return;
+        }
+      }
 
-      var topic = str(DATA.displayName) + " - " + str(DATA.primaryScenario || "");
+      var DATA = isCustom ? null : getData();
+      if (!isCustom && !DATA) return;
+
       var h = readHeightMeters();
       var windRaw = document.getElementById("wind").value.trim();
       var wind = windRaw === "" ? NaN : parseFloat(windRaw);
+      var reqDesc = (document.getElementById("requirement-desc") || {}).value || "";
 
-      var extraParts = [
-        "场景：" + str(DATA.displayName),
-        "作业高度：" + h + "m",
-        Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s"
-      ].filter(Boolean);
+      var topic, extraParts;
+      if (isCustom) {
+        topic = customSceneName.trim();
+        extraParts = [
+          "场景类型：" + topic,
+          "作业高度：" + h + "m",
+          Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s",
+          reqDesc ? "客户需求描述：" + reqDesc : ""
+        ].filter(Boolean);
+      } else {
+        topic = str(DATA.displayName) + " - " + str(DATA.primaryScenario || "");
+        extraParts = [
+          "场景：" + str(DATA.displayName),
+          "作业高度：" + h + "m",
+          Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s",
+          reqDesc ? "客户补充需求：" + reqDesc : ""
+        ].filter(Boolean);
+      }
+
+      var sceneContext = DATA ? buildAIContext(DATA) : buildAircraftCatalogForAI();
+      if (sceneContext) {
+        extraParts.push("【以下为真实参数数据，请基于这些数据撰写方案，不要编造机型参数和法规条款】\n" + sceneContext);
+      }
       var extra = extraParts.join("；");
+
+      /** 自定义场景用最小 DATA 代用对象，供 briefingChrome 渲染标题栏 */
+      var chromeData = DATA || { displayName: customSceneName.trim() };
 
       btn.setAttribute("aria-busy", "true");
       btn.disabled = true;
       btn.innerHTML =
         '<span class="btn-generate-inner" role="status" aria-live="polite"><span class="btn-spinner" aria-hidden="true"></span><span>AI 生成中...</span></span>';
+
+      var out = document.getElementById("output");
+      var chrome = briefingChrome(chromeData);
+      out.innerHTML = chrome.start +
+        '<div class="proposal-content" style="white-space:pre-wrap;line-height:1.8;"></div>' +
+        chrome.end;
+      var contentEl = out.querySelector(".proposal-content");
+
+      var ctrl = new AbortController();
+      var timeoutId = setTimeout(function () { ctrl.abort(); }, 120_000);
 
       fetch(GENERATE_API_BASE + "/api/generate", {
         method: "POST",
@@ -2582,13 +2793,9 @@
           industry: "低空经济",
           audience: "政府",
           extra_context: extra,
-          scene_name: str(DATA.displayName)
+          scene_name: isCustom ? customSceneName.trim() : str(DATA.displayName)
         }),
-        signal: (function () {
-          var ctrl = new AbortController();
-          setTimeout(function () { ctrl.abort(); }, 120_000);
-          return ctrl.signal;
-        })()
+        signal: ctrl.signal
       })
         .then(function (res) {
           if (!res.ok) {
@@ -2596,42 +2803,84 @@
               throw new Error("API " + res.status + ": " + (t || "").slice(0, 200));
             });
           }
-          return res.json();
-        })
-        .then(function (result) {
-          var out = document.getElementById("output");
-          var chrome = briefingChrome(DATA);
-          var metaHtml =
-            '<p class="ai-meta" style="font-size:0.8rem;color:var(--muted);margin:0 0 1rem 0;">' +
-            "模型：" + escapeHtml(result.meta?.model || "deepseek-chat") +
-            " | Token：" + (result.meta?.input_tokens || 0) + "→" + (result.meta?.output_tokens || 0) +
-            " | 预估费用：¥" + (result.meta?.cost_est_cny || 0).toFixed(4) +
-            "</p>";
-          out.innerHTML =
-            chrome.start +
-            metaHtml +
-            '<div class="proposal-content" style="white-space:pre-wrap;line-height:1.8;">' +
-            escapeHtml(result.proposal || "") +
-            "</div>" +
-            chrome.end;
-          setBriefingActionsEnabled(true);
-          triggerBriefingPulse();
-          window.dispatchEvent(
-            new CustomEvent("briefing:rendered", {
-              detail: { ok: true, ai: true }
-            })
-          );
+
+          var reader = res.body.getReader();
+          var decoder = new TextDecoder();
+          var buffer = "";
+
+          var rawContent = "";
+
+          function pump() {
+            return reader.read().then(function (result) {
+              if (result.done) return;
+
+              buffer += decoder.decode(result.value, { stream: true });
+              var parts = buffer.split("\n\n");
+              buffer = parts.pop();
+
+              for (var i = 0; i < parts.length; i++) {
+                var lines = parts[i].split("\n");
+                for (var j = 0; j < lines.length; j++) {
+                  if (!lines[j].startsWith("data: ")) continue;
+                  try {
+                    var evt = JSON.parse(lines[j].slice(6));
+                    if (evt.type === "chunk" && contentEl) {
+                      rawContent += evt.content || "";
+                      // 流式阶段剥离 HTML 标签，显示纯文本预览
+                      contentEl.textContent = rawContent.replace(/<[^>]*>/g, "");
+                    }
+                    if (evt.type === "done") {
+                      clearTimeout(timeoutId);
+                      // 将完整 markdown 转为 HTML 渲染
+                      if (contentEl && rawContent.trim()) {
+                        contentEl.style.whiteSpace = "normal";
+                        contentEl.innerHTML = sanitizeAIHtml(rawContent);
+                        // 存储对话上下文，供追问使用
+                        currentConversation = {
+                            topic: topic,
+                            industry: "低空经济",
+                            audience: "政府",
+                            extra: extra,
+                            scene_name: isCustom ? customSceneName.trim() : str(DATA ? DATA.displayName : ""),
+                            _lastResponse: rawContent
+                        };
+                        showFollowUpSection();
+                      }
+                      var metaHtml =
+                        '<p class="ai-meta" style="font-size:0.8rem;color:var(--muted);margin:0 0 1rem 0;">' +
+                        "模型：" + escapeHtml(evt.meta?.model || "deepseek-chat") +
+                        " | Token：" + (evt.meta?.input_tokens || 0) + "→" + (evt.meta?.output_tokens || 0) +
+                        " | 预估费用：¥" + (evt.meta?.cost_est_cny || 0).toFixed(4) +
+                        "</p>";
+                      if (contentEl) contentEl.insertAdjacentHTML("beforebegin", metaHtml);
+                      setBriefingActionsEnabled(true);
+                      triggerBriefingPulse();
+                      window.dispatchEvent(
+                        new CustomEvent("briefing:rendered", { detail: { ok: true, ai: true } })
+                      );
+                    }
+                  } catch (_) {}
+                }
+              }
+              return pump();
+            });
+          }
+
+          return pump();
         })
         .catch(function (err) {
-          var out = document.getElementById("output");
-          var chrome = briefingChrome(DATA);
-          out.innerHTML =
-            chrome.start +
-            '<p style="margin:0;color:var(--warn);">AI 生成失败：' +
-            escapeHtml(err.message || "未知错误") +
-            (err.name === "AbortError" ? "（请求超时）" : "") +
-            "</p>" +
-            chrome.end;
+          if (err.name === "AbortError") {
+            if (contentEl && !contentEl.textContent.trim()) {
+              contentEl.textContent = "请求超时，请重试";
+            }
+          } else {
+            out.innerHTML =
+              chrome.start +
+              '<p style="margin:0;color:var(--warn);">AI 生成失败：' +
+              escapeHtml(err.message || "未知错误") +
+              "</p>" +
+              chrome.end;
+          }
           setBriefingActionsEnabled(true);
           triggerBriefingPulse();
           window.dispatchEvent(
@@ -2639,6 +2888,7 @@
           );
         })
         .finally(function () {
+          clearTimeout(timeoutId);
           btn.disabled = false;
           btn.removeAttribute("aria-busy");
           btn.textContent = "AI 生成方案";
@@ -2650,6 +2900,11 @@
       if (ex) {
         ex.disabled = !on;
         ex.setAttribute("aria-disabled", on ? "false" : "true");
+      }
+      var pdf = document.getElementById("btn-export-pdf");
+      if (pdf) {
+        pdf.disabled = !on;
+        pdf.setAttribute("aria-disabled", on ? "false" : "true");
       }
       var cp = document.getElementById("btn-copy");
       if (cp) {
@@ -2904,6 +3159,19 @@
       });
     }
 
+
+    function exportBriefingPDF() {
+        var target = document.querySelector("#output .briefing-wrap");
+        if (!target) {
+            alert("请先生成方案，再导出 PDF。");
+            return;
+        }
+        // 给打印元素临时添加 class 以便 print CSS 定位
+        target.classList.add("printing");
+        window.print();
+        target.classList.remove("printing");
+    }
+
     document.getElementById("output").addEventListener("click", function (e) {
       var copyBtn = e.target && e.target.closest && e.target.closest("#btn-copy");
       if (copyBtn) {
@@ -2934,6 +3202,272 @@
         });
     }
 
+
+    /** 追问迭代：存储当前对话上下文 */
+    var currentConversation = null;  // { topic, industry, audience, extra, scene_name, messages: [...] }
+
+    function showFollowUpSection() {
+        var el = document.getElementById("follow-up-section");
+        if (el) el.style.display = "block";
+    }
+
+    function hideFollowUpSection() {
+        var el = document.getElementById("follow-up-section");
+        if (el) el.style.display = "none";
+    }
+
+    function submitFollowUp() {
+        var btn = document.getElementById("btn-follow-up");
+        var input = document.getElementById("follow-up-input");
+        var status = document.getElementById("follow-up-status");
+        if (!btn || !input || !currentConversation) return;
+
+        var question = input.value.trim();
+        if (!question) {
+            alert("请输入追问内容");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "发送中...";
+        if (status) status.textContent = "正在生成...";
+
+        // 构建多轮对话：在已有历史基础上追加新问题
+        var conv = currentConversation;
+        var topic = conv.topic || "";
+        // 仅传原始上下文，追问内容通过 follow_up_question 单独传递
+        var extra = conv.extra || "";
+
+        var out = document.getElementById("output");
+        var contentEl = out ? out.querySelector(".proposal-content") : null;
+        if (!contentEl) return;
+
+        // 追加加载提示
+        var loadingDiv = document.createElement("div");
+        loadingDiv.className = "follow-up-loading";
+        loadingDiv.innerHTML = '<p style="color:var(--muted);border-top:1px solid var(--border-subtle);padding-top:1rem;margin-top:1rem;">⏳ 正在生成回复...</p>';
+        contentEl.appendChild(loadingDiv);
+
+        var ctrl = new AbortController();
+        var timeoutId = setTimeout(function () { ctrl.abort(); }, 120_000);
+
+        fetch(GENERATE_API_BASE + "/api/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                topic: topic,
+                industry: conv.industry || "低空经济",
+                audience: conv.audience || "政府",
+                extra_context: extra,
+                scene_name: conv.scene_name || "",
+                follow_up_to: currentConversation._lastResponse || "",
+                follow_up_question: question
+            }),
+            signal: ctrl.signal
+        })
+            .then(function (res) {
+                if (!res.ok) {
+                    return res.text().then(function (t) {
+                        throw new Error("API " + res.status + ": " + (t || "").slice(0, 200));
+                    });
+                }
+                var reader = res.body.getReader();
+                var decoder = new TextDecoder();
+                var buffer = "";
+                var followUpContent = "";
+
+                // 移除加载提示，添加分隔线
+                if (loadingDiv.parentNode) loadingDiv.parentNode.removeChild(loadingDiv);
+                var sepDiv = document.createElement("div");
+                sepDiv.innerHTML = '<hr style="border:none;border-top:1px solid var(--border-subtle);margin:1rem 0;">';
+                contentEl.appendChild(sepDiv);
+                var followDiv = document.createElement("div");
+                followDiv.className = "follow-up-response";
+                contentEl.appendChild(followDiv);
+
+                function pump() {
+                    return reader.read().then(function (result) {
+                        if (result.done) return;
+                        buffer += decoder.decode(result.value, { stream: true });
+                        var parts = buffer.split("\n\n");
+                        buffer = parts.pop();
+                        for (var i = 0; i < parts.length; i++) {
+                            var lines = parts[i].split("\n");
+                            for (var j = 0; j < lines.length; j++) {
+                                if (!lines[j].startsWith("data: ")) continue;
+                                try {
+                                    var evt = JSON.parse(lines[j].slice(6));
+                                    if (evt.type === "chunk") {
+                                        followUpContent += evt.content || "";
+                                        followDiv.textContent = followUpContent.replace(/<[^>]*>/g, "");
+                                    }
+                                    if (evt.type === "done") {
+                                        clearTimeout(timeoutId);
+                                        followDiv.style.whiteSpace = "normal";
+                                        followDiv.innerHTML = sanitizeAIHtml(followUpContent);
+                                        currentConversation._lastResponse = followUpContent;
+                                    }
+                                } catch (_) {}
+                            }
+                        }
+                        return pump();
+                    });
+                }
+                return pump();
+            })
+            .catch(function (err) {
+                if (err.name !== "AbortError") {
+                    if (loadingDiv.parentNode) loadingDiv.parentNode.removeChild(loadingDiv);
+                    var errDiv = document.createElement("div");
+                    errDiv.innerHTML = '<p style="color:var(--warn);">追问失败：' + escapeHtml(err.message || "未知错误") + '</p>';
+                    contentEl.appendChild(errDiv);
+                }
+            })
+            .finally(function () {
+                clearTimeout(timeoutId);
+                btn.disabled = false;
+                btn.textContent = "发送追问";
+                if (status) status.textContent = "";
+                input.value = "";
+            });
+    }
+
+    /** 政策合规体检 */
+    var COMPLIANCE_SYSTEM = "你是一位低空经济政策法规专家，专注无人机行业合规审查。你的输出必须严格基于真实法规条款。不确定处标注「待核实」。输出中文，使用 HTML 标签格式化。";
+
+    function runComplianceCheck() {
+        var btn = document.getElementById("btn-compliance-check");
+        if (!btn || btn.getAttribute("aria-busy") === "true") return;
+
+        var isCustom = getScenarioKey() === "__custom__";
+        var sceneName = isCustom
+            ? (document.getElementById("custom-scene-name") || {}).value || ""
+            : getScenarioKey();
+
+        if (!sceneName.trim()) {
+            alert("请先选择或输入场景");
+            return;
+        }
+
+        var DATA = isCustom ? null : getData();
+        var reqDesc = (document.getElementById("requirement-desc") || {}).value || "";
+
+        var promptParts = [
+            "场景：" + sceneName,
+            "行业方向：低空经济",
+            "请对该场景进行政策法规合规体检，输出要求：",
+            "<h3>1. 适用法规清单</h3>列出所有相关的法规、标准、条例（含条款号）",
+            "<h3>2. 合规检查项</h3>逐条列出需要满足的合规要求",
+            "<h3>3. 当前差距分析</h3>基于场景描述，识别可能存在的合规差距",
+            "<h3>4. 合规建议</h3>给出具体的合规操作建议",
+            "只引用已核实的法规条款，不确定处标注「待核实」。"
+        ];
+
+        if (reqDesc) {
+            promptParts.push("项目补充描述：" + reqDesc);
+        }
+
+        if (DATA) {
+            var ctx = buildAIContext(DATA);
+            if (ctx) {
+                promptParts.push("【场景参考数据】\n" + ctx);
+            }
+        }
+
+        var prompt = promptParts.join("\n");
+
+        btn.setAttribute("aria-busy", "true");
+        btn.disabled = true;
+        btn.textContent = "体检中...";
+
+        var out = document.getElementById("output");
+        var isCustom2 = isCustom;
+        var sceneName2 = sceneName;
+        var chromeData = DATA || { displayName: sceneName2 };
+        var chrome = briefingChrome(chromeData);
+        out.innerHTML = chrome.start +
+            '<div class="compliance-content" style="white-space:pre-wrap;line-height:1.8;"></div>' +
+            chrome.end;
+        var contentEl = out.querySelector(".compliance-content");
+
+        var ctrl = new AbortController();
+        var timeoutId = setTimeout(function () { ctrl.abort(); }, 120_000);
+
+        fetch(GENERATE_API_BASE + "/api/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                topic: sceneName2 + " - 合规体检",
+                industry: "低空经济",
+                audience: "政府",
+                extra_context: prompt,
+                scene_name: sceneName2,
+                mode: "compliance"
+            }),
+            signal: ctrl.signal
+        })
+            .then(function (res) {
+                if (!res.ok) {
+                    return res.text().then(function (t) {
+                        throw new Error("API " + res.status + ": " + (t || "").slice(0, 200));
+                    });
+                }
+                var reader = res.body.getReader();
+                var decoder = new TextDecoder();
+                var buffer = "";
+                var rawContent = "";
+
+                function pump() {
+                    return reader.read().then(function (result) {
+                        if (result.done) return;
+                        buffer += decoder.decode(result.value, { stream: true });
+                        var parts = buffer.split("\n\n");
+                        buffer = parts.pop();
+                        for (var i = 0; i < parts.length; i++) {
+                            var lines = parts[i].split("\n");
+                            for (var j = 0; j < lines.length; j++) {
+                                if (!lines[j].startsWith("data: ")) continue;
+                                try {
+                                    var evt = JSON.parse(lines[j].slice(6));
+                                    if (evt.type === "chunk" && contentEl) {
+                                        rawContent += evt.content || "";
+                                        contentEl.textContent = rawContent.replace(/<[^>]*>/g, "");
+                                    }
+                                    if (evt.type === "done") {
+                                        clearTimeout(timeoutId);
+                                        if (contentEl && rawContent.trim()) {
+                                            contentEl.style.whiteSpace = "normal";
+                                            contentEl.innerHTML = sanitizeAIHtml(rawContent);
+                                        }
+                                        setBriefingActionsEnabled(true);
+                                        triggerBriefingPulse();
+                                        hideFollowUpSection();
+                                        currentConversation = null;
+                                    }
+                                } catch (_) {}
+                            }
+                        }
+                        return pump();
+                    });
+                }
+                return pump();
+            })
+            .catch(function (err) {
+                if (err.name !== "AbortError") {
+                    out.innerHTML = chrome.start +
+                        '<p style="color:var(--warn);">合规体检失败：' + escapeHtml(err.message || "未知错误") + '</p>' +
+                        chrome.end;
+                }
+                setBriefingActionsEnabled(true);
+            })
+            .finally(function () {
+                clearTimeout(timeoutId);
+                btn.disabled = false;
+                btn.removeAttribute("aria-busy");
+                btn.textContent = "政策合规体检";
+            });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
       loadAmap();
       loadScenarioData().then(function () {
@@ -2945,15 +3479,23 @@
           var out = document.getElementById("output");
           if (out) out.innerHTML = "";
           setBriefingActionsEnabled(false);
+          hideFollowUpSection();
+          currentConversation = null;
           var ws = window.WorkspaceStore && window.WorkspaceStore.load();
           if (ws) {
             ws.selectedScenarioId = getScenarioKey();
             window.WorkspaceStore.save(ws);
           }
+          /** 自定义场景：显示名称输入框 */
+          var customRow = document.getElementById("row-custom-scene");
+          if (customRow) customRow.hidden = getScenarioKey() !== "__custom__";
         });
         document.getElementById("btn").addEventListener("click", render);
         document.getElementById("btn-ai").addEventListener("click", generateWithAI);
         document.getElementById("btn-export").addEventListener("click", exportBriefingPng);
+        document.getElementById("btn-export-pdf").addEventListener("click", exportBriefingPDF);
+        document.getElementById("btn-follow-up").addEventListener("click", submitFollowUp);
+        document.getElementById("btn-compliance-check").addEventListener("click", runComplianceCheck);
         initWindBeaufortControls();
         initBriefingVideoPlayOverlay();
         var hSel = document.getElementById("height");

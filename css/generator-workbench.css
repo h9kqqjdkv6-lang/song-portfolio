@@ -345,6 +345,38 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--input-bg);
+      border: 1px solid color-mix(in srgb, var(--theme-color) 28%, var(--border));
+      border-radius: var(--radius-sm);
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    textarea {
+      min-height: 4.5rem;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
+      box-shadow:
+        0 0 0 3px rgba(167, 139, 250, 0.18),
+        0 2px 8px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
     .row {
       margin-bottom: 1rem;
     }
@@ -732,6 +764,90 @@
       padding: 1.25rem 1.35rem;
       line-height: 1.6;
     }
+    /* —— AI 生成方案：表格样式 —— */
+    .proposal-content table, .compliance-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        background: color-mix(in srgb, var(--surface) 60%, transparent);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xs);
+        overflow: hidden;
+    }
+
+    .proposal-content th, .compliance-content th {
+        background: color-mix(in srgb, var(--tog-accent) 14%, var(--surface));
+        color: var(--text-heading);
+        font-weight: 700;
+        text-align: left;
+        padding: 0.55rem 0.75rem;
+        border-bottom: 2px solid var(--tog-accent-soft);
+        font-size: 0.8125rem;
+        letter-spacing: 0.03em;
+    }
+
+    .proposal-content td, .compliance-content td {
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid var(--border-subtle);
+        color: var(--text);
+        vertical-align: top;
+    }
+
+    .proposal-content tr:last-child td, .compliance-content tr:last-child td {
+        border-bottom: none;
+    }
+
+    .proposal-content tr:nth-child(even) td, .compliance-content tr:nth-child(even) td {
+        background: color-mix(in srgb, var(--surface) 40%, transparent);
+    }
+
+    .proposal-content td:first-child, .compliance-content td:first-child,
+    .proposal-content th:first-child {
+        font-weight: 600;
+    }
+
+    /* 数值列右对齐 */
+    .proposal-content td:nth-child(n+2), .compliance-content td:nth-child(n+2) {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum" 1;
+    }
+
+    .proposal-content h3, .compliance-content h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-heading);
+        margin: 1.5rem 0 0.75rem;
+        padding-bottom: 0.35rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .proposal-content strong, .compliance-content strong {
+        color: var(--tog-accent);
+        font-weight: 700;
+    }
+
+    .proposal-content p, .compliance-content p {
+        margin: 0.5rem 0;
+        line-height: 1.75;
+    }
+
+    .proposal-content ul, .proposal-content ol, .compliance-content ul, .compliance-content ol {
+        margin: 0.5rem 0;
+        padding-left: 1.25rem;
+    }
+
+    .proposal-content li, .compliance-content li {
+        margin: 0.25rem 0;
+        line-height: 1.65;
+    }
+
+    .proposal-content, .compliance-content {
+        color: var(--text);
+    }
+
 
     .out-block {
       margin-bottom: var(--section-gap);
@@ -3338,6 +3454,168 @@
       font-size: 0.6875rem;
       color: var(--muted);
     }
+    /* —— 追问迭代优化 —— */
+    #follow-up-section {
+        padding: 0.85rem 1rem;
+    }
+
+    #follow-up-section textarea {
+        width: 100%;
+        min-height: 3.5rem;
+        background: var(--input-bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xs);
+        color: var(--text);
+        padding: 0.55rem 0.65rem;
+        font: inherit;
+        font-size: 0.875rem;
+        line-height: 1.55;
+        resize: vertical;
+        transition: border-color 0.2s ease-out;
+    }
+
+    #follow-up-section textarea:focus {
+        outline: none;
+        border-color: var(--tog-accent);
+        box-shadow: 0 0 0 2px var(--tog-accent-soft);
+    }
+
+    .btn-follow-up {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.45rem 0.95rem;
+        font: inherit;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text-heading);
+        background: var(--tog-accent);
+        border: none;
+        border-radius: var(--radius-xs);
+        cursor: pointer;
+        transition: opacity 0.2s ease-out;
+    }
+
+    .btn-follow-up:hover {
+        opacity: 0.88;
+    }
+
+    .btn-follow-up:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    /* —— PDF 导出按钮 —— */
+    .btn-export-pdf {
+        display: block;
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.55rem 0.85rem;
+        font: inherit;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        color: var(--text-heading);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xs);
+        cursor: pointer;
+        text-align: center;
+        transition: border-color 0.2s ease-out, background 0.2s ease-out;
+    }
+
+    .btn-export-pdf:hover {
+        border-color: var(--tog-accent);
+        background: color-mix(in srgb, var(--tog-accent) 8%, var(--surface));
+    }
+
+    .btn-export-pdf:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    /* —— 打印样式（PDF 导出） —— */
+    @media print {
+        body {
+            background: #fff !important;
+            color: #000 !important;
+            font-size: 11pt;
+        }
+
+        .tog-sidebar,
+        .tog-rail,
+        .tog-top-bar,
+        .tog-footer,
+        .feedback-fab--tog,
+        .tog-brief-video-slot,
+        .case-breakdown,
+        .tog-panel-footer-note,
+        .btn-copy-brief,
+        #follow-up-section,
+        .tog-backdrop {
+            display: none !important;
+        }
+
+        .tog-main {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+        }
+
+        #output {
+            width: 100% !important;
+        }
+
+        .briefing-wrap {
+            box-shadow: none !important;
+            border: 1px solid #ccc !important;
+            page-break-inside: avoid;
+        }
+
+        .proposal-content table {
+            border: 1px solid #000 !important;
+        }
+
+        .proposal-content th {
+            background: #e0e0e0 !important;
+            color: #000 !important;
+            border-bottom: 2px solid #000 !important;
+        }
+
+        .proposal-content td {
+            border-bottom: 1px solid #ccc !important;
+            color: #000 !important;
+        }
+
+        .proposal-content h3 {
+            color: #000 !important;
+            border-bottom-color: #ccc !important;
+        }
+
+        .proposal-content strong {
+            color: #000 !important;
+        }
+
+        @page {
+            margin: 1.5cm;
+        }
+    }
+
+    /* —— 合规体检按钮 —— */
+    #btn-compliance-check {
+        background: color-mix(in srgb, var(--tog-accent-2) 18%, var(--surface));
+        border-color: var(--tog-accent-2);
+        color: var(--tog-accent-2);
+        font-weight: 700;
+    }
+
+    #btn-compliance-check:hover {
+        background: color-mix(in srgb, var(--tog-accent-2) 28%, var(--surface));
+    }
+
+    #btn-compliance-check:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
 
     .feedback-fab--tog {
       z-index: 100;
