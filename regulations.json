@@ -1,0 +1,153 @@
+{
+  "version": "1.0",
+  "updated": "2026-05-18",
+  "sources": [
+    "CCAR-92《民用无人驾驶航空器运行安全管理规则》",
+    "《无人驾驶航空器飞行管理暂行条例》（国务院令第761号）",
+    "《中华人民共和国民用航空法》（2026年修订版）",
+    "深圳、合肥、成都、广州、杭州地方低空经济条例"
+  ],
+  "regulations": [
+    {
+      "id": "civil-aviation-law-2026",
+      "title": "《中华人民共和国民用航空法》（2026年修订版）",
+      "effective": "2026-07-01",
+      "level": "法律",
+      "summary": "首次全面系统修订，16章262条。新增第225条低空经济专项条款，新增第十三章'发展促进'，新增无人驾驶航空器全生命周期适航管理（第34条）",
+      "categories": ["空域", "适航", "运营"]
+    },
+    {
+      "id": "uav-temp-regulations",
+      "title": "《无人驾驶航空器飞行管理暂行条例》",
+      "effective": "2024-01-01",
+      "level": "行政法规",
+      "summary": "中国首部专门针对无人驾驶航空器的行政法规。实名登记制度、空域分类（管制空域/适飞空域）、航空器分类规则、处罚规则",
+      "categories": ["空域", "运营", "保险"]
+    },
+    {
+      "id": "ccar-92",
+      "title": "CCAR-92《民用无人驾驶航空器运行安全管理规则》",
+      "effective": "2024-01-01",
+      "level": "部门规章",
+      "summary": "《暂行条例》的操作性配套规章。适航管理（92.327/343条）、运营合格证OC、设计保证系统（92.323条）、四证链条TC→PC→AC→OC",
+      "categories": ["适航", "运营"]
+    },
+    {
+      "id": "uom-registration",
+      "title": "UOM实名登记制度",
+      "effective": "2024-01-01",
+      "level": "部门规章",
+      "categories": ["运营"],
+      "summary": "所有民用无人驾驶航空器须在uom.caac.gov.cn完成实名登记并张贴二维码。违反者200元以下罚款，严重者2000~2万元"
+    }
+  ],
+  "airspace_classification": {
+    "description": "条例第19条空域分类",
+    "controlled_airspace": "真高120米以上 + 机场/军事/核/文保等8类区域上空。须提前1日12时前申请",
+    "free_airspace": "管制空域以外，微型/轻型/小型无人机在120米以下可自由飞行"
+  },
+  "aircraft_classification": {
+    "微型": { "empty_weight_kg": "<0.25", "license_required": false },
+    "轻型": { "empty_weight_kg": "≤4", "mtow_kg": "≤7", "license_required": false, "note": "需培训合格证" },
+    "小型": { "empty_weight_kg": "≤15", "mtow_kg": "≤25", "license_required": true },
+    "中型": { "mtow_kg": "≤150", "license_required": true },
+    "大型": { "mtow_kg": ">150", "license_required": true }
+  },
+  "penalties": {
+    "no_registration": { "amount": "200元以下；严重2000~2万元", "authority": "公安机关" },
+    "unauthorized_flight": { "amount": "500元以下；严重没收+1000~1万元", "authority": "公安机关" },
+    "no_oc": { "amount": "5万~50万元", "authority": "民航部门" },
+    "no_license": { "amount": "5000~5万元", "authority": "民航部门" },
+    "no_insurance": { "amount": "2000~2万元", "authority": "民航部门" },
+    "detention_2026": { "amount": "行政拘留5~15日", "note": "2026年《治安管理处罚法》新增", "authority": "公安机关" },
+    "new_aviation_law_max": { "amount": "最高200万元", "note": "2026年修订《民用航空法》" }
+  },
+  "certification_chain": {
+    "description": "CCAR-92四证链条",
+    "steps": [
+      { "cert": "TC", "name": "型号合格证", "duration": "3-5年" },
+      { "cert": "PC", "name": "生产许可证", "duration": "3-6个月" },
+      { "cert": "AC", "name": "单机适航证", "duration": "5-10工作日" },
+      { "cert": "OC", "name": "运营合格证", "duration": "1年以上" }
+    ]
+  },
+  "city_regulations": [
+    {
+      "city": "深圳",
+      "name": "《深圳经济特区低空经济产业促进条例》",
+      "effective": "2024年初",
+      "significance": "全国首部低空经济地方立法",
+      "highlights": [
+        "首次以立法确立'分层分类'空域动态管理",
+        "'条例+行动计划+若干措施'三级体系",
+        "军地民协同运行机制",
+        "建设SILAS'低空大脑'"
+      ],
+      "achievements": "2024年低空产值超900亿元，1900+企业"
+    },
+    {
+      "city": "合肥",
+      "name": "《合肥市支持低空经济发展若干政策》",
+      "effective": "2024→2025升级版",
+      "significance": "eVTOL商业运营最快实践者",
+      "highlights": [
+        "全球首张载人OC证（2025.3.28合翼航空×亿航）",
+        "最高单项奖补3000万元",
+        "骆岗公园→'五圆五线'城市空中交通网"
+      ],
+      "philosophy": "'先飞起来再完善规则'"
+    },
+    {
+      "city": "成都",
+      "name": "'低空经济14条'（成发改基础规〔2025〕167号）",
+      "effective": "2025.6",
+      "significance": "工业无人机产业基础最强",
+      "highlights": [
+        "适航取证最高奖励1500万元",
+        "工业无人机全链补贴",
+        "eVTOL试点六城之一"
+      ]
+    },
+    {
+      "city": "广州",
+      "name": "低空经济发展条例（推进中）",
+      "status": "立法推进中",
+      "highlights": [
+        "2027年建成100个起降点",
+        "粤港澳跨境飞行规划"
+      ]
+    },
+    {
+      "city": "杭州",
+      "name": "低空经济产业促进条例（推进中）",
+      "status": "立法推进中",
+      "highlights": [
+        "数字经济+低空融合",
+        "城市治理场景先行"
+      ]
+    }
+  ],
+  "standards": {
+    "framework_2025": {
+      "title": "《低空经济标准体系建设指南（2025年版）》",
+      "issuer": "市场监管总局、中央空管办、发改委、工信部等十部门",
+      "date": "2025-12-11",
+      "core_domains": ["低空航空器", "低空基础设施", "低空空中交通管理(UTM)", "安全监管", "应用场景(11个领域)"],
+      "timeline": "2027年基本建立；2030年标准超过300项"
+    },
+    "airworthiness_standards": {
+      "title": "《限用类无人驾驶航空器系统适航标准》《动力提升航空器适航标准》",
+      "date": "2025-12",
+      "note": "中国首部载人eVTOL专用适航标准"
+    }
+  },
+  "utm_framework": {
+    "concept": "四张网",
+    "layers": [
+      { "name": "设施网", "description": "物理起降场" },
+      { "name": "空联网", "description": "5G-A/北斗/通感一体化" },
+      { "name": "航路网", "description": "空域数字化" },
+      { "name": "服务网", "description": "飞行监管平台" }
+    ]
+  }
+}

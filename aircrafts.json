@@ -219,6 +219,46 @@
     "endurance": "41分钟（理论）",
     "role": "可选：超大面积首轮低空走廊侦察；主作业链仍以 M400 RTK 与下列 SOP 为准。"
   },
+  "EH216-S": {
+    "model": "亿航 EH216-S",
+    "type": "多旋翼eVTOL",
+    "maxPayload": 200,
+    "maxTakeoffWeight": "650kg",
+    "endurance": "30km（最大航程）",
+    "speed": "130km/h（巡航）",
+    "propulsion": "纯电",
+    "certificationStatus": "四证齐全（TC+PC+AC+OC）",
+    "price": "约239万/台",
+    "keyConstraint": "航程仅30km；适航已通过但载人运营成本高；无专门消防版本",
+    "applicableScenes": ["公安执法", "医疗应急"]
+  },
+  "V2000CG": {
+    "model": "峰飞V2000CG凯瑞鸥",
+    "type": "复合翼eVTOL",
+    "maxPayload": 400,
+    "maxTakeoffWeight": "2吨级",
+    "endurance": "200km（最大航程）",
+    "speed": "200km/h（巡航）",
+    "propulsion": "纯电（宁德时代投资）",
+    "certificationStatus": "三证齐全已交付（TC+PC+AC）",
+    "price": "待核实",
+    "keyConstraint": "纯电航程200km，消防版本尚未量产；应用案例多在物流运输",
+    "firefightingVersion": "可搭载4×100kg灭火弹",
+    "applicableScenes": ["高楼灭火", "山林搜救"]
+  },
+  "R6000": {
+    "model": "联合飞机镧影R6000",
+    "type": "倾转旋翼",
+    "maxPayload": 2000,
+    "maxTakeoffWeight": "6吨级",
+    "endurance": "4000km（最大航程）",
+    "speed": "550km/h（巡航）",
+    "propulsion": "燃油涡轴（中国航发AES100）",
+    "certificationStatus": "2025.12首飞，取证中（预计3-5年）",
+    "price": "待披露",
+    "keyConstraint": "适航取证至少3-5年，短期不可用；倾转旋翼技术复杂度高",
+    "applicableScenes": []
+  },
   "_emergingTech": {
     "note": "以下为2026年5月前沿技术动态，尚未进入量产产品，但可能影响方案选型",
     "hydrogenFuelCell": {

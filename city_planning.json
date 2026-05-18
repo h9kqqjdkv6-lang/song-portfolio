@@ -1,0 +1,93 @@
+{
+  "version": "1.0",
+  "updated": "2026-05-18",
+  "sources": [
+    "《深圳经济特区低空经济产业促进条例》",
+    "深圳SILAS智能融合低空系统",
+    "各城市十四五规划/低空经济专项规划"
+  ],
+  "city_profiles": [
+    {
+      "city": "深圳",
+      "strategy": "先发+系统型",
+      "core_indicator": "低空经济产值",
+      "core_value": "900亿元(2024)",
+      "enterprise_count": 1900,
+      "milestones": [
+        "全国首部低空经济地方立法",
+        "SILAS低空大脑上线",
+        "2026年目标: 起降点1200+、航线1000+、5G-A基站4967",
+        "无人机载货飞行100万+架次/年"
+      ],
+      "infrastructure_2026": {
+        "takeoff_points": "1200+",
+        "air_routes": "1000+",
+        "5ga_stations": 4967,
+        "digital_twin": "SILAS系统(micro-service+digital-twin)",
+        "navigation": "北斗高精度+5G-A通感一体化"
+      },
+      "utm_system": "SILAS(智能融合低空系统)"
+    },
+    {
+      "city": "合肥",
+      "strategy": "场景先行型",
+      "core_value": "eVTOL商业运营全国首个",
+      "milestones": [
+        "全球首张载人OC证(2025.3.28)",
+        "骆岗公园→五圆五线城市空中交通网",
+        "亿航VT35总部落户",
+        "最高单项奖补3000万元"
+      ]
+    },
+    {
+      "city": "成都",
+      "strategy": "工业无人机产业主导型",
+      "core_value": "工业无人机产业基础最强",
+      "milestones": [
+        "eVTOL试点六城之一(2024.11获批)",
+        "适航取证最高奖励1500万元",
+        "工业无人机全链补贴"
+      ]
+    },
+    {
+      "city": "广州",
+      "strategy": "大湾区枢纽型",
+      "milestones": [
+        "2027年建成100个起降点",
+        "粤港澳跨境飞行规划",
+        "低空经济发展条例(推进中)"
+      ]
+    },
+    {
+      "city": "杭州",
+      "strategy": "数字经济融合型",
+      "milestones": [
+        "数字经济+低空融合",
+        "城市治理场景先行",
+        "低空经济产业促进条例(推进中)"
+      ]
+    }
+  ],
+  "scenario_strategy_mapping": [
+    {
+      "scenario": "高楼灭火",
+      "preferred_cities": ["深圳", "广州"],
+      "notes": "超高层建筑密度高，消防压力大，政府财政充裕"
+    },
+    {
+      "scenario": "山林搜救",
+      "preferred_cities": ["成都", "杭州"],
+      "notes": "山地地形多，现有救援体系响应慢"
+    },
+    {
+      "scenario": "公安执法",
+      "preferred_cities": ["深圳", "合肥"],
+      "notes": "两地已建成城市级无人机调度系统"
+    },
+    {
+      "scenario": "医疗应急",
+      "preferred_cities": ["广州", "杭州"],
+      "notes": "医疗资源集中、跨区域运输需求大"
+    }
+  ]
+}
