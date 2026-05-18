@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>底层能力系统 · 人的操作系统</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh;overflow-x:hidden}
+  .header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:1px solid #30363d;padding:40px 48px 32px}
+  .header h1{font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,#58a6ff,#a371f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+  .header .subtitle{color:#8b949e;font-size:1rem;font-weight:300;letter-spacing:.3px}
+  .header .stats{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap}
+  .header .stat{display:flex;flex-direction:column;align-items:center}
+  .header .stat-num{font-size:1.6rem;font-weight:700;color:#a371f7}
+  .header .stat-label{font-size:.7rem;color:#8b949e;text-transform:uppercase;letter-spacing:1px}
+  .status-bar{background:#161b22;border-bottom:1px solid #21262d;padding:12px 48px;display:flex;align-items:center;gap:16px;font-size:.85rem}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:#3fb950;display:inline-block}
+  .status-text{color:#8b949e}
+  .status-text strong{color:#e0e0e0}
+  .main{display:flex;max-width:1440px;margin:0 auto;padding:24px 48px;gap:32px;min-height:calc(100vh - 200px)}
+  .tree-panel{flex:1;min-width:0}
+  .detail-panel{width:380px;flex-shrink:0;position:sticky;top:24px;align-self:flex-start;max-height:calc(100vh - 200px);overflow-y:auto}
+  .pillar{border:1px solid #21262d;border-radius:12px;margin-bottom:16px;overflow:hidden;transition:border-color .2s}
+  .pillar:hover{border-color:#30363d}
+  .pillar-header{display:flex;align-items:center;padding:16px 20px;cursor:pointer;background:#161b22;user-select:none;gap:12px;transition:background .2s}
+  .pillar-header:hover{background:#1c2128}
+  .pillar-header .icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+  .pillar-header .info{flex:1;min-width:0}
+  .pillar-header .info h2{font-size:1rem;font-weight:600;color:#e0e0e0}
+  .pillar-header .info .desc{font-size:.78rem;color:#8b949e;margin-top:2px}
+  .pillar-header .count{font-size:.78rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:10px}
+  .pillar-header .arrow{color:#8b949e;font-size:.8rem;transition:transform .3s}
+  .pillar-header.collapsed .arrow{transform:rotate(-90deg)}
+  .topic-list{padding:8px 16px 12px}
+  .pillar.collapsed .topic-list{display:none}
+  .topic{display:flex;align-items:center;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s;gap:10px}
+  .topic:hover{background:#1c2128}
+  .topic.active{background:#1f384f;border:1px solid #1f6feb40}
+  .topic .t-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+  .topic .t-info{flex:1;min-width:0}
+  .topic .t-info .t-name{font-size:.88rem;font-weight:500;color:#e0e0e0}
+  .topic .t-info .t-desc{font-size:.72rem;color:#8b949e;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .topic .t-size{font-size:.7rem;color:#6e7681;background:#161b22;padding:1px 7px;border-radius:6px;white-space:nowrap}
+  .topic .t-link{cursor:pointer;font-size:.75rem;color:#484f58;padding:2px 5px;border-radius:4px;transition:color .2s;text-decoration:none}
+  .topic .t-link:hover{color:#a371f7}
+  .detail-card{background:#161b22;border:1px solid #21262d;border-radius:12px;padding:24px}
+  .detail-card .empty{text-align:center;padding:40px 20px;color:#484f58}
+  .detail-card .empty .empty-icon{font-size:2.5rem;margin-bottom:12px}
+  .detail-card .empty .empty-text{font-size:.9rem}
+  .detail-card .d-header{margin-bottom:16px}
+  .detail-card .d-header .d-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:8px}
+  .detail-card .d-header h3{font-size:1.1rem;font-weight:600;color:#e0e0e0}
+  .detail-card .d-header .d-level{font-size:.75rem;color:#8b949e;margin-top:2px}
+  .detail-card .d-section{margin-bottom:12px}
+  .detail-card .d-section .d-label{font-size:.7rem;color:#484f58;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+  .detail-card .d-section .d-value{font-size:.85rem;color:#c9d1d9;line-height:1.5}
+  .detail-card .d-section .d-tags{display:flex;flex-wrap:wrap;gap:6px}
+  .detail-card .d-section .d-tag{font-size:.72rem;color:#8b949e;background:#21262d;padding:2px 8px;border-radius:4px}
+  .detail-card .d-path{background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:10px 12px;margin-top:12px;display:flex;align-items:center;gap:8px}
+  .detail-card .d-path code{font-size:.75rem;color:#8b949e;flex:1;word-break:break-all}
+  .detail-card .d-path .copy-btn{cursor:pointer;font-size:.7rem;color:#a371f7;background:#1f384f;border:none;padding:4px 8px;border-radius:4px;white-space:nowrap}
+  .detail-card .d-path .copy-btn:hover{background:#1f6feb40}
+  .learning-paths{padding:24px 48px 48px;max-width:1440px;margin:0 auto}
+  .learning-paths h3{font-size:1.1rem;font-weight:600;margin-bottom:16px;color:#e0e0e0}
+  .paths-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .path-card{background:#161b22;border:1px solid #21262d;border-radius:12px;padding:16px 20px;transition:border-color .2s}
+  .path-card:hover{border-color:#30363d}
+  .path-card h4{font-size:.9rem;font-weight:600;color:#a371f7;margin-bottom:4px}
+  .path-card .p-role{font-size:.75rem;color:#8b949e;margin-bottom:8px}
+  .path-card .p-steps{list-style:none;padding:0;margin:0}
+  .path-card .p-steps li{font-size:.82rem;color:#c9d1d9;padding:4px 0;border-bottom:1px solid #21262d}
+  .path-card .p-steps li:last-child{border-bottom:none}
+  .path-card .p-steps li .step-num{color:#484f58;margin-right:6px}
+  .path-card.p5{background:#1c2128;border-color:#f0883e40}
+  .path-card.p5:hover{border-color:#f0883e80}
+  .path-card.p5 h4{color:#f0883e}
+  @media(max-width:900px){.main{flex-direction:column;padding:16px}.detail-panel{width:100%;position:static}.header{padding:24px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🧠 底层能力系统 · 人的操作系统</h1>
+  <div class="subtitle">7大支柱 · 45篇深度笔记 · 从元认知到传记模式的全链路底层能力</div>
+  <div class="stats">
+    <div class="stat"><span class="stat-num">45</span><span class="stat-label">深度笔记</span></div>
+    <div class="stat"><span class="stat-num">~650</span><span class="stat-label">总KB</span></div>
+    <div class="stat"><span class="stat-num">6</span><span class="stat-label">P0元认知</span></div>
+    <div class="stat"><span class="stat-num">6</span><span class="stat-label">P1学习系统</span></div>
+    <div class="stat"><span class="stat-num">6</span><span class="stat-label">P2理解思维</span></div>
+    <div class="stat"><span class="stat-num">7</span><span class="stat-label">P3表达沟通</span></div>
+    <div class="stat"><span class="stat-num">7</span><span class="stat-label">P4组织关系</span></div>
+    <div class="stat"><span class="stat-num">7</span><span class="stat-label">P5经典框架</span></div>
+    <div class="stat"><span class="stat-num">5</span><span class="stat-label">P6传记模式</span></div>
+    <div class="stat"><span class="stat-num">1</span><span class="stat-label">阅读路线图</span></div>
+  </div>
+</div>
+<div class="status-bar">
+  <span class="status-dot"></span>
+  <span class="status-text">知识库完整 · <strong>45篇深度笔记</strong> · 7大支柱 · Frontmatter统一 · 交叉引用可跳转</span>
+</div>
+<div class="main">
+  <div class="tree-panel" id="tree"></div>
+  <div class="detail-panel" id="detail">
+    <div class="detail-card">
+      <div class="empty">
+        <div class="empty-icon">🧠</div>
+        <div class="empty-text">点击左侧任意专题查看详情</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="learning-paths">
+  <h3>📌 推荐学习路径</h3>
+  <div class="paths-grid">
+    <div class="path-card">
+      <h4>快速自检</h4>
+      <div class="p-role">适合任何人，8篇</div>
+      <ul class="p-steps">
+        <li><span class="step-num">1.</span>元认知的本质</li>
+        <li><span class="step-num">2.</span>学习的本质</li>
+        <li><span class="step-num">3.</span>刻意练习实战手册</li>
+        <li><span class="step-num">4.</span>概率思维与科学决策</li>
+        <li><span class="step-num">5.</span>结构化表达</li>
+        <li><span class="step-num">6.</span>脆弱沟通与信任建立</li>
+        <li><span class="step-num">7.</span>个人工作流操作系统</li>
+        <li><span class="step-num">8.</span>人生哲学与意义系统</li>
+      </ul>
+    </div>
+    <div class="path-card">
+      <h4>认知提升</h4>
+      <div class="p-role">技术/产品同学</div>
+      <ul class="p-steps">
+        <li><span class="step-num">1.</span>价值观与意义选择</li>
+        <li><span class="step-num">2.</span>思维模型库</li>
+        <li><span class="step-num">3.</span>刻意练习</li>
+        <li><span class="step-num">4.</span>批判性思维</li>
+        <li><span class="step-num">5.</span>系统思维</li>
+        <li><span class="step-num">6.</span>判断与决策</li>
+        <li><span class="step-num">7.</span>概率思维与科学决策</li>
+        <li><span class="step-num">8.</span>认知觉醒</li>
+      </ul>
+    </div>
+    <div class="path-card">
+      <h4>管理影响力</h4>
+      <div class="p-role">管理者/领导者</div>
+      <ul class="p-steps">
+        <li><span class="step-num">1.</span>深度倾听</li>
+        <li><span class="step-num">2.</span>识人能力</li>
+        <li><span class="step-num">3.</span>冲突化解</li>
+        <li><span class="step-num">4.</span>脆弱沟通与信任建立</li>
+        <li><span class="step-num">5.</span>向上管理</li>
+        <li><span class="step-num">6.</span>向下管理</li>
+        <li><span class="step-num">7.</span>跨部门协作</li>
+        <li><span class="step-num">8.</span>习惯系统</li>
+      </ul>
+    </div>
+    <div class="path-card">
+      <h4>全栈成长</h4>
+      <div class="p-role">长期学习路线</div>
+      <ul class="p-steps">
+        <li><span class="step-num">1.</span>元认知的本质</li>
+        <li><span class="step-num">2.</span>认知偏误清单</li>
+        <li><span class="step-num">3.</span>学习的本质</li>
+        <li><span class="step-num">4.</span>输入系统</li>
+        <li><span class="step-num">5.</span>学习路径设计</li>
+        <li><span class="step-num">6.</span>结构化思维</li>
+        <li><span class="step-num">7.</span>写作能力</li>
+        <li><span class="step-num">8.</span>情绪管理与韧性</li>
+        <li><span class="step-num">9.</span>成长路径设计</li>
+        <li><span class="step-num">10.</span>个人工作流操作系统</li>
+        <li><span class="step-num">11.</span>意志力与韧性</li>
+        <li><span class="step-num">12.</span>创造力方法论</li>
+      </ul>
+    </div>
+    <div class="path-card p5">
+      <h4>传记模式阅读</h4>
+      <div class="p-role">从伟大人物身上提炼模式</div>
+      <ul class="p-steps">
+        <li><span class="step-num">1.</span>实业家模式：乔布斯与奈特</li>
+        <li><span class="step-num">2.</span>智者先驱模式：富兰克林达芬奇芒格</li>
+        <li><span class="step-num">3.</span>东方人物模式：任正非曾国藩</li>
+        <li><span class="step-num">4.</span>逆境典范模式：曼德拉林肯苏东坡</li>
+        <li><span class="step-num">5.</span>传记通用方法论</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<script>
+const knowledgeData = {
+  pillars: [
+    {
+      id:'P0', title:'元认知', icon:'🧬', color:'#3fb950',
+      desc:'大脑本身的机制是什么？',
+      topics:[
+        {id:'P0.1',name:'元认知的本质',size:'~9KB',icon:'🧠',tags:['元认知','自我觉察','思维监控'],insight:'思考自己的思考——元认知决定一切认知的上限'},
+        {id:'P0.2',name:'注意力管理',size:'~10KB',icon:'🎯',tags:['注意力','深度工作','心流'],insight:'注意力是比时间更稀缺的资源'},
+        {id:'P0.3',name:'记忆系统',size:'~11KB',icon:'📦',tags:['记忆','艾宾浩斯','间隔重复'],insight:'记忆不是存储，是重构'},
+        {id:'P0.4',name:'认知偏误清单',size:'~11KB',icon:'⚠️',tags:['偏误','系统1','决策陷阱'],insight:'200+已知偏误，识别是克服的第一步'},
+        {id:'P0.5',name:'思维模型库',size:'~10KB',icon:'🔧',tags:['思维模型','第一性原理','二阶思维'],insight:'用模型替代直觉，让决策有据可依'},
+        {id:'P0.6',name:'价值观与意义选择',size:'~11KB',icon:'🧭',tags:['价值观','意义','人生方向'],insight:'价值观是元认知的终极罗盘'}
+      ]
+    },
+    {
+      id:'P1', title:'学习系统', icon:'📚', color:'#d29922',
+      desc:'怎么学会任何东西？',
+      topics:[
+        {id:'P1.1',name:'学习的本质',size:'~10KB',icon:'🧪',tags:['学习科学','神经可塑性','成长型思维'],insight:'学的目的是改变神经连接，不是填充信息'},
+        {id:'P1.2',name:'刻意练习',size:'~10KB',icon:'🏋️',tags:['刻意练习','舒适区','反馈'],insight:'进步只发生在舒适区的边界'},
+        {id:'P1.3',name:'知识内化',size:'~10KB',icon:'🔄',tags:['费曼','Active Recall','知行鸿沟'],insight:'教是最好的学——输出倒逼输入'},
+        {id:'P1.4',name:'输入系统',size:'~10KB',icon:'📡',tags:['阅读','笔记','Zettelkasten'],insight:'输入质量决定输出质量'},
+        {id:'P1.5',name:'学习路径设计',size:'~9KB',icon:'🗺️',tags:['技能树','Dreyfus模型','T型'],insight:'先建主干再填枝叶，逆向设计从目标倒推'},
+        {id:'P1.6',name:'刻意练习实战手册',size:'~10KB',icon:'📋',tags:['行动清单','反馈系统','追踪'],insight:'从理论到行动的桥梁'}
+      ]
+    },
+    {
+      id:'P2', title:'理解与思维', icon:'💡', color:'#58a6ff',
+      desc:'怎么想得深、想得对？',
+      topics:[
+        {id:'P2.1',name:'本质思考',size:'~9KB',icon:'🔍',tags:['5 Whys','抽象化','类比'],insight:'穿透问题表层，找到根本原因'},
+        {id:'P2.2',name:'批判性思维',size:'~11KB',icon:'⚔️',tags:['逻辑谬误','证据分级','论证分析'],insight:'批判性思维是有标准的判断'},
+        {id:'P2.3',name:'结构化思维',size:'~10KB',icon:'📐',tags:['MECE','金字塔','逻辑树'],insight:'把复杂问题拆解为可处理的模块'},
+        {id:'P2.4',name:'系统思维',size:'~11KB',icon:'🕸️',tags:['反馈循环','涌现','杠杆点'],insight:'在系统的哪里用力最有效'},
+        {id:'P2.5',name:'判断与决策',size:'~10KB',icon:'🎲',tags:['OODA','Premortem','决策框架'],insight:'好决策不一定有好结果，但要有好过程'},
+        {id:'P2.6',name:'概率思维与科学决策',size:'~12KB',icon:'📊',tags:['贝叶斯','概率','不确定'],insight:'在不确定性中用概率语言思考'}
+      ]
+    },
+    {
+      id:'P3', title:'表达与沟通', icon:'💬', color:'#f85149',
+      desc:'怎么把想法传递出去？',
+      topics:[
+        {id:'P3.1',name:'结构化表达',size:'~10KB',icon:'🏗️',tags:['SCQA','黄金圈','PREP'],insight:'结论先行——顶层表达比底层表达更有效'},
+        {id:'P3.2',name:'写作能力',size:'~10KB',icon:'✍️',tags:['写作','笔记','文章'],insight:'糟糕的写作等于糟糕的思考'},
+        {id:'P3.3',name:'口头表达',size:'~11KB',icon:'🎤',tags:['演讲','汇报','即兴'],insight:'非语言信息占93%'},
+        {id:'P3.4',name:'深度倾听',size:'~11KB',icon:'👂',tags:['倾听','共情','主动倾听'],insight:'听到言外之意是最高级的沟通力'},
+        {id:'P3.5',name:'识人能力',size:'~11KB',icon:'👁️',tags:['识人','判断','气场'],insight:'在有限信息下对人建模的能力'},
+        {id:'P3.6',name:'冲突化解',size:'~12KB',icon:'🤝',tags:['冲突','非暴力沟通','托马斯模型'],insight:'健康冲突vs破坏性冲突——关键在沟通'},
+        {id:'P3.7',name:'脆弱沟通与信任建立',size:'~16KB',icon:'🤲',tags:['BRAVING','脆弱','信任'],insight:'信任是可以刻意构建的'}
+      ]
+    },
+    {
+      id:'P4', title:'组织与关系', icon:'🤝', color:'#a371f7',
+      desc:'怎么在组织里拿到结果？',
+      topics:[
+        {id:'P4.1',name:'向上管理',size:'~11KB',icon:'⬆️',tags:['向上管理','预期','资源'],insight:'管理老板的预期比管理项目更重要'},
+        {id:'P4.2',name:'向下管理',size:'~12KB',icon:'⬇️',tags:['授权','激励','SBI反馈'],insight:'从执行者到赋能者的角色转型'},
+        {id:'P4.3',name:'跨部门协作',size:'~14KB',icon:'🔄',tags:['协作','信任','OKR'],insight:'协作的困难在于目标不一致'},
+        {id:'P4.4',name:'个人品牌与影响力',size:'~12KB',icon:'🌟',tags:['个人品牌','Trust Equation','影响力'],insight:'品牌是别人怎么谈论不在场的你'},
+        {id:'P4.5',name:'情绪管理与韧性',size:'~16KB',icon:'💪',tags:['情绪','韧性','Burnout'],insight:'情绪是信号系统，不是敌人'},
+        {id:'P4.6',name:'成长路径设计',size:'~18KB',icon:'📈',tags:['T型','技能树','职业规划'],insight:'从T型到π型到组合型的进化'},
+        {id:'P4.7',name:'个人工作流操作系统',size:'~17KB',icon:'⚡',tags:['GTD','深度工作','自动化'],insight:'让产出稳定可预期'}
+      ]
+    },
+    {
+      id:'P5', title:'经典框架', icon:'🏛️', color:'#f0883e',
+      desc:'历史上最好的框架是什么？',
+      topics:[
+        {id:'P5.1',name:'习惯系统：从行为设计到身份重塑',size:'~6KB',icon:'🔄',tags:['习惯','原子习惯','身份重塑'],insight:'习惯不是目标，是系统'},
+        {id:'P5.2',name:'认知觉醒：从元认知到自我进化',size:'~7KB',icon:'🌅',tags:['元认知','系统1','系统2'],insight:'认知层次决定人生上限'},
+        {id:'P5.3',name:'意志力：能量管理与自我控制',size:'~8KB',icon:'⚡',tags:['意志力','自控','心流'],insight:'意志力是有限资源，需要策略管理'},
+        {id:'P5.4',name:'时间管理：从效率到战略',size:'~8KB',icon:'⏰',tags:['GTD','时间阻塞','精力匹配'],insight:'时间不是用来管理的，是用来投资的'},
+        {id:'P5.5',name:'人生哲学与意义系统',size:'~18KB',icon:'🌌',tags:['意义','哲学','价值'],insight:'没有意义的效率是空虚'},
+        {id:'P5.6',name:'创造力：从洞察到创新',size:'~23KB',icon:'✨',tags:['创新','创造力','框架突破'],insight:'创造是有组织的意外'},
+        {id:'P5.7',name:'经典框架交叉索引',size:'~18KB',icon:'🗂️',tags:['框架','对照','决策树'],insight:'所有框架的对照表及选择方法'}
+      ]
+    },
+    {
+      id:'P6', title:'传记模式', icon:'📜', color:'#f85149',
+      desc:'伟大人物可迁移什么？',
+      topics:[
+        {id:'P6.1',name:'实业家模式：乔布斯与奈特',size:'~25KB',icon:'🏢',tags:['创业','实业','耐克','苹果'],insight:'从零到一的创业进化论'},
+        {id:'P6.2',name:'智者先驱模式：富兰克林达芬奇芒格',size:'~9KB',icon:'🎓',tags:['智者','终身学习','跨学科'],insight:'终身学习者的操作系统'},
+        {id:'P6.3',name:'逆境典范模式：曼德拉林肯苏东坡',size:'~11KB',icon:'🌪️',tags:['逆境','韧性','意义重构'],insight:'在绝境中重构意义系统'},
+        {id:'P6.4',name:'东方人物模式：任正非曾国藩',size:'~9KB',icon:'🏮',tags:['东方智慧','管理','自省'],insight:'中国式智慧与组织管理'},
+        {id:'P6.5',name:'传记通用方法论：如何从传记中提炼可迁移模式',size:'~12KB',icon:'🔑',tags:['方法论','模式','迁移'],insight:'从故事到模式的实用框架'}
+      ]
+    }
+  ]
+};
+const pillarDirs = {'P0':'P0-元认知/','P1':'P1-学习系统/','P2':'P2-理解与思维/','P3':'P3-表达与沟通/','P4':'P4-组织与关系/','P5':'P5-经典框架/','P6':'P6-传记模式/'};
+const basePath = "底层能力系统/";
+const vaultBase = "obsidian://open?vault=我的数字花园&file=03%20Knowledge%20System%20%EF%BC%88%E7%9F%A5%E8%AF%86%E4%BD%93%E7%B3%BB%EF%BC%89%2F3.11%20Industry%20%26%20Case%20Studies%20%E8%A1%8C%E4%B8%9A%E4%B8%8E%E6%A1%88%E4%BE%8B%E7%A0%94%E7%A9%B6%2F" + encodeURIComponent(basePath);
+const pillarColors = {'P0':'#3fb950','P1':'#d29922','P2':'#58a6ff','P3':'#f85149','P4':'#a371f7','P5':'#f0883e','P6':'#f85149'};
+function renderTree(){
+  const container = document.getElementById('tree');
+  container.innerHTML = '';
+  knowledgeData.pillars.forEach((pillar, pi) => {
+    const section = document.createElement('div');
+    section.className = 'pillar collapsed';
+    section.innerHTML = `
+      <div class="pillar-header collapsed" onclick="togglePillar(this)">
+        <div class="icon" style="background:${pillar.color}22;color:${pillar.color}">${pillar.icon}</div>
+        <div class="info">
+          <h2>${pillar.id} · ${pillar.title}</h2>
+          <div class="desc">${pillar.desc}</div>
+        </div>
+        <span class="count">${pillar.topics.length}篇</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="topic-list">
+        ${pillar.topics.map((t, ti) => `
+          <div class="topic" data-pillar="${pi}" data-topic="${ti}" onclick="selectTopic(${pi},${ti})">
+            <div class="t-icon" style="background:${pillar.color}15;color:${pillar.color};font-size:.7rem">${t.icon}</div>
+            <div class="t-info">
+              <div class="t-name">${t.id} ${t.name}</div>
+              <div class="t-desc">${t.insight}</div>
+            </div>
+            <span class="t-size">${t.size}</span>
+            <a class="t-link" onclick="event.stopPropagation();copyObsidianPath('${t.id}')" title="复制Obsidian路径">📂</a>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(section);
+  });
+}
+function togglePillar(header){header.classList.toggle('collapsed');const section=header.parentElement;section.classList.toggle('collapsed');}
+function selectTopic(pi, ti){
+  const t=knowledgeData.pillars[pi].topics[ti];const p=knowledgeData.pillars[pi];
+  document.querySelectorAll('.topic').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`.topic[data-pillar="${pi}"][data-topic="${ti}"]`)?.classList.add('active');
+  document.getElementById('detail').innerHTML=`
+    <div class="detail-card">
+      <div class="d-header">
+        <div class="d-icon" style="background:${p.color}22;color:${p.color};font-size:.8rem">${t.icon}</div>
+        <h3>${t.id} ${t.name}</h3>
+        <div class="d-level">${p.id}-${p.title}</div>
+      </div>
+      <div class="d-section"><div class="d-label">核心洞察</div><div class="d-value">${t.insight}</div></div>
+      <div class="d-section"><div class="d-label">文件大小</div><div class="d-value">${t.size} · 深度笔记</div></div>
+      <div class="d-section"><div class="d-label">标签</div><div class="d-tags">${t.tags.map(tag=>`<span class="d-tag">${tag}</span>`).join('')}</div></div>
+      <div class="d-path">
+        <span>📁</span>
+        <code>${basePath}${pillarDirs[p.id]}${t.id} ${t.name}.md</code>
+        <button class="copy-btn" onclick="copyObsidianPath('${t.id}')">复制路径</button>
+      </div>
+    </div>`;
+}
+function copyObsidianPath(id){
+  let fname='',pname='';
+  for(const p of knowledgeData.pillars){for(const t of p.topics){if(t.id===id){fname=`${id} ${t.name}.md`;pname=p.id;break;}}}
+  const subdir=pillarDirs[pname]?encodeURIComponent(pillarDirs[pname]):'';
+  const fullPath=vaultBase+subdir+encodeURIComponent(fname);
+  if(navigator.clipboard){navigator.clipboard.writeText(fullPath).then(()=>{const btn=event?.target||document.querySelector('.copy-btn');if(btn){const t=btn.textContent;btn.textContent='已复制!';setTimeout(()=>btn.textContent=t,1500);}});}
+}
+renderTree();
+setTimeout(()=>{document.querySelectorAll('.pillar').forEach(p=>p.classList.remove('collapsed'));document.querySelectorAll('.pillar-header').forEach(h=>h.classList.remove('collapsed'));},100);
+</script>
+</body>
+</html>

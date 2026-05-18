@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>低空经济知识架构 | 宋宗源</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0b0f15;
+  color: #e6edf3;
+  font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', system-ui, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 24px;
+}
+
+/* ===== NAV ===== */
+.nav {
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 32px;
+}
+.nav h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.3px; }
+.nav .sub { font-size: 13px; color: #8b949e; }
+.nav .author { font-size: 12px; color: #58a6ff; background: rgba(88,166,255,0.08); padding: 4px 10px; border-radius: 6px; }
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 16px;
+}
+.section-title h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.section-title .bar {
+  width: 40px;
+  height: 2px;
+  background: #30363d;
+  margin-top: 8px;
+}
+
+/* ===== ARCHITECTURE STACK ===== */
+.arch-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 48px;
+}
+.layer {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 2px;
+}
+.layer-label {
+  width: 100px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  padding: 12px 0;
+  border-radius: 6px 0 0 6px;
+  margin-right: 2px;
+}
+.layer-nodes {
+  flex: 1;
+  display: flex;
+  gap: 2px;
+}
+.layer-node {
+  flex: 1;
+  padding: 16px 10px;
+  border-radius: 0 6px 6px 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.layer-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.layer-node .tag {
+  font-size: 10px;
+  font-weight: 400;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+.layer-node .dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+/* Layer 5 - 应用场景层 */
+.layer-5 .layer-label { background: rgba(245,158,11,0.15); color: #f59e0b; }
+.layer-5 .layer-node { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+.layer-5 .layer-node:hover { background: rgba(245,158,11,0.15); }
+.layer-5 .dot { background: #f59e0b; }
+
+/* Layer 4 - 方案架构层 */
+.layer-4 .layer-label { background: rgba(168,85,247,0.15); color: #a855f7; }
+.layer-4 .layer-node { background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); }
+.layer-4 .layer-node:hover { background: rgba(168,85,247,0.15); }
+.layer-4 .dot { background: #a855f7; }
+
+/* Layer 3 - 基础设施层 */
+.layer-3 .layer-label { background: rgba(34,197,94,0.15); color: #22c55e; }
+.layer-3 .layer-node { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
+.layer-3 .layer-node:hover { background: rgba(34,197,94,0.15); }
+.layer-3 .dot { background: #22c55e; }
+
+/* Layer 2 - 技术能力层 */
+.layer-2 .layer-label { background: rgba(59,130,246,0.15); color: #3b82f6; }
+.layer-2 .layer-node { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); }
+.layer-2 .layer-node:hover { background: rgba(59,130,246,0.15); }
+.layer-2 .dot { background: #3b82f6; }
+
+/* Layer 1 - 基础认知层 */
+.layer-1 .layer-label { background: rgba(239,68,68,0.15); color: #ef4444; }
+.layer-1 .layer-node { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+.layer-1 .layer-node:hover { background: rgba(239,68,68,0.15); }
+.layer-1 .dot { background: #ef4444; }
+
+/* ===== ARROW BETWEEN LAYERS ===== */
+.layer-arrow {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 4px 100px;
+  color: rgba(255,255,255,0.08);
+  font-size: 16px;
+}
+
+/* ===== LEARNING PATH (FLOWCHART) ===== */
+.path-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 48px;
+}
+.path-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.path-node {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.path-node:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.path-arrow {
+  color: rgba(255,255,255,0.15);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.path-branch {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 20px;
+  flex-wrap: wrap;
+}
+.path-branch-indent {
+  width: 40px;
+  height: 2px;
+  background: rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+
+/* Phase colors for path */
+.phase-foundation .path-node { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25); color: #ef4444; }
+.phase-tech .path-node { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.25); color: #3b82f6; }
+.phase-infra .path-node { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25); color: #22c55e; }
+.phase-app .path-node { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); color: #f59e0b; }
+.phase-solution .path-node { background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.25); color: #a855f7; }
+
+/* ===== DETAIL PANEL (MODAL) ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #161b22;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 520px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalIn 0.25s ease-out;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: none;
+  border: none;
+  color: #8b949e;
+  font-size: 20px;
+  cursor: pointer;
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close:hover { background: rgba(255,255,255,0.05); color: #f0f6fc; }
+.modal-layer { font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+.modal h3 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.modal .subtitle { font-size: 12px; color: #8b949e; margin-bottom: 16px; }
+.modal .desc { font-size: 14px; line-height: 1.7; color: #c9d1d9; margin-bottom: 20px; }
+.modal .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.modal .tag { font-size: 11px; padding: 3px 10px; border-radius: 4px; background: rgba(88,166,255,0.1); color: #58a6ff; border: 1px solid rgba(88,166,255,0.2); }
+.modal .deps-title { font-size: 12px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.modal .deps { list-style: none; }
+.modal .deps li { font-size: 13px; color: #c9d1d9; padding: 3px 0 3px 16px; position: relative; }
+.modal .deps li::before { content: '→'; position: absolute; left: 0; color: #58a6ff; }
+
+/* ===== FOOTER ===== */
+.footer {
+  width: 100%;
+  max-width: 1200px;
+  padding: 24px 0 32px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  text-align: center;
+  font-size: 12px;
+  color: #484f58;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  body { padding: 0 12px; }
+  .layer { flex-direction: column; margin-bottom: 1px; }
+  .layer-label {
+    width: 100%;
+    writing-mode: horizontal-tb;
+    padding: 8px;
+    border-radius: 6px 6px 0 0;
+  }
+  .layer-nodes { flex-wrap: wrap; }
+  .layer-node { min-width: calc(33% - 2px); min-height: 48px; padding: 10px 6px; font-size: 11px; border-radius: 0 0 6px 6px; }
+  .layer-arrow { padding-left: 0; }
+  .path-node { font-size: 11px; padding: 6px 12px; }
+  .modal { padding: 24px; max-width: 95%; }
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<div class="nav">
+  <div>
+    <h1>低空经济知识架构</h1>
+    <div class="sub">知识点依赖关系 · 学习路径流程</div>
+  </div>
+  <div class="author">宋宗源</div>
+</div>
+
+<!-- ===== ARCHITECTURE LAYERS ===== -->
+<div class="section-title">
+  <h2>一、知识架构层</h2>
+  <div class="bar"></div>
+</div>
+
+<div class="arch-container">
+  <!-- Layer 5: 应用场景层 -->
+  <div class="layer layer-5">
+    <div class="layer-label">应用场景层</div>
+    <div class="layer-nodes">
+      <div class="layer-node" onclick="openModal('firefighting')">🧯 消防应急<div class="tag">高层灭火 · 火场侦察 · 搜救</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('logistics')">📦 物流配送<div class="tag">末端配送 · 医疗运输 · 应急投送</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('inspection')">🔍 巡查巡检<div class="tag">电力 · 管道 · 光伏 · 桥梁</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('agriculture')">🌾 农业植保<div class="tag">喷洒 · 播撒 · 测绘 · 授粉</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('urban')">🏙️ 城市空中交通<div class="tag">eVTOL载人 · 空中出租车</div><div class="dot"></div></div>
+    </div>
+  </div>
+
+  <div class="layer-arrow">▲</div>
+
+  <!-- Layer 4: 方案架构层 -->
+  <div class="layer layer-4">
+    <div class="layer-label">方案架构层</div>
+    <div class="layer-nodes">
+      <div class="layer-node" onclick="openModal('solution')">📋 方案生成器<div class="tag">AI情报采集 → 分析 → 自动生成</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('decision')">🧠 决策支持系统<div class="tag">态势感知 · 资源调度 · 风险评估</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('data')">📊 数据中台<div class="tag">22万字知识库 · 实时情报 · 数字孪生</div><div class="dot"></div></div>
+    </div>
+  </div>
+
+  <div class="layer-arrow">▲</div>
+
+  <!-- Layer 3: 基础设施层 -->
+  <div class="layer layer-3">
+    <div class="layer-label">基础设施层</div>
+    <div class="layer-nodes">
+      <div class="layer-node" onclick="openModal('utm')">🛰️ UTM无人机交通管理<div class="tag">飞行计划 · 冲突检测 · 动态空域</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('vertiport')">🛫 起降场与航线网络<div class="tag">Vertiport · 充电站 · 航线规划</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('navsurv')">📡 导航与监视系统<div class="tag">北斗RTK · ADS-B · 雷达补盲</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('counter')">🛡️ 反无人机系统<div class="tag">探测 · 识别 · 处置 · 安防</div><div class="dot"></div></div>
+    </div>
+  </div>
+
+  <div class="layer-arrow">▲</div>
+
+  <!-- Layer 2: 技术能力层 -->
+  <div class="layer layer-2">
+    <div class="layer-label">技术能力层</div>
+    <div class="layer-nodes">
+      <div class="layer-node" onclick="openModal('evtol')">✈️ eVTOL技术<div class="tag">倾转旋翼 · 复合翼 · 多旋翼</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('uav')">🚁 无人机系统<div class="tag">多旋翼 · 复合翼 · 载荷</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('comm')">📶 通信(5G ATG)<div class="tag">C-V2X · 4G图传 · 超视距</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('sensors')">👁️ 传感器与感知<div class="tag">LiDAR · 毫米波 · 视觉 · RTK</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('ai')">🤖 AI与智能决策<div class="tag">CV · 路径规划 · 边缘AI</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('edge')">💻 边缘计算<div class="tag">Jetson · 模型压缩 · 实时推理</div><div class="dot"></div></div>
+    </div>
+  </div>
+
+  <div class="layer-arrow">▲</div>
+
+  <!-- Layer 1: 基础认知层 -->
+  <div class="layer layer-1">
+    <div class="layer-label">基础认知层</div>
+    <div class="layer-nodes">
+      <div class="layer-node" onclick="openModal('policy')">📜 政策法规体系<div class="tag">国家战略 · CCAR · UOM系统</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('airspace')">🗺️ 空域管理基础<div class="tag">G/W类空域 · 融合运行</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('airworthiness')">✅ 适航认证流程<div class="tag">TC · PC · AC · 取证路径</div><div class="dot"></div></div>
+      <div class="layer-node" onclick="openModal('market')">📈 市场与格局<div class="tag">2万亿市场 · 关键玩家 · 趋势</div><div class="dot"></div></div>
+    </div>
+  </div>
+
+  <div class="layer-arrow" style="padding-bottom:0">▲ 知识积累方向</div>
+</div>
+
+<!-- ===== LEARNING PATH ===== -->
+<div class="section-title">
+  <h2>二、学习路径流程</h2>
+  <div class="bar"></div>
+</div>
+
+<div class="path-container">
+
+  <div style="color:#8b949e;font-size:12px;margin-bottom:16px;">推荐学习顺序 —— 箭头指向为前置依赖关系</div>
+
+  <!-- Phase 1: Foundation -->
+  <div class="phase-foundation">
+    <div class="path-row">
+      <span style="font-size:11px;color:#ef4444;font-weight:600;margin-right:8px;">阶段一·基础</span>
+      <span class="path-node">政策法规</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">空域管理</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">适航认证</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">市场格局</span>
+    </div>
+  </div>
+
+  <!-- Phase 2: Technology -->
+  <div class="phase-tech">
+    <div class="path-row">
+      <span style="font-size:11px;color:#3b82f6;font-weight:600;margin-right:8px;">阶段二·技术</span>
+      <span class="path-node">eVTOL技术</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">无人机系统</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">通信5G</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">传感器</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">AI决策</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">边缘计算</span>
+    </div>
+    <div style="margin-left:180px;margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;">
+      <span class="path-node" style="font-size:11px;padding:6px 12px;background:rgba(59,130,246,0.06);border-color:rgba(59,130,246,0.12);color:#58a6ff;">动力电池</span>
+      <span class="path-arrow" style="font-size:14px;">→</span>
+      <span class="path-node" style="font-size:11px;padding:6px 12px;background:rgba(59,130,246,0.06);border-color:rgba(59,130,246,0.12);color:#58a6ff;">复合翼VTOL</span>
+      <span style="font-size:11px;color:#484f58;margin-left:4px;">（并行学习）</span>
+    </div>
+  </div>
+
+  <!-- Phase 3: Infrastructure -->
+  <div class="phase-infra">
+    <div class="path-row">
+      <span style="font-size:11px;color:#22c55e;font-weight:600;margin-right:8px;">阶段三·基建</span>
+      <span class="path-node" onclick="this.style.background='rgba(34,197,94,0.2)'">UTM交通管理</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node" onclick="this.style.background='rgba(34,197,94,0.2)'">起降场网络</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node" onclick="this.style.background='rgba(34,197,94,0.2)'">导航监视</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node" onclick="this.style.background='rgba(34,197,94,0.2)'">反无人机</span>
+    </div>
+  </div>
+
+  <!-- Phase 4: Application -->
+  <div class="phase-app">
+    <div class="path-row">
+      <span style="font-size:11px;color:#f59e0b;font-weight:600;margin-right:8px;">阶段四·应用</span>
+      <span class="path-node">消防应急</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">物流配送</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">巡查巡检</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">农业植保</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node">城市空中交通</span>
+    </div>
+    <div style="margin-left:180px;margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;">
+      <span class="path-node" style="font-size:11px;padding:6px 12px;background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.12);color:#fbbf24;">测绘与建模</span>
+      <span style="font-size:11px;color:#484f58;margin-left:4px;">（所有应用场景可选并行）</span>
+    </div>
+  </div>
+
+  <!-- Phase 5: Solution -->
+  <div class="phase-solution">
+    <div class="path-row">
+      <span style="font-size:11px;color:#a855f7;font-weight:600;margin-right:8px;">阶段五·方案</span>
+      <span class="path-node" style="border-width:2px;border-color:#a855f7;">数据中台搭建</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node" style="border-width:2px;border-color:#a855f7;">决策支持系统</span>
+      <span class="path-arrow">→</span>
+      <span class="path-node" style="border-width:2px;border-color:#a855f7;background:rgba(168,85,247,0.2);">🎯 方案生成器</span>
+    </div>
+    <div style="margin-top:8px;margin-left:296px;">
+      <span style="font-size:11px;color:#484f58;">← 这是你现在的位置 (song-portfolio)</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-layer" id="m-layer"></div>
+    <h3 id="m-title"></h3>
+    <div class="subtitle" id="m-subtitle"></div>
+    <div class="desc" id="m-desc"></div>
+    <div class="tags" id="m-tags"></div>
+    <div class="deps-title">前置依赖</div>
+    <ul class="deps" id="m-deps"></ul>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+  Song Zongyuan · 低空经济知识架构 · 2026
+</div>
+
+<script>
+// ===== DATA =====
+const knowledgeData = {
+  policy: {
+    layer: '基础层', layerColor: '#ef4444',
+    title: '政策法规体系',
+    subtitle: '国家战略 · CCAR · UOM系统',
+    desc: '低空经济的顶层制度设计。2023年中央经济工作会议将低空经济列为战略性新兴产业，2024年写入政府工作报告。深圳率先立法，合肥、成都、广州等城市跟进。核心法规框架由CCAR-21(适航)、CCAR-91(运行)、CCAR-92(无人机)构成。UOM(无人驾驶航空器管理)系统于2024年上线，实现实名登记+飞行申请+动态监管一体化。',
+    tags: ['国家战略','CCAR-21','CCAR-91','CCAR-92','UOM','深圳立法'],
+    deps: ['此为基础知识节点，无前置依赖']
+  },
+  airspace: {
+    layer: '基础层', layerColor: '#ef4444',
+    title: '空域管理基础',
+    subtitle: 'G/W类空域 · 融合运行',
+    desc: '空域是低空经济的物理基础。中国空域分为A/B/C/D/E/G/W共7类，低空经济主要涉及G类(真高120m以下非管制空域)和W类(真高120m以下管制空域)。空域开放力度决定了低空经济的实际天花板。融合运行(无人机与有人机共享空域)是当前最大的技术和管理挑战。',
+    tags: ['G类空域','W类空域','融合运行','空域分类','隔离运行'],
+    deps: ['政策法规体系']
+  },
+  airworthiness: {
+    layer: '基础层', layerColor: '#ef4444',
+    title: '适航认证流程',
+    subtitle: 'TC · PC · AC · 取证路径',
+    desc: '航空器投入商业运营的前置条件。型号合格证(TC)证明设计安全，生产许可证(PC)证明制造能力，单机适航证(AC)证明每架飞机合格。亿航EH216-S在2023年获得全球首张eVTOL型号合格证，小鹏汇天、峰飞航空跟进取证中。适航认证是eVTOL商业化最大的时间瓶颈。',
+    tags: ['TC','PC','AC','型号合格证','生产许可证','亿航'],
+    deps: ['政策法规体系','空域管理基础']
+  },
+  market: {
+    layer: '基础层', layerColor: '#ef4444',
+    title: '市场与竞争格局',
+    subtitle: '2万亿市场 · 关键玩家',
+    desc: '中国低空经济市场规模预计2030年达2万亿元。细分赛道：工业无人机(年增25%+)＞eVTOL(孵化期)＞消费级无人机(5-10%)。关键玩家：大疆(工业无人机全球龙头)、亿航(eVTOL取证先行者)、美团/顺丰/京东(物流无人机)、莱斯信息/川大智胜(空管系统)。商业模式以"SaaS+解决方案"为主。',
+    tags: ['2万亿','2030','大疆','亿航','美团','商业模式','SaaS'],
+    deps: ['政策法规体系']
+  },
+  evtol: {
+    layer: '技术层', layerColor: '#3b82f6',
+    title: 'eVTOL技术',
+    subtitle: '倾转旋翼 · 复合翼 · 多旋翼',
+    desc: '电动垂直起降飞行器——低空经济的标志性品类。三种主流构型：多旋翼(亿航EH216-S，简单可靠但航程短)、复合翼(峰飞V2000CG，航程长但有死重)、倾转旋翼(航程效率最优但机械复杂)。亿航已取证运营，小鹏汇天分体式飞行汽车、峰飞盛世龙推进中。',
+    tags: ['eVTOL','倾转旋翼','复合翼','多旋翼','亿航','小鹏汇天','峰飞'],
+    deps: ['适航认证流程','动力电池技术']
+  },
+  uav: {
+    layer: '技术层', layerColor: '#3b82f6',
+    title: '无人机系统',
+    subtitle: '多旋翼 · 复合翼 · 载荷',
+    desc: '当前最成熟的低空经济载体。大疆产品线覆盖：M350(行业旗舰，六向感知+AI)、FC30(运载旗舰，载重30kg)、T200/T60(农业)。构型以四轴/六轴/八轴多旋翼为主，复合翼用于长航程场景。关键子系统：飞控、图传、云台、载荷(相机/雷达/喷洒/抛投)。',
+    tags: ['大疆','M350','FC30','T200','多旋翼','复合翼','飞控','图传'],
+    deps: ['适航认证流程','动力电池技术','传感器与感知']
+  },
+  comm: {
+    layer: '技术层', layerColor: '#3b82f6',
+    title: '通信系统 (5G ATG)',
+    subtitle: 'C-V2X · 4G图传 · 超视距',
+    desc: '低空通信是超视距运行的前提。5G ATG(5G Air-to-Ground)专门针对300m以下低空设计，提供广覆盖+低延迟连接。C-V2X支持车-飞-路-云协同通信。大疆4G图传已实现超视距控制(配合O3图传)。低空通信网络正由运营商(移动/联通/电信)和通信设备商(华为/中兴)联合建设。',
+    tags: ['5G ATG','C-V2X','4G图传','华为','中兴','低延迟','超视距'],
+    deps: ['无人机系统','eVTOL技术']
+  },
+  sensors: {
+    layer: '技术层', layerColor: '#3b82f6',
+    title: '传感器与感知系统',
+    subtitle: 'LiDAR · 毫米波 · 视觉 · RTK',
+    desc: '环境感知是自主飞行的基础。核心传感器：激光雷达(LiDAR, 高精度3D建模)、毫米波雷达(全天候测距)、视觉传感器(双目/单目，成本低)、超声波(近距避障)。定位层：RTK(厘米级)、IMU(姿态)、视觉里程计(无GPS时定位)。大疆的六向感知系统(前后左右上下双目视觉+红外)是行业标杆。',
+    tags: ['LiDAR','毫米波雷达','双目视觉','RTK','IMU','六向感知','融合'],
+    deps: ['无人机系统','通信系统(5G ATG)']
+  },
+  ai: {
+    layer: '技术层', layerColor: '#3b82f6',
+    title: 'AI与智能决策',
+    subtitle: 'CV · 路径规划 · 边缘AI',
+    desc: 'AI正重新定义低空飞行器的能力边界。核心应用：目标检测(火灾/人员/物资识别)、路径规划(动态避障/多机协同)、态势感知(融合多源传感器数据)、自动机场(无人值守作业)。边缘AI使飞行器在无网络环境下自主决策。你的song-portfolio方案生成器属于AI+低空的典型应用。',
+    tags: ['CV','路径规划','目标检测','边缘AI','自动机场','决策'],
+    deps: ['传感器与感知系统','通信系统(5G ATG)','边缘计算']
+  },
+  edge: {
+    layer: '技术层', layerColor: '#3b82f6',
+    title: '边缘计算与机载AI',
+    subtitle: 'Jetson · 模型压缩 · 实时推理',
+    desc: '将AI推理能力部署到飞行器端侧。主流硬件平台：NVIDIA Jetson Orin NX(40 TOPS, 10W)、华为昇腾310(16 TOPS)、地平线征程(4 TOPS)。关键技术：模型量化(INT8/FP16)、剪枝、知识蒸馏。实时推理延迟<30ms是工业级作业的门槛指标。',
+    tags: ['Jetson Orin','昇腾','地平线','量化','剪枝','蒸馏','推理'],
+    deps: ['AI与智能决策']
+  },
+  utm: {
+    layer: '基础设施层', layerColor: '#22c55e',
+    title: 'UTM无人机交通管理',
+    subtitle: '飞行计划 · 冲突检测 · 动态空域',
+    desc: '低空经济的"空中交警"——UTM(UAS Traffic Management)。核心功能：飞行计划审批(自动/秒级)、冲突检测与化解(多机不碰撞)、动态空域重构(根据实时情况调整可飞行区域)、紧急处置(禁飞/迫降指引)。莱斯信息、川大智胜是国内UTM主力厂商。U-Space是欧洲对应标准。',
+    tags: ['U-Space','冲突检测','飞行计划','莱斯信息','川大智胜','ATC'],
+    deps: ['空域管理基础','通信系统(5G ATG)','AI与智能决策']
+  },
+  vertiport: {
+    layer: '基础设施层', layerColor: '#22c55e',
+    title: '起降场与航线网络',
+    subtitle: 'Vertiport · 充电站 · 航线规划',
+    desc: '低空基础设施的物理层。垂直起降场(Vertiport)需要：起降坪(至少1个无人机直径的空旷区)、充电/换电设施、货物装卸站、通信覆盖。航线网络规划需避开禁飞区(机场净空区、军事区、政治中心、核电站)。城市密集区的起降场选址是最棘手的物理瓶颈。',
+    tags: ['Vertiport','充电站','航线规划','禁飞区','城市选址'],
+    deps: ['空域管理基础','无人机系统','eVTOL技术']
+  },
+  navsurv: {
+    layer: '基础设施层', layerColor: '#22c55e',
+    title: '导航与监视系统',
+    subtitle: '北斗RTK · ADS-B · 雷达补盲',
+    desc: '低空导航依赖北斗卫星导航系统+RTK差分定位(厘米级精度)+视觉里程计(GPS失效时)。监视系统需要：ADS-B IN(接收附近飞行器的广播位置)、低空补盲雷达(探测"看不到"的飞行器)、5G网络定位协同。目标是实现低空"看得见、控得住"。',
+    tags: ['北斗','RTK','ADS-B','补盲雷达','5G定位','导航','监视'],
+    deps: ['传感器与感知系统','通信系统(5G ATG)','UTM无人机交通管理']
+  },
+  counter: {
+    layer: '基础设施层', layerColor: '#22c55e',
+    title: '反无人机系统',
+    subtitle: '探测 · 识别 · 处置 · 安防',
+    desc: '低空安全的"守门人"。三层体系：探测(雷达搜索/RF频谱监测/光电识别)、识别(ADS-B校验/RF指纹匹配/AI视觉确认)、处置(软杀伤:GPS干扰/导航诱骗，硬杀伤:激光/网捕/无人机拦截)。关键场景：机场(防止黑飞干扰航班)、重大活动、军事基地、核电站、监狱。',
+    tags: ['雷达探测','RF测向','导航诱骗','激光拦截','网捕','机场安防'],
+    deps: ['传感器与感知系统','AI与智能决策','空域管理基础']
+  },
+  firefighting: {
+    layer: '应用场景层', layerColor: '#f59e0b',
+    title: '消防应急',
+    subtitle: '高层灭火 · 火场侦察 · 搜救',
+    desc: '无人机在消防中的核心价值：高层建筑灭火(挂载破窗弹+灭火弹+水带，FC30已在实战中验证)、火场侦察(热成像+气体检测+实时图传，为指挥员提供"上帝视角")、搜救(红外热成像+喊话器+物资精准投送，夜间/浓烟条件下不可替代)。',
+    tags: ['高层灭火','火场侦察','热成像','FC30','搜救','气体检测'],
+    deps: ['无人机系统','AI与智能决策','通信系统(5G ATG)']
+  },
+  logistics: {
+    layer: '应用场景层', layerColor: '#f59e0b',
+    title: '物流配送',
+    subtitle: '末端配送 · 医疗运输 · 应急投送',
+    desc: '无人机物流三大核心场景：末端配送(美团已在北京/上海/深圳常态化运营，配送时间缩短40%)、医疗物资运输(血液/药品/器官/检验样本，顺丰/京东已在多个城市落地)、应急投送(灾区/孤岛/洪涝区域的食品/药品/通信设备空投)。物流是低空经济商业化速度最快的应用方向。',
+    tags: ['末端配送','医疗运输','应急投送','美团','顺丰','京东','常态化'],
+    deps: ['无人机系统','UTM无人机交通管理','通信系统(5G ATG)']
+  },
+  inspection: {
+    layer: '应用场景层', layerColor: '#f59e0b',
+    title: '巡查巡检',
+    subtitle: '电力 · 管道 · 光伏 · 桥梁',
+    desc: '基础设施巡检是工业无人机最成熟的应用。覆盖场景：电力线(绝缘子/导线/塔基缺陷检测)、油气管道(泄漏监测/第三方施工预警)、光伏电站(热斑检测/组件清洗判断)、风力发电机(叶片裂纹/雷击损伤)、桥梁隧道(裂缝/变形/渗水)。大疆司空2+AI云端识别已成行业标准方案。',
+    tags: ['电力巡检','管道巡检','光伏','司空2','AI识别','桥梁检测'],
+    deps: ['无人机系统','AI与智能决策','传感器与感知系统']
+  },
+  agriculture: {
+    layer: '应用场景层', layerColor: '#f59e0b',
+    title: '农业植保',
+    subtitle: '喷洒 · 播撒 · 测绘 · 授粉',
+    desc: '农业无人机是中国低空经济最早商业化的领域。三大功能：植保(精准喷洒/变量施肥，大疆T200/T60覆盖全地形)、播撒(水稻直播/草籽/固体肥)、测绘(多光谱长势分析/变量处方图/产量预测)。中国农业无人机保有量和作业面积全球第一，占全球市场70%+。',
+    tags: ['植保','播撒','变量施肥','T200','T60','多光谱','全球第一'],
+    deps: ['无人机系统','传感器与感知系统','AI与智能决策']
+  },
+  urban: {
+    layer: '应用场景层', layerColor: '#f59e0b',
+    title: '城市空中交通 (UAM)',
+    subtitle: 'eVTOL载人 · 空中出租车',
+    desc: 'UAM(Urban Air Mobility)是低空经济最受瞩目的未来场景。亿航EH216-S已在合肥骆岗公园开启商业运营(全球首例)，小鹏汇天分体式飞行汽车计划2026年量产。UAM需要UTM+Vertiport+适航许可+公众接受度四位一体才能落地。目前处于"早期试水→规模化商用"的过渡期。',
+    tags: ['UAM','空中出租车','亿航','小鹏汇天','合肥','商业化'],
+    deps: ['eVTOL技术','UTM无人机交通管理','起降场与航线网络','适航认证流程']
+  },
+  solution: {
+    layer: '方案架构层', layerColor: '#a855f7',
+    title: 'AI方案生成器',
+    subtitle: '情报采集 → 分析 → 自动生成',
+    desc: '面向应急管理和物流行业的低空经济方案生成工具。核心流程：(1)情报采集(从政策/新闻/论文/竞品动态抓取最新行业情报) → (2)AI分析(基于22万字知识库+LLM推理，理解用户需求场景) → (3)方案生成(自动输出结构化方案：问题定义→设备选型→操作流程→成本估算→风险评估)。这是你现在正在做的song-portfolio项目。',
+    tags: ['song-portfolio','方案生成','情报采集','LLM','低空经济'],
+    deps: ['数据中台','决策支持系统','所有应用场景知识']
+  },
+  decision: {
+    layer: '方案架构层', layerColor: '#a855f7',
+    title: '决策支持系统',
+    subtitle: '态势感知 · 资源调度 · 风险评估',
+    desc: '低空作业的"作战指挥室"。整合多源数据(气象/空域/设备状态/人员位置)形成实时态势感知。核心模块：资源调度(车辆/无人机/飞手/载荷的最优匹配)、风险评估(根据天气/空域/设备状态自动评估任务风险等级)、实时决策建议(冲突预警/备降建议/资源再分配)。',
+    tags: ['态势感知','资源调度','风险评估','实时决策','指挥'],
+    deps: ['数据中台','AI与智能决策','通信系统(5G ATG)']
+  },
+  data: {
+    layer: '方案架构层', layerColor: '#a855f7',
+    title: '数据中台',
+    subtitle: '22万字知识库 · 实时情报 · 数字孪生',
+    desc: '低空经济知识的"中央仓库"。内容：22万字结构化知识库(政策/机型/场景/方案/案例/市场六大板块)、实时情报流(每日行业动态采集+AI摘要)、数据资产(设备参数库/方案模板库/案例库)。数字孪生层(飞行器3D模型+场景仿真)是未来方向。现以Obsidian为核心管理，my-ai-hub为自动采集管道。',
+    tags: ['22万字知识库','Obsidian','实时情报','数字孪生','my-ai-hub'],
+    deps: ['所有基础层知识','所有技术层知识']
+  },
+};
+
+// ===== MODAL CONTROL =====
+function openModal(id) {
+  const d = knowledgeData[id];
+  if (!d) return;
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('m-layer').textContent = d.layer;
+  document.getElementById('m-layer').style.background = d.layerColor + '22';
+  document.getElementById('m-layer').style.color = d.layerColor;
+  document.getElementById('m-title').textContent = d.title;
+  document.getElementById('m-subtitle').textContent = d.subtitle;
+  document.getElementById('m-desc').textContent = d.desc;
+  document.getElementById('m-tags').innerHTML = d.tags.map(t => '<span class="tag">' + t + '</span>').join('');
+
+  const depsEl = document.getElementById('m-deps');
+  if (d.deps[0].includes('无前置依赖')) {
+    depsEl.innerHTML = '<li style="color:#8b949e;padding-left:0">此为基础知识节点，无前置依赖</li>';
+  } else {
+    depsEl.innerHTML = d.deps.map(dep => '<li>' + dep + '</li>').join('');
+  }
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>

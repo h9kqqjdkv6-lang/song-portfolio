@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>低空经济学 | 交叉学科知识体系</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#090d14;color:#e6edf3;font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(9,13,20,.94);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.05);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
+.nav-left h1{font-size:18px;font-weight:600;letter-spacing:.3px}
+.nav-left .sub{font-size:12px;color:#8b949e;margin-top:1px}
+.nav-right{font-size:11px;color:#58a6ff;background:rgba(88,166,255,.08);padding:3px 10px;border-radius:5px}
+
+.container{max-width:1360px;margin:0 auto;padding:32px 24px 60px}
+
+/* HERO */
+.hero{text-align:center;margin-bottom:48px;padding:48px 0 32px;border-bottom:1px solid rgba(255,255,255,.04)}
+.hero .badge{display:inline-block;font-size:11px;padding:4px 12px;border-radius:20px;background:rgba(88,166,255,.08);color:#58a6ff;border:1px solid rgba(88,166,255,.15);margin-bottom:16px;letter-spacing:1px}
+.hero h2{font-size:36px;font-weight:700;margin-bottom:10px;background:linear-gradient(135deg,#f0f6fc 0%,#58a6ff 50%,#a855f7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .tagline{font-size:15px;color:#8b949e;max-width:700px;margin:0 auto 20px;line-height:1.7}
+.hero .def{font-size:13px;color:#c9d1d9;max-width:720px;margin:0 auto;line-height:1.8;padding:16px 24px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:10px}
+.hero .def strong{color:#58a6ff}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:32px;flex-wrap:wrap;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:10px;padding:4px}
+.tab{flex:1;min-width:120px;padding:10px 16px;border:none;background:transparent;color:#8b949e;font-size:13px;cursor:pointer;border-radius:7px;transition:all .2s;text-align:center;font-family:inherit}
+.tab:hover{color:#c9d1d9;background:rgba(255,255,255,.03)}
+.tab.active{color:#f0f6fc;background:rgba(255,255,255,.06);font-weight:500}
+
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05)}
+.sh h3{font-size:15px;font-weight:600}
+.sh .sc{font-size:11px;color:#8b949e;margin-left:auto}
+.sh .pill{font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(88,166,255,.08);color:#58a6ff}
+
+/* ===== PANEL 0: 本质论 ===== */
+.essence-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:32px}
+.essence-card{background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.04);border-radius:10px;padding:20px;transition:all .2s}
+.essence-card:hover{background:rgba(255,255,255,.025);border-color:rgba(255,255,255,.08)}
+.essence-card .e-icon{font-size:28px;margin-bottom:8px}
+.essence-card h4{font-size:14px;font-weight:600;margin-bottom:6px}
+.essence-card p{font-size:12px;line-height:1.7;color:#8b949e}
+.essence-card .e-link{font-size:11px;color:#58a6ff;margin-top:8px;display:block}
+
+/* ===== PANEL 1: 知识树 ===== */
+.subject{margin-bottom:20px;background:rgba(255,255,255,.012);border:1px solid rgba(255,255,255,.035);border-radius:9px;overflow:hidden}
+.subject-header{padding:11px 14px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;user-select:none}
+.subject-header:hover{background:rgba(255,255,255,.025)}
+.subject-header .arrow{font-size:9px;color:rgba(255,255,255,.2);transition:transform .2s;width:12px;text-align:center;flex-shrink:0}
+.subject-header .arrow.open{transform:rotate(90deg)}
+.subject-header .scode{font-size:10px;padding:1px 5px;border-radius:3px;background:rgba(255,255,255,.04);color:#8b949e;width:44px;text-align:center;flex-shrink:0}
+.subject-header .sn{font-size:14px;font-weight:500}
+.subject-header .sb{font-size:10px;padding:1px 6px;border-radius:3px;margin-left:4px}
+.subject-header .smeta{font-size:10px;color:#484f58;margin-left:auto}
+
+.chapters{display:none;padding:0 14px 12px 14px}
+.chapters.open{display:block}
+.chapter{margin-bottom:8px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.03);border-radius:6px;padding:9px 11px;transition:all .15s}
+.chapter:hover{background:rgba(255,255,255,.025)}
+.chapter:last-child{margin-bottom:0}
+.chapter .ct{display:flex;align-items:baseline;gap:5px;margin-bottom:4px}
+.chapter .ct .cn{font-size:12px;font-weight:600}
+.chapter .ct .cc{font-size:10px;color:#8b949e}
+.chapter .ct .c-link{font-size:9px;margin-left:auto;color:#484f58}
+.chapter .kp{display:flex;flex-wrap:wrap;gap:2px}
+.chapter .kp span{font-size:10px;padding:2px 6px;border-radius:3px;background:rgba(255,255,255,.03);color:#8b949e;border:1px solid rgba(255,255,255,.03);cursor:default;transition:all .12s}
+.chapter .kp span:hover{background:rgba(255,255,255,.05);color:#c9d1d9}
+
+/* AREA */
+.area-h{display:flex;align-items:center;gap:8px;margin-bottom:14px;margin-top:28px}
+.area-h .bar{width:3px;height:18px;border-radius:2px}
+.area-h h4{font-size:13px;font-weight:600;letter-spacing:.15px}
+.area-h .ac{font-size:11px;color:#8b949e;margin-left:auto}
+
+/* ===== PANEL 2: 学习路径 ===== */
+.path-intro{font-size:13px;color:#8b949e;margin-bottom:20px;line-height:1.7;padding:14px 18px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.04);border-radius:8px}
+.path-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin-bottom:32px}
+.path-card{background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.045);border-radius:10px;padding:18px 20px;position:relative;overflow:hidden}
+.path-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
+.path-card .pc-icon{font-size:24px;margin-bottom:6px}
+.path-card h4{font-size:14px;font-weight:600;margin-bottom:3px}
+.path-card .pc-sub{font-size:11px;color:#8b949e;margin-bottom:8px}
+.path-card .pc-body{font-size:12px;line-height:1.7;color:#c9d1d9;margin-bottom:8px}
+.path-card .pc-steps{list-style:none}
+.path-card .pc-steps li{font-size:12px;color:#8b949e;padding:3px 0 3px 16px;position:relative}
+.path-card .pc-steps li::before{content:'→';position:absolute;left:0;color:#58a6ff;font-size:11px}
+.path-card .pc-code{font-size:11px;padding:8px 12px;background:rgba(0,0,0,.25);border-radius:5px;border:1px solid rgba(255,255,255,.04);margin-top:6px;color:#8b949e;line-height:1.6;font-family:'Menlo','Consolas',monospace}
+
+/* ===== PANEL 3: 交叉链接 ===== */
+.cross-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:24px}
+.cross-card{background:rgba(255,255,255,.012);border:1px solid rgba(255,255,255,.035);border-radius:8px;padding:14px 16px;transition:all .15s}
+.cross-card:hover{background:rgba(255,255,255,.022)}
+.cross-card h4{font-size:13px;font-weight:600;margin-bottom:4px}
+.cross-card p{font-size:11px;color:#8b949e;line-height:1.6;margin-bottom:6px}
+.cross-card .xref{display:flex;flex-wrap:wrap;gap:3px}
+.cross-card .xref span{font-size:10px;padding:2px 7px;border-radius:3px;cursor:default}
+
+.footer{text-align:center;padding:28px 24px;border-top:1px solid rgba(255,255,255,.05);font-size:11px;color:#484f58;margin-top:40px}
+.footer a{color:#58a6ff;text-decoration:none}
+.footer a:hover{text-decoration:underline}
+
+@media(max-width:768px){
+  .nav{padding:10px 14px}.hero h2{font-size:24px}.hero .def{font-size:12px;padding:12px 16px}
+  .container{padding:20px 10px 40px}.tab{font-size:12px;padding:8px 10px;min-width:80px}
+  .essence-grid,.path-grid,.cross-grid{grid-template-columns:1fr}
+}
+
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.05);border-radius:2px}
+
+/* ===== GROWTH TREE (Panel 4) ===== */
+.tt-container{max-width:1200px;margin:0 auto}
+.tt-intro{font-size:13px;color:#8b949e;line-height:1.7;padding:14px 18px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.04);border-radius:8px;margin-bottom:24px}
+.tt-intro strong{color:#c9d1d9}
+.tt-progress{display:flex;align-items:center;gap:14px;margin-bottom:28px;padding:14px 18px;background:rgba(255,255,255,.012);border:1px solid rgba(255,255,255,.04);border-radius:8px}
+.tt-progress .bar-wrap{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.05);overflow:hidden}
+.tt-progress .bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#58a6ff,#a855f7);transition:width .4s}
+.tt-progress .p-label{font-size:11px;color:#8b949e;white-space:nowrap}
+.tt-progress .p-pct{font-size:13px;font-weight:600;color:#58a6ff;min-width:40px;text-align:right}
+
+.tt-tier{display:flex;gap:16px;margin-bottom:12px;align-items:flex-start}
+.tt-tier-label{width:110px;flex-shrink:0;padding-top:14px;text-align:right}
+.tt-tier-label .tl-num{font-size:10px;color:#484f58;font-weight:600}
+.tt-tier-label .tl-name{font-size:12px;font-weight:600}
+.tt-tier-label .tl-sub{font-size:10px;color:#484f58;margin-top:2px}
+.tt-nodes{flex:1;display:flex;flex-wrap:wrap;gap:10px;padding:12px 0;position:relative;min-height:76px}
+.tt-nodes::before{content:'';position:absolute;left:12px;right:12px;top:0;height:1px;background:rgba(255,255,255,.04)}
+
+.tt-node{position:relative;padding:9px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.015);cursor:pointer;transition:all .2s;min-width:120px;max-width:180px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px;box-shadow:0 0 0 0 transparent}
+.tt-node:hover{transform:translateY(-1px);box-shadow:0 3px 12px rgba(0,0,0,.2)}
+.tt-node .t-icon{font-size:14px;flex-shrink:0}
+.tt-node .t-status{font-size:9px;margin-left:auto;flex-shrink:0}
+.tt-node .t-prereqs{display:none;position:absolute;top:100%;left:0;margin-top:6px;padding:8px 10px;background:#141a26;border:1px solid rgba(255,255,255,.08);border-radius:6px;font-size:10px;color:#8b949e;white-space:nowrap;z-index:10;line-height:1.5}
+.tt-node:hover .t-prereqs{display:block}
+
+/* Node states */
+.tt-node.state-locked{opacity:.35;border-color:rgba(255,255,255,.04);cursor:default;filter:grayscale(.7)}
+.tt-node.state-available{border-color:rgba(88,166,255,.3);background:rgba(88,166,255,.04);animation:glow-pulse 2s ease-in-out infinite}
+.tt-node.state-learning{border-color:rgba(250,204,21,.4);background:rgba(250,204,21,.04);border-style:dashed}
+.tt-node.state-mastered{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.04)}
+.tt-node.state-mastered .t-status{color:#22c55e}
+.tt-node.state-ultimate{border-color:rgba(168,85,247,.35);background:rgba(168,85,247,.04);box-shadow:0 0 16px rgba(168,85,247,.1)}
+
+@keyframes glow-pulse{0%,100%{box-shadow:0 0 4px rgba(88,166,255,.1)}50%{box-shadow:0 0 10px rgba(88,166,255,.2)}}
+
+.tt-bridge{margin:0 0 0 110px;display:flex;gap:10px;padding:0 0 8px 0}
+.tt-bridge span{font-size:9px;color:#484f58;padding:2px 8px;border-radius:3px;background:rgba(255,255,255,.02)}
+
+.tt-legend{display:flex;gap:16px;margin-top:20px;padding:12px 0;flex-wrap:wrap}
+.tt-legend span{font-size:11px;color:#8b949e;display:flex;align-items:center;gap:5px}
+.tt-legend .dot{width:10px;height:10px;border-radius:3px;display:inline-block;flex-shrink:0}
+
+/* Minecraft-style emphasis */
+.tt-craft-row{display:flex;align-items:center;gap:10px;margin:16px 0 16px 110px;padding:12px 16px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.04);border-radius:8px;font-size:12px;color:#9ca3af}
+.tt-craft-row .arrow{color:#484f58;font-size:14px}
+.tt-craft-row .item{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.03);font-size:11px}
+.tt-craft-row .result{color:#c084fc;font-weight:600}
+
+/* Detail modal */
+.tt-detail{display:none;margin:16px 0 16px 110px;padding:16px 20px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.05);border-radius:8px}
+.tt-detail.open{display:block}
+.tt-detail h5{font-size:13px;font-weight:600;margin-bottom:6px}
+.tt-detail p{font-size:11px;color:#8b949e;line-height:1.7}
+.tt-detail .dep{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.tt-detail .dep span{font-size:10px;padding:2px 7px;border-radius:3px}
+.tt-detail .action{font-size:11px;color:#58a6ff;cursor:pointer;margin-top:6px;display:inline-block}
+
+@media(max-width:768px){
+  .tt-tier{flex-direction:column}.tt-tier-label{width:100%;text-align:left;padding-top:0}
+  .tt-nodes::before{left:0;right:0}.tt-bridge,.tt-craft-row,.tt-detail{margin-left:0}
+  .tt-node{min-width:100px;max-width:140px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-left"><h1>低空经济学</h1><div class="sub">交叉学科知识体系 · 多入口学习路径 · 完整章节知识点</div></div>
+  <div class="nav-right">宋宗源</div>
+</div>
+<div class="container">
+  <div class="hero">
+    <div class="badge">⏺ 低空经济学 · 5大支柱知识体系</div>
+    <h2>低空经济知识体系</h2>
+    <p class="tagline">航空工程 × 通信导航 × 人工智能 × 城市管理 × 经济法律 —<br>五大学科的交叉地带，构成一个全新的知识领域 · <strong style="color:#58a6ff">5大支柱 · 37个核心专题</strong></p>
+    <div class="def">
+      <strong>低空经济的本质</strong>：将<strong>300米以下空域</strong>从"管制资源"转化为<strong>生产要素</strong>——通过<strong>电动航空器+智能通信+AI决策+UTM管控</strong>的四位一体技术栈，实现人员/物资/数据在低空的高效调度。<br>
+      它不是"无人机行业"的简单延伸，而是<strong>航空载运 + 数字经济 + 城市基础设施</strong>三个产业范式在低空维度的<strong>深度耦合</strong>。
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-panel="p0">🌐 本质论</button>
+    <button class="tab" data-panel="p1">📚 知识树</button>
+    <button class="tab" data-panel="p2">🗺️ 学习路径</button>
+    <button class="tab" data-panel="p3">🔗 交叉链接</button>
+    <button class="tab" data-panel="p4">🎮 成长树</button>
+  </div>
+
+  <!-- ===== PANEL 0: ESSENCE ===== -->
+  <div class="panel active" id="p0">
+    <div class="sh">
+      <h3>低空经济本质论</h3>
+      <span class="sc">6个核心命题 · 先理解"为什么"再做知识拆解</span>
+    </div>
+    <div class="essence-grid">
+      <div class="essence-card" style="border-left-color:#ef4444">
+        <div class="e-icon">🏛️</div>
+        <h4>命题一：空域即基础设施</h4>
+        <p>低空经济的物质基础不是飞行器，而是<strong>空域的可调度性</strong>。就像公路之于汽车、频谱之于通信——空域从"管制品"变为"可动态配置的资源"，整个产业逻辑因此而变。<br><br>→ 这意味着UTM(无人机交通管理)不是辅助系统，而是低空经济的<strong>操作系统</strong>。没有UTM就没有规模化的低空商业。UTM是低空经济的"安卓"。</p>
+        <span class="e-link">↳ 关联：空域管理 · UTM · 政策法规</span>
+      </div>
+      <div class="essence-card" style="border-left-color:#3b82f6">
+        <div class="e-icon">⚡</div>
+        <h4>命题二：电动化是前提</h4>
+        <p>为什么低空经济在2020s爆发、而不是1990s？因为<strong>电动航空技术成熟了</strong>。电池能量密度从100→300Wh/kg(2000→2025)，电机功率密度从2→8kW/kg。电动化带来的三个质变：<strong>低成本</strong>(燃油成本1/10)、<strong>低噪音</strong>(适合城市运行)、<strong>高冗余</strong>(分布式电推DEPA)。<br><br>→ 电池不是"配件"，是低空经济<strong>最关键的技术天花板</strong>。</p>
+        <span class="e-link">↳ 关联：电池技术 · 电推进 · eVTOL设计</span>
+      </div>
+      <div class="essence-card" style="border-left-color:#22c55e">
+        <div class="e-icon">🧠</div>
+        <h4>命题三：AI即安全</h4>
+        <p>传统航空的安全模型是"人+程序+机械冗余"。低空经济的安全模型是<strong>AI+传感器融合+实时决策</strong>。因为低空运行密度是传统航空的100-1000倍——不可能像民航FAA那样靠管制员一对一指挥。<br><br>→ 感知(六向避障)+决策(碰撞解脱)+执行(自动备降)，构成了<strong>低空安全铁三角</strong>。没有AI能力做不了低空经济——这句话不是营销，是物理约束。</p>
+        <span class="e-link">↳ 关联：AI与决策 · 传感器 · 边缘计算 · 安全</span>
+      </div>
+      <div class="essence-card" style="border-left-color:#f59e0b">
+        <div class="e-icon">🌆</div>
+        <h4>命题四：城市是主战场</h4>
+        <p>低空经济的核心价值不在野外，而在<strong>城市空间</strong>。城市产生80%的物流需求、90%的应急响应需求、100%的通勤拥堵问题。但城市也是运行环境最复杂的：高楼峡谷(通信多径+GPS失锁)、密集人口(安全冗余提升10倍)、噪音限制(电动垂起的天然优势)。<br><br>→ 低空经济的终极检验标准是：能否在<strong>深圳CBD</strong>安全飞一个架次。</p>
+        <span class="e-link">↳ 关联：UAM · 城市选址 · 起降场 · 通信系统</span>
+      </div>
+      <div class="essence-card" style="border-left-color:#a855f7">
+        <div class="e-icon">🔄</div>
+        <h4>命题五：系统工程是关键</h4>
+        <p>低空经济不是单项技术突破就能成功的——它是<strong>航空×通信×AI×城市治理×法律×保险×金融</strong>的七维交叉问题。飞行器做得再好，UTM没建起来也飞不了；法规再完善，电池续航不够也白搭。没有任何单一学科能解决所有问题。<br><br>→ 低空经济的核心能力是<strong>系统架构能力</strong>——把七个维度的约束和机会整合成一个可执行的方案。</p>
+        <span class="e-link">↳ 关联：方案架构 · 决策支持 · 方案生成器</span>
+      </div>
+      <div class="essence-card" style="border-left-color:#58a6ff">
+        <div class="e-icon">📈</div>
+        <h4>命题六：网络效应决定终局</h4>
+        <p>低空经济的竞争终局是<strong>平台经济</strong>，不是硬件销售。谁拥有最大的飞行网络(航线+起降场+UTM连接数)，谁就能定义标准、收取平台税。大疆在做司空2(云平台)、美团在铺配送网络、亿航在跑UAM航线——都是在抢占<strong>网络效应的飞轮起点</strong>。<br><br>→ 硬件是入口，网络是护城河，数据是壁垒。</p>
+        <span class="e-link">↳ 关联：商业模式 · 市场格局 · SaaS平台</span>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;padding:16px 20px;background:rgba(88,166,255,.04);border:1px solid rgba(88,166,255,.12);border-radius:8px;">
+      <div style="font-size:13px;font-weight:600;color:#58a6ff;margin-bottom:6px">💡 核心洞察</div>
+      <div style="font-size:12px;line-height:1.8;color:#c9d1d9">
+        <strong>低空经济 = (航空器的电动化 + 通信的数字化 + 决策的智能化) × 空域的可调度化</strong><br>
+        这四个维度缺一不可，且相互耦合变化——这就是它为什么是<strong>十年一遇的系统级机会</strong>。作为进入者，不需要在所有维度都有深度，但必须<strong>理解每个维度的核心约束和交叉影响</strong>。
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PANEL 1: KNOWLEDGE TREE ===== -->
+  <div class="panel" id="p1">
+    <div class="sh">
+      <h3>知识树 · 5大支柱 · 37个核心专题</h3>
+      <span class="sc">点击展开章节→知识点</span>
+    </div>
+
+    <!-- OBSIDIAN PATH BAR -->
+    <div style="background:rgba(88,166,255,.08);border-left:3px solid #58a6ff;padding:10px 14px;margin:0 12px 12px;border-radius:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span style="font-size:13px;color:#58a6ff;font-weight:600">📚 Obsidian 知识库</span>
+      <span style="font-size:12px;color:#8b949e">每个专题旁都有 <span style="background:rgba(88,166,255,.12);padding:1px 6px;border-radius:3px;font-size:11px;cursor:pointer" onclick="navigator.clipboard?.writeText('低空经济/P0 基础基石/P0.1 低空经济本质论');this.textContent='已复制!'">📂 路径</span> 可点击复制</span>
+      <span style="font-size:11px;color:#6b7280;margin-left:auto">完整深度笔记在 Obsidian</span>
+    </div>
+
+    <!-- PILLAR 0 -->
+    <div class="area-h"><div class="bar" style="background:#6b7280"></div><h4 style="color:#6b7280">P0. 基础基石 — 理解低空经济需要的前置知识</h4><span class="ac">3科</span></div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#6b7280">P0.1</span>
+        <span class="sn">低空经济本质论</span><span class="sb" style="background:rgba(107,114,128,.12);color:#9ca3af">元认知</span>
+        <span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">定义与边界</span><span class="cc">· 5知识点</span></div><div class="kp"><span>低空经济vs无人机行业</span><span>"三流"模型(物流/信息流/资金流)</span><span>300m空间资源化</span><span>四维约束框架</span><span>国际定义对比</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">技术推动力分析</span><span class="cc">· 5知识点</span></div><div class="kp"><span>电动化(电池/电机)</span><span>数字化(5G/边缘计算)</span><span>智能化(AI/NPU)</span><span>轻量化(复合材料/拓扑)</span><span>S型技术曲线位置判断</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">要素解构</span><span class="cc">· 4知识点</span></div><div class="kp"><span>飞行器(运载工具)</span><span>空域(空间资源)</span><span>通信(连接纽带)</span><span>AI(智能调度中枢)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">产业演进阶段论</span><span class="cc">· 4知识点</span></div><div class="kp"><span>萌芽期(2010s-2023)</span><span>政策驱动期(2024-2026)</span><span>商业验证期(2026-2028)</span><span>网络效应期(2028+)</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#6b7280">P0.2</span>
+        <span class="sn">系统工程方法论</span><span class="sb" style="background:rgba(107,114,128,.12);color:#9ca3af">方法论</span>
+        <span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">系统思维(V模型)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>需求分析→系统设计→集成验证</span><span>V模型在低空系统的应用</span><span>层级分解(top-down)</span><span>接口管理</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">多学科优化</span><span class="cc">· 4知识点</span></div><div class="kp"><span>气动-结构-热控耦合</span><span>通信-控制-导航共优化</span><span>成本-性能-安全三角</span><span>MDAO框架</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">系统安全工程</span><span class="cc">· 5知识点</span></div><div class="kp"><span>FHA(功能危险分析)</span><span>FTA(故障树)</span><span>FMECA(失效模式)</span><span>ALARP原则</span><span>SIL等级</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">模型化系统工程(MBSE)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>SysML建模</span><span>需求追溯矩阵</span><span>数字线程</span><span>仿真驱动的设计</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#6b7280">P0.3</span>
+        <span class="sn">航空基础原理</span><span class="sb" style="background:rgba(107,114,128,.12);color:#9ca3af">基础</span>
+        <span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">空气动力学入门</span><span class="cc">· 5知识点</span></div><div class="kp"><span>伯努利原理</span><span>翼型升力阻力</span><span>雷诺数影响(低空低Re)</span><span>地面效应</span><span>涡环状态(旋翼危险区)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">飞行力学基础</span><span class="cc">· 4知识点</span></div><div class="kp"><span>六自由度运动方程</span><span>稳定与操纵</span><span>重心/气动中心/焦点</span><span>多旋翼控制机理(扭矩差)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">结构力学概念</span><span class="cc">· 4知识点</span></div><div class="kp"><span>疲劳与断裂</span><span>共振频率设计</span><span>承载比(结构重量/总重)</span><span>振动控制(频率隔离)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">推进系统原理</span><span class="cc">· 4知识点</span></div><div class="kp"><span>动量盘理论(悬停推力)</span><span>桨尖速度/效率/噪音权衡</span><span>功率载荷(PL)</span><span>盘载荷(DL)</span></div></div>
+      </div>
+    </div>
+
+    <!-- PILLAR I -->
+    <div class="area-h"><div class="bar" style="background:#ef4444"></div><h4 style="color:#ef4444">P1. 飞行器系统 — 航空工程核心</h4><span class="ac">8科</span></div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#ef4444">P1.1</span>
+        <span class="sn">eVTOL构型设计</span><span class="sb" style="background:rgba(239,68,68,.12);color:#ef4444">核心</span>
+        <span class="smeta">6章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">多旋翼构型</span><span class="cc">· 4知识点</span></div><div class="kp"><span>4/6/8轴冗余</span><span>亿航EH216-S(16桨冗余)</span><span>优：简单/安全</span><span>劣：航程<30km、巡航效率低</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">复合翼构型(VTOL)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>四旋翼+固定翼过渡</span><span>峰飞V2000CG(200km+航程)</span><span>优：巡航效率高</span><span>劣：死重(额外电机+机翼)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">倾转旋翼/涵道</span><span class="cc">· 4知识点</span></div><div class="kp"><span>Joby S4(倾转旋翼)</span><span>Lilium(倾转涵道)</span><span>优：无死重效率最高</span><span>劣：机械复杂度/适航难度</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">分体式/陆空两用</span><span class="cc">· 4知识点</span></div><div class="kp"><span>小鹏汇天(陆空一体)</span><span>分体式设计权衡</span><span>公路+飞行双适航挑战</span><span>轻量化vs耐撞性矛盾</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">翼身融合(BWB)</span><span class="cc">· 3知识点</span></div><div class="kp"><span>气动效率+30%</span><span>乘员布局挑战</span><span>低噪音优势</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">构型选择决策树</span><span class="cc">· 4知识点</span></div><div class="kp"><span>航程需求→构型筛选</span><span>适航路径判断</span><span>制造成本评估</span><span>运营场景匹配</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#ef4444">P1.2</span>
+        <span class="sn">无人机系统架构</span><span class="sb" style="background:rgba(239,68,68,.12);color:#ef4444">核心</span>
+        <span class="smeta">6章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">飞控系统(FCC)</span><span class="cc">· 5知识点</span></div><div class="kp"><span>姿态/高度/位置三闭环</span><span>IMU三冗余+仲裁</span><span>PIXHAWK/APM/大疆架构</span><span>RTK+视觉融合导航</span><span>限飞/电子围栏</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">图传与遥测</span><span class="cc">· 4知识点</span></div><div class="kp"><span>O3图传(15km/1080p)</span><span>4G双链路(广域备份)</span><span>SDR(软件无线电)趋势</span><span>自适应码率/发射功率</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">DJI M350(行业旗舰)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>六向感知(双目+红外)</span><span>IP55防护/55min续航</span><span>SDK开发(PSDK/OSDK)</span><span>司空2云平台对接</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">DJI FC30/200(运载旗舰)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>30/50kg载重</span><span>16km/30km航程</span><span>换电+水带+灭火弹+破窗</span><span>IPX5防水/抗风6级</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">DJI T200/T60(农业旗舰)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>50kg喷洒/全地形覆盖</span><span>双RTK/多光谱兼容</span><span>果树模式(穿透喷)</span><span>40倍人工效率</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">复合翼机(长航时)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>垂起+固定翼过渡策略</span><span>40-120min续航范围</span><span>测绘/管线/侦察应用</span><span>大疆/纵横/傲飞对比</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#ef4444">P1.3</span>
+        <span class="sn">电推进系统</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">无刷直流电机(BLDC)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>外转子(大扭矩/低KV)</span><span>内转子(高转速/高KV)</span><span>效率95%+曲线</span><span>霍尔/无感FOC控制</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">电子调速器(ESC)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>FOC矢量控制原理</span><span>PWM/OneShot/DShot协议</span><span>堵转/过流/过热保护</span><span>主动刹车(能量回收)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">螺旋桨设计</span><span class="cc">· 4知识点</span></div><div class="kp"><span>桨径/螺距/桨叶数权衡</span><span>效率(>85%)vs噪音权衡</span><span>碳纤维/尼龙桨特性</span><span>桨尖造型(翼尖小翼)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">分布式电推进(DEPA)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>冗余推力阵列设计</span><span>电机故障-推力重组</span><span>边界层注入增升</span><span>DEPA在eVTOL的应用</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#ef4444">P1.4</span>
+        <span class="sn">电池与能源系统</span><span class="sb" style="background:rgba(239,68,68,.12);color:#ef4444">瓶颈</span>
+        <span class="smeta">6章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">锂离子/聚合物电池</span><span class="cc">· 5知识点</span></div><div class="kp"><span>能量密度250-300Wh/kg</span><span>倍率放电(>10C)</span><span>循环寿命(<500次)</span><span>安全(热失控/鼓包)</span><span>低温降效(-20°C容量减半)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">固态电池</span><span class="cc">· 4知识点</span></div><div class="kp"><span>500+Wh/kg(2026-28量产)</span><span>固态电解质(硫化物/氧化物)</span><span>本质安全(不可燃)</span><span>富锂锰基正极路线</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">氢燃料电池</span><span class="cc">· 4知识点</span></div><div class="kp"><span>质子交换膜(PEM)</span><span>鹏飞氢电方案(>1h续航)</span><span>加氢基础设施</span><span>低温启动挑战(<0°C)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">换电系统</span><span class="cc">· 4知识点</span></div><div class="kp"><span>模块化电池pack设计</span><span>自动换电站(机械臂)</span><span>BaaS电池资产管理</span><span>充电vs换电商业模式对比</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">BMS(电池管理系统)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>SoC估算(EKF/安时积分)</span><span>SoH健康度评估</span><span>均衡(被动vs主动)</span><span>热管理(风冷/液冷/相变)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">能量密度×航程关系</span><span class="cc">· 4知识点</span></div><div class="kp"><span>航程=能量密度×电池占比/飞阻</span><span>当前250Wh/kg→航程20-30km</span><span>500Wh/kg→航程50-100km</span><span>氢能→航程>200km</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#ef4444">P1.5</span>
+        <span class="sn">结构与材料</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">碳纤维复合材料</span><span class="cc">· 4知识点</span></div><div class="kp"><span>预浸料/铺层设计</span><span>模压/热压罐/3D编织</span><span>T300/T700/T800等级</span><span>航空级vs工业级标准</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">铝合金与轻合金</span><span class="cc">· 3知识点</span></div><div class="kp"><span>7075-T6/6061-T6</span><span>镁合金(更轻但腐蚀)</span><span>钛合金(高温/高强)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">3D打印(增材制造)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>钛合金/铝合金/尼龙</span><span>随形冷却/拓扑优化</span><span>减重30-50%</span><span>小批量/定制化适合航空</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">结构完整性</span><span class="cc">· 4知识点</span></div><div class="kp"><span>静强度/疲劳/损伤容限</span><span>落震试验(起落架)</span><span>鸟撞/冰雹冲击</span><span>复合材料修补规范</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#ef4444">P1.6</span>
+        <span class="sn">挂载与载荷系统</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">光学载荷</span><span class="cc">· 5知识点</span></div><div class="kp"><span>可见光(4K/8K变焦)</span><span>热成像(640x512夜视)</span><span>多光谱(NDVI/RE)</span><span>三轴云台增稳(>0.01°精度)</span><span>RTK打点定位</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">消防专用载荷</span><span class="cc">· 5知识点</span></div><div class="kp"><span>破窗弹(破拆玻璃幕墙)</span><span>灭火弹(干粉/水基)</span><span>水带+水炮(FC30方案)</span><span>抛投(救生圈/药品)</span><span>喊话器+探照灯</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">物流/运输载荷</span><span class="cc">· 4知识点</span></div><div class="kp"><span>货箱(标准/冷链/医疗)</span><span>降落伞(应急空投)</span><span>挂钩/电磁释放</span><span>重量-重心限制</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">特殊载荷</span><span class="cc">· 4知识点</span></div><div class="kp"><span>大气/气体检测传感器</span><span>5G基站/通信中继</span><span>LiDAR测绘单元</span><span>喷洒(植保/消毒)</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#ef4444">P1.7</span>
+        <span class="sn">自动机场与地面设备</span><span class="smeta">3章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">DJI Dock 2</span><span class="cc">· 4知识点</span></div><div class="kp"><span>IP55防护/自动开合仓门</span><span>15km控制/自动充电</span><span>司空2远程操控</span><span>部署选址(屋顶/灯杆)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">车载/船载无人机航母</span><span class="cc">· 4知识点</span></div><div class="kp"><span>移动起降平台设计</span><span>机库+充电+数据回传</span><span>移动场景的导航挑战</span><span>应急指挥车集成方案</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">智能充换电站</span><span class="cc">· 4知识点</span></div><div class="kp"><span>机械臂自动换电(30秒)</span><span>多电池仓位管理</span><span>电池健康监测/循环管理</span><span>充电功率调度</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#ef4444">P1.8</span>
+        <span class="sn">制造与供应链</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">整机总装工艺</span><span class="cc">· 4知识点</span></div><div class="kp"><span>机身/机臂/电机/载荷装配</span><span>线束设计与EMC防护</span><span>出厂测试流程(振动/通信/飞控)</span><span>大疆产线效率</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">零部件供应链</span><span class="cc">· 4知识点</span></div><div class="kp"><span>电机/电调(国产化率90%+)</span><span>IMU/GNSS芯片(依赖进口)</span><span>SoC/NPU(英伟达/海思/地平线)</span><span>碳纤维原丝(日本东丽限制)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">适航与量产合规</span><span class="cc">· 4知识点</span></div><div class="kp"><span>生产许可证(PC)要求</span><span>AS9100航空质量体系</span><span>供应链追溯要求</span><span>关键件/关键工序认定</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">中国低空制造生态</span><span class="cc">· 4知识点</span></div><div class="kp"><span>珠三角(大疆+配套生态)</span><span>长三角(eVTOL+供应链)</span><span>成渝(特种无人机)</span><span>产业集群规划</span></div></div>
+      </div>
+    </div>
+
+    <!-- PILLAR II -->
+    <div class="area-h"><div class="bar" style="background:#3b82f6"></div><h4 style="color:#3b82f6">P2. 通信导航控制 — 数字化神经系统</h4><span class="ac">9科</span></div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#3b82f6">P2.1</span>
+        <span class="sn">通信系统</span><span class="sb" style="background:rgba(59,130,246,.12);color:#3b82f6">核心</span>
+        <span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">5G ATG低空专网</span><span class="cc">· 5知识点</span></div><div class="kp"><span>300m以下空域优化覆盖</span><span>端到端延迟<10ms</span><span>上行增强(飞-地)</span><span>MEC边缘云下沉</span><span>网络切片(控制vs数据分离)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">C-V2X车-飞-路-云协同</span><span class="cc">· 4知识点</span></div><div class="kp"><span>PC5直连通信(5.9GHz)</span><span>V2V(飞-飞)/V2I(飞-站)</span><span>碰撞预警/协作感知</span><span>信号遮蔽(城市峡谷)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">4G/5G双链路冗余</span><span class="cc">· 4知识点</span></div><div class="kp"><span>主链路O3+备链路4G</span><span>链路切换延迟<100ms</span><span>超视距BVLOS控制</span><span>大疆4G云控方案</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">MESH自组网</span><span class="cc">· 4知识点</span></div><div class="kp"><span>多机中继/链式组网</span><span>山体遮挡/城市峡谷场景</span><span>动态路由协议(OLSR)</span><span>带宽共享/负载均衡</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">卫星通信(远期)</span><span class="cc">· 3知识点</span></div><div class="kp"><span>低轨LEO卫星(星链/千帆)</span><span>跨海/偏远覆盖</span><span>延迟/带宽/终端重量权衡</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#3b82f6">P2.2</span>
+        <span class="sn">导航与定位</span><span class="sb" style="background:rgba(59,130,246,.12);color:#3b82f6">核心</span>
+        <span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">GNSS(全球导航卫星系统)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>北斗BDS+GPS双频定位</span><span>多星座融合(三频RTK)</span><span>星基增强SBAS</span><span>城市峡谷多径/失锁</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">RTK差分定位</span><span class="cc">· 4知识点</span></div><div class="kp"><span>厘米级精度(2cm+1ppm)</span><span>基站+流动站架构</span><span>网络RTK(NTRIP)</span><span>PPK后处理(免基站)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">IMU/惯导系统</span><span class="cc">· 4知识点</span></div><div class="kp"><span>加速度计+陀螺仪+磁力计</span><span>MEMS IMU(工业级vs战术级)</span><span>EKF姿态融合</span><span>GPS失效惯性推算(10s精度)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">视觉里程计(VIO)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>双目视觉+IMU紧耦合</span><span>ORB-SLAM/VINS-Fusion</span><span>特征点提取/匹配</span><span>退化场景(弱纹理/高速移动)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">UWB/蓝牙室内辅助</span><span class="cc">· 4知识点</span></div><div class="kp"><span>UWB定位(10-30cm)</span><span>蓝牙AoA/AoD定位</span><span>室内外无缝切换</span><span>起降场/机库精确定位</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#3b82f6">P2.3</span>
+        <span class="sn">传感器与环境感知</span><span class="sb" style="background:rgba(59,130,246,.12);color:#3b82f6">核心</span>
+        <span class="smeta">7章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">LiDAR激光雷达</span><span class="cc">· 4知识点</span></div><div class="kp"><span>ToF/FMCW原理</span><span>机械/固态/Flash分类</span><span>30m+测距(低空需求)</span><span>点云处理/障碍物检测</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">毫米波雷达</span><span class="cc">· 4知识点</span></div><div class="kp"><span>77G/24GHz频段</span><span>全天候(雨/雾/烟)</span><span>FMCW测距测速</span><span>4D成像雷达趋势</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">计算机视觉(CV)</span><div class="cc">· 5知识点</div></div><div class="kp"><span>双目立体匹配/深度估计</span><span>目标检测(YOLOv8/RT-DETR)</span><span>语义分割/可通行区域</span><span>Tracking(DeepSORT/ByteTrack)</span><span>弱光/逆光增强</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">红外/热成像</span><span class="cc">· 4知识点</span></div><div class="kp"><span>非制冷氧化钒微测辐射热计</span><span>640×512/1280×1024分辨率</span><span>温度测量(火源/人员)</span><span>烟透/夜视能力</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">多源传感器融合</span><span class="cc">· 4知识点</span></div><div class="kp"><span>EKF/UKF空间时间对准</span><span>大疆六向感知架构</span><span>传感器时序同步</span><span>故障检测/降级模式</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">环境感知一体化SoC</span><span class="cc">· 3知识点</span></div><div class="kp"><span>英伟达Orin/Jetson</span><span>华为昇腾MDC</span><span>地平线征程</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">对抗性环境(低空挑战)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>玻璃幕墙反射(毫米波虚警)</span><span>电力线检测(细小障碍物)</span><span>飞鸟/AED(动物识别)</span><span>烟/雾/雨衰减</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#3b82f6">P2.4</span>
+        <span class="sn">飞控与自动驾驶仪</span><span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">控制架构</span><span class="cc">· 4知识点</span></div><div class="kp"><span>位置环→速度环→姿态环→力矩环</span><span>PID/ADRC/MPC控制</span><span>多旋翼控制分配矩阵</span><span>饱和/反螺旋/防积分积分</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">冗余与容错</span><span class="cc">· 4知识点</span></div><div class="kp"><span>三余度IMU架构</span><span>双余度GNSS/磁力计</span><span>电机故障检测(6→5轴重组)</span><span>自动返航(RTL/降落)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">自动驾驶等级</span><span class="cc">· 4知识点</span></div><div class="kp"><span>L0(手动操控)</span><span>L2(自主悬停/避障)</span><span>L4(航线自主飞行+备降)</span><span>L5(全自主运行+应急决策)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">链路中断保护</span><span class="cc">· 4知识点</span></div><div class="kp"><span>信号丢失超时判定</span><span>自动返航策略(直线/航路)</span><span>备降点选择逻辑</span><span>地理围栏强制降落</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">适航级飞控标准</span><span class="cc">· 3知识点</span></div><div class="kp"><span>DO-178C(软件)</span><span>DO-254(硬件)</span><span>开发保证等级DAL</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#3b82f6">P2.5</span>
+        <span class="sn">AI与智能决策</span><span class="sb" style="background:rgba(59,130,246,.12);color:#3b82f6">核心</span>
+        <span class="smeta">7章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">计算机视觉(CV)</span><span class="cc">· 5知识点</span></div><div class="kp"><span>火灾/人员/车辆/物资检测</span><span>YOLOv8/RT-DETR/小目标检测</span><span>多目标跟踪(DeepSORT)</span><span>航空视角(俯视+侧视)</span><span>航拍图像拼接+标注</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">路径规划</span><span class="cc">· 5知识点</span></div><div class="kp"><span>A*/RRT/Dijkstra</span><span>动态避障(DWA/TEB)</span><span>多目标优化(Pareto)</span><span>能量最优航路</span><span>实时重规划(<50ms)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">态势感知与融合</span><span class="cc">· 4知识点</span></div><div class="kp"><span>多源数据对齐(空间/时间)</span><span>空域态势图生成</span><span>异常行为检测</span><span>预测性分析(冲突预警)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">多机协同与任务分配</span><span class="cc">· 4知识点</span></div><div class="kp"><span>分布式任务分配(拍卖/一致性)</span><span>编队保持(领航-跟随)</span><span>覆盖路径规划</span><span>通信约束下的协同</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">大模型在低空的应用</span><span class="cc">· 4知识点</span></div><div class="kp"><span>RAG知识库+方案生成</span><span>多模态(图/文/语音指令)</span><span>故障诊断/维修建议</span><span>自然语言操控(NLU)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">安全AI(可解释/鲁棒)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>对抗样本防御(Gaussian blur)</span><span>OOD检测(未知物体)</span><span>模型量级与延迟权衡</span><span>AI Safety(安全边界)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">端侧AI推理引擎</span><span class="cc">· 4知识点</span></div><div class="kp"><span>TensorRT/ONNX Runtime</span><span>INT8/FP16量化精度</span><span>异构调度(CPU+GPU+NPU)</span><span>实时性<30ms</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#3b82f6">P2.6</span>
+        <span class="sn">边缘计算</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">硬件平台</span><span class="cc">· 4知识点</span></div><div class="kp"><span>NVIDIA Jetson Orin/Thor</span><span>华为昇腾Atlas(20-40TOPS)</span><span>地平线征程(4-10TOPS)</span><span>MCU+NPU异构方案</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">功耗与散热</span><span class="cc">· 4知识点</span></div><div class="kp"><span>15W/30W/50W热设计</span><span>被动散热/主动风冷</span><span>降频保护策略</span><span>电池续航vs算力比值</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">模型轻量化</span><span class="cc">· 4知识点</span></div><div class="kp"><span>量化(INT8/FP16)</span><span>剪枝(结构化/非结构化)</span><span>蒸馏(Teacher-Student)</span><span>NAS(神经架构搜索)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">机载-边缘-云三级架构</span><span class="cc">· 4知识点</span></div><div class="kp"><span>机载:实时推理<30ms</span><span>边缘:5G MEC/多机协同</span><span>云端:大模型/海量数据分析</span><span>分级推理决策架构</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#3b82f6">P2.7</span>
+        <span class="sn">集群与蜂群</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">编队控制算法</span><span class="cc">· 4知识点</span></div><div class="kp"><span>领航-跟随/虚拟结构</span><span>基于行为的编队</span><span>一致性控制(Consensus)</span><span>队形变换与避障</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">通信约束MESH</span><span class="cc">· 4知识点</span></div><div class="kp"><span>分布式vs集中式架构</span><span>通信延迟对协同的影响</span><span>局部观测/部分可观测MDP</span><span>拓扑切换稳定性</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">任务分配</span><span class="cc">· 4知识点</span></div><div class="kp"><span>匈牙利算法(小规模)</span><span>分布式拍卖(大规模)</span><span>CBBA(一致性包算法)</span><span>动态重分配</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">编队表演</span><span class="cc">· 3知识点</span></div><div class="kp"><span>GPS/RTK编队(厘米级间距)</span><span>灯光舞步设计</span><span>紧急返航同步</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#3b82f6">P2.8</span>
+        <span class="sn">频谱管理</span><span class="smeta">3章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">无人机通信频段</span><span class="cc">· 4知识点</span></div><div class="kp"><span>2.4G/5.8G图传频段</span><span>4.5G/5G NR控制频段</span><span>专用低空频率规划</span><span>C-band/毫米波(未来)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">干扰管理</span><span class="cc">· 4知识点</span></div><div class="kp"><span>WiFi/蓝牙/5G共存干扰</span><span>DFS动态频率选择</span><span>射频频谱监测/感知</span><span>认知无线电(cognitive radio)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">SRRC型号核准</span><span class="cc">· 3知识点</span></div><div class="kp"><span>中国SRRC认证要求</span><span>发射功率限制(20dBm max)</span><span>FCC/CE/中国差异</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#3b82f6">P2.9</span>
+        <span class="sn">仿真与数字孪生</span><span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">飞行仿真平台</span><span class="cc">· 4知识点</span></div><div class="kp"><span>Gazebo/Webots/CoppeliaSim</span><span>X-Plane(空气动力学真实)</span><span>AirSim(微软无人机仿真)</span><span>HITL/SITL在环仿真</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">数字孪生城市</span><span class="cc">· 4知识点</span></div><div class="kp"><span>CIM(城市信息模型)</span><span>BIM(建筑信息模型)</span><span>CityEngine场景构建</span><span>孪生-实时数据同步</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">半实物仿真(HILS)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>飞控HITL(硬件在环)</span><span>信号级仿真(传感器模拟)</span><span>故障注入测试</span><span>边界条件/极限状态</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">虚拟适航验证</span><span class="cc">· 3知识点</span></div><div class="kp"><span>仿真飞行试验小时积累</span><span>参数扫略/敏感性分析</span><span>适航仿真认可框架</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">数字主线(Digital Thread)</span><span class="cc">· 3知识点</span></div><div class="kp"><span>设计→制造→飞行→维护全链路</span><span>数据追溯/配置管理</span><span>反馈闭环</span></div></div>
+      </div>
+    </div>
+
+    <!-- PILLAR III -->
+    <div class="area-h"><div class="bar" style="background:#22c55e"></div><h4 style="color:#22c55e">P3. 运行体系 — 空域/安全/基础设施</h4><span class="ac">7科</span></div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#22c55e">P3.1</span>
+        <span class="sn">空域管理与UTM</span><span class="sb" style="background:rgba(34,197,94,.12);color:#22c55e">核心</span>
+        <span class="smeta">6章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">空域结构与分类</span><span class="cc">· 5知识点</span></div><div class="kp"><span>A/B/C/D/E/G/W七类空域</span><span>G类(120m下非管制)</span><span>W类(120m下管制)</span><span>空域开放度:LOS/BVLOS差距</span><span>深圳/合肥/成都试点</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">UTM系统架构</span><span class="cc">· 5知识点</span></div><div class="kp"><span>飞行计划+冲突检测+动态空域</span><span>U-Space四阶段演进</span><span>中国UTM标准制定</span><span>莱斯信息/川大智胜</span><span>低空数字身份(RemoteID)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">飞行申请与批准</span><span class="cc">· 4知识点</span></div><div class="kp"><span>UOM系统全流程(申请/审核/监控)</span><span>秒级审批(常态化航线)</span><span>临时空域/活动空域审批</span><span>跨境飞行(大湾区)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">动态空域重构</span><span class="cc">· 4知识点</span></div><div class="kp"><span>实时禁飞区调整</span><span>气象触发限飞</span><span>应急/安保空域释放</span><span>时间/空间切片</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">低空航路体系</span><span class="cc">· 4知识点</span></div><div class="kp"><span>固定航路vs自由航线</span><span>分层分流(物流/载人/巡检)</span><span>eVTOL走廊规划</span><span>航路容量与碰撞风险评估</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">国际UTM对比</span><span class="cc">· 4知识点</span></div><div class="kp"><span>NASA UTM(技术原型)</span><span>EU U-Space(法规完善)</span><span>中国UTM(政府主导)</span><span>日本DIPS(海岛物流)</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#22c55e">P3.2</span>
+        <span class="sn">适航与安全审定</span><span class="sb" style="background:rgba(34,197,94,.12);color:#22c55e">核心</span>
+        <span class="smeta">6章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">型号合格证(TC)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>TC获取流程(10步)</span><span>亿航EH216-S全球首张(2023)</span><span>小鹏/峰飞/沃飞进展</span><span>SC-VTOL特殊适航标准</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">生产许可证(PC)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>量产质量体系(AS9100)</span><span>生产批准/制造符合性</span><span>供应商管控/来料检验</span><span>PC与TC的关系</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">单机适航证(AC)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>出厂试飞检验</span><span>持续适航(适航指令AD)</span><span>设计更改(STC)</span><span>限用类vs标准类</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">大型无人机审定</span><span class="cc">· 4知识点</span></div><div class="kp"><span>MTOW>150kg正规审定</span><span>CCAR-92运行规范</span><span>FC200/FC30审定时间估算</span><span>这是方案落地的真实时间约束</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">轻小型(限用类)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>M350<25kg限用类豁免</span><span>适航标准征求意见稿</span><span>运营合格证(OC)</span><span>豁免清单条件</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">航空安全等级(DAL)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>A级(灾难性)→E级(无影响)</span><span>DO-178C(软件开发保证)</span><span>DO-254(复杂硬件)</span><span>安全案例/安全论据</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#22c55e">P3.3</span>
+        <span class="sn">运行安全与SMS</span><span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">安全管理体系(SMS)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>安全政策/风险管理/安全保证/安全促进</span><span>危险源识别</span><span>风险矩阵(可能性×严重度)</span><span>SMS与适航的关系</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">运行风险评估(OSRA)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>SORA(Specific Ops Risk Assessment)</span><span>地面风险/空中风险/空域风险</span><span>缓冲措施/安全目标</span><span>城市运行的特殊风险因子</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">事故调查与归因</span><span class="cc">· 4知识点</span></div><div class="kp"><span>人为因素(飞手错误率统计)</span><span>机械故障(电机/IMU/通信)分布</span><span>环境诱发(强风/降雨/飞鸟)</span><span>事故数据库/统计分析</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">应急程序</span><span class="cc">· 4知识点</span></div><div class="kp"><span>链路中断(信号丢失自动返航)</span><span>电量不足(分级预警/备降)</span><span>GPS丢失/磁干扰</span><span>紧急迫降(降落伞/缓冲装置)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">低空网络安全</span><span class="cc">· 4知识点</span></div><div class="kp"><span>通信链路加密(AES256)</span><span>GNSS欺骗/反欺骗</span><span>地面站入侵防护</span><span>无人机劫持/反劫持</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#22c55e">P3.4</span>
+        <span class="sn">基础设施网络</span><span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">Vertiport设计标准</span><span class="cc">· 4知识点</span></div><div class="kp"><span>起降坪尺寸/结构/材料</span><span>充电/换电设施</span><span>安全隔离(人员/车辆/障碍物)</span><span>通信/导航/监视覆盖</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">城市选址方法论</span><span class="cc">· 4知识点</span></div><div class="kp"><span>屋顶改建(载荷/结构加固)</span><span>地面新建(占地/规划/环评)</span><span>噪声控制(<45dB限值)</span><span>物业/社区协调(最复杂)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">导航监视覆盖网</span><span class="cc">· 4知识点</span></div><div class="kp"><span>RTK基站网络布局</span><span>ADS-B地面站/低空补盲雷达</span><span>5G基站通信+定位融合</span><span>覆盖盲区分析</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">5G/MEC边缘网</span><span class="cc">· 4知识点</span></div><div class="kp"><span>运营商5G低空专网</span><span>MEC边缘节点部署(upf下沉)</span><span>网络切片/SLA保障</span><span>支持10万架次/平方公里密度</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">基础设施投资估算</span><span class="cc">· 4知识点</span></div><div class="kp"><span>单个Vertiport建设成本</span><span>通信覆盖成本/站点</span><span>UTM系统建设/运营</span><span>全国覆盖vs先试先行</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#22c55e">P3.5</span>
+        <span class="sn">反无人机系统</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">探测层</span><span class="cc">· 4知识点</span></div><div class="kp"><span>雷达(机械/相控阵/多普勒3km+)</span><span>RF频谱监测(20MHz-6GHz)</span><span>光电红外(EO/IR跟踪)</span><span>声学阵列(麦克风+波束形成)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">识别与验证</span><span class="cc">· 4知识点</span></div><div class="kp"><span>ADS-B校验(可信身份)</span><span>RF指纹匹配(无人机型号识别)</span><span>AI视觉确认(飞鸟vs无人机)</span><span>多传感器关联跟踪</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">软杀伤(电子对抗)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>GPS欺骗/定位漂移</span><span>通信阻断(RF JAM/协议阻塞)</span><span>导航诱骗(虚假航路注入)</span><span>无害驱离(回家/降落)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">硬杀伤(物理拦截)</span><span class="cc">· 4知识点</span></div><div class="kp"><span>激光拦截(光纤固体/高能10-50kw)</span><span>网捕(无人机发射网弹)</span><span>拦截无人机(直接撞击/捕获)</span><span>城市场景的附损伤限制</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#22c55e">P3.6</span>
+        <span class="sn">低空气象服务</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">低空风场特征</span><span class="cc">· 4知识点</span></div><div class="kp"><span>300m以下风切变(强/频发)</span><span>城市峡谷湍流(高楼尾流)</span><span>地表摩擦效应(风速梯度)</span><span>地形诱导上升/下沉气流</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">降水与能见度</span><span class="cc">· 4知识点</span></div><div class="kp"><span>降雨强度vs飞行限制等级</span><span>低能见度(<2km)对视觉降落影响</span><span>雾/霾/烟的光衰减</span><span>雨强对LiDAR/视觉干扰</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">低空气象站网络</span><span class="cc">· 4知识点</span></div><div class="kp"><span>无人机载气象传感器(自测)</span><span>城市微气象站(楼顶/灯杆)</span><span>LiDAR风廓线垂直探测</span><span>数值预报降尺度(1km级)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">飞行气象决策</span><span class="cc">· 4知识点</span></div><div class="kp"><span>安全飞行气象阈值(Safety-of-flight)</span><span>自动返航/备降触发条件</span><span>动态限飞(大风/暴雨激活)</span><span>航线气象风险预评估</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#22c55e">P3.7</span>
+        <span class="sn">培训与人员资质</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">飞手资质要求</span><span class="cc">· 4知识点</span></div><div class="kp"><span>视距内(VLOS)驾驶员证</span><span>超视距(BVLOS)机长证</span><span>执照考试科目(理论/实操)</span><span>CAAC/AOPA/大疆UTC</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">行业操作员培训</span><span class="cc">· 4知识点</span></div><div class="kp"><span>消防/物流/测绘/巡检专项</span><span>机型熟悉+场景案例+应急演练</span><span>大疆UTC分级培训体系</span><span>模拟器训练(8-10h)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">eVTOL飞行员</span><span class="cc">· 4知识点</span></div><div class="kp"><span>有人驾驶eVTOL型别等级</span><span>LSA(轻型运动类/运动驾驶)</span><span>亿航EH216全自主(安全员)</span><span>FPV/远程操控不同路径</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">人才缺口分析</span><span class="cc">· 4知识点</span></div><div class="kp"><span>飞手缺口(100万+/年)</span><span>复合型人才(硬件+软件+场景)</span><span>薪资梯度(飞手/方案/研发)</span><span>培训市场分析(这是蓝海)</span></div></div>
+      </div>
+    </div>
+
+    <!-- PILLAR IV: 产业经济与顶层架构 (P4合并P5) -->
+    <div class="area-h"><div class="bar" style="background:#f59e0b"></div><h4 style="color:#f59e0b">P4. 产业经济与顶层架构 — 产业经济/方案设计/趋势</h4><span class="ac">13科</span></div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.1</span>
+        <span class="sn">应用场景与商业价值</span><span class="sb" style="background:rgba(245,158,11,.12);color:#f59e0b">核心</span>
+        <span class="smeta">7章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">🔥 消防应急 (主攻)</span><span class="cc">· 6知识点</span></div><div class="kp"><span>高层灭火(FC30破窗弹+灭火弹+水带)</span><span>火场侦察(热成像+气体检测)</span><span>搜救(红外+喊话+物资投送)</span><span>灾后评估(3D建模+损毁分析)</span><span>多机协同(消防+通信+照明)</span><span>消防无人机标准体系+采购链</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">📦 物流配送</span><span class="cc">· 5知识点</span></div><div class="kp"><span>末端配送(美团深圳常态化/时间-40%)</span><span>医疗运输(血液/器官/检验样本)</span><span>应急投送(灾区/孤岛/高山空投)</span><span>城市无人配送网络(物流UTM)</span><span>大型重载物流(FC30/200/机场-园区)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">🔍 巡查巡检</span><span class="cc">· 5知识点</span></div><div class="kp"><span>电力线(绝缘子/导线/塔基AI检测)</span><span>油气管道(泄漏/第三方施工)</span><span>光伏风电(热斑/叶片裂纹)</span><span>桥梁隧道(裂缝/变形/渗水)</span><span>司空2+云端AI已成行业标准</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">🌾 农业植保</span><span class="cc">· 4知识点</span></div><div class="kp"><span>精准喷洒(变量施肥/40倍人工)</span><span>播撒(水稻直播/草籽/固体肥)</span><span>多光谱测绘(NDVI处方图)</span><span>中国全球70%+市场</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">🏙️ 城市空中交通</span><span class="cc">· 4知识点</span></div><div class="kp"><span>亿航合肥商运(全球首例)</span><span>空中出租车/城市通勤</span><span>低空旅游(景区观光)</span><span>需要四位一体(航空器+起降场+UTM+法规)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">🗺️ 测绘遥感</span><span class="cc">· 4知识点</span></div><div class="kp"><span>倾斜摄影(实景三维)</span><span>LiDAR测绘(DEM/DSM)</span><span>多光谱遥感(农业/环保)</span><span>大疆智图/ContextCapture</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">🛡️ 安防执法+影视</span><span class="cc">· 4知识点</span></div><div class="kp"><span>大型活动安保/交通监控</span><span>警用追逃/取证</span><span>影视航拍/FPV/全景</span><span>VR直播/沉浸式体验</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.2</span>
+        <span class="sn">商业模式与平台经济</span><span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">硬件销售模式</span><span class="cc">· 4知识点</span></div><div class="kp"><span>大疆直销+渠道分销</span><span>行业方案:硬件+软件+服务</span><span>eVTOL销售(单台>200万)</span><span>利润结构:硬件30%+软件70%</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">SaaS/平台模式</span><span class="cc">· 4知识点</span></div><div class="kp"><span>司空2(月费+数据增值)</span><span>美团配送网络(佣金模式)</span><span>UTM即服务</span><span>飞行小时订阅(如航空发动机)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">解决方案模式</span><span class="cc">· 4知识点</span></div><div class="kp"><span>咨询+方案设计+设备+部署+运维</span><span>你的song-portfolio核心模型</span><span>客单价:小5万/中50万/大500万+</span><span>壁垒:行业Know-how+案例库</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">飞轮效应</span><span class="cc">· 4知识点</span></div><div class="kp"><span>更多飞行器→更多航线→更多数据→更好AI→更低成本</span><span>硬件是入口</span><span>网络是护城河</span><span>数据是终极壁垒</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">定价策略</span><span class="cc">· 3知识点</span></div><div class="kp"><span>成本定价(硬件为主)</span><span>价值定价(解决方案较适合)</span><span>渗透定价(平台型先占领)</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.3</span>
+        <span class="sn">产业链与供应链</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">产业链全景</span><span class="cc">· 5知识点</span></div><div class="kp"><span>上游:芯片/传感器/材料/电池</span><span>中游:飞行器/通信/UTM/起降场</span><span>下游:运营/服务/培训/保险</span><span>各环节毛利率分布</span><span>中国在全球产业链位置</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">关键器件卡脖子</span><span class="cc">· 4知识点</span></div><div class="kp"><span>高精度IMU(霍尼韦尔/ADI)</span><span>高端FPGA(Xilinx/Altera)</span><span>高压功率器件(SiC/GaN)</span><span>国产替代进度(不完全但能用)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">主要玩家地图</span><span class="cc">· 5知识点</span></div><div class="kp"><span>大疆(工业/物流/农业全线)</span><span>亿航(eVTOL取证领先)</span><span>小鹏汇天(飞行汽车)</span><span>美团/顺丰/京东(物流运营)</span><span>莱斯/川大智胜(UTM)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">产业集群</span><span class="cc">· 3知识点</span></div><div class="kp"><span>深圳(全球无人机之都)</span><span>合肥(eVTOL示范区)</span><span>成都(工业无人机+空域)</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.4</span>
+        <span class="sn">政策法规与标准</span><span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">国家法律体系</span><span class="cc">· 5知识点</span></div><div class="kp"><span>新《民用航空法》(2026.7.1施行)</span><span>无人驾驶航空器飞行管理暂行条例</span><span>CCAR-92运行规则(2024.1.1)</span><span>中央经济工作会议战略定位</span><span>UOM系统(实名+飞行+监控)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">地方先行立法</span><span class="cc">· 5知识点</span></div><div class="kp"><span>深圳低空经济产业促进条例(全国首部)</span><span>合肥低空经济行动计划</span><span>成都/广州/杭州跟进</span><span>各地试点政策对比</span><span>"先试先行"政策红利窗口</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">行业标准</span><span class="cc">· 4知识点</span></div><div class="kp"><span>消防无人机标准体系</span><span>适航标准(SC-VTOL)</span><span>UTM技术标准</span><span>团体标准/企业标准(大疆/亿航等)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">罚款与合规成本</span><span class="cc">· 4知识点</span></div><div class="kp"><span>未经实名登记/未经审批飞行处罚</span><span>黑飞/禁飞区闯入法律后果</span><span>北京禁飞(市场+政策双重信号)</span><span>合规是全生命周期的最低成本</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">保险法律要求</span><span class="cc">· 4知识点</span></div><div class="kp"><span>无人驾驶航空器第三者责任强制险</span><span>保额梯度(轻/中/大型)</span><span>保险产品设计创新(UBI模式)</span><span>事故责任认定法律框架</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.5</span>
+        <span class="sn">投资与资本市场</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">投融资阶段</span><span class="cc">· 4知识点</span></div><div class="kp"><span>概念验证(2015-2020:种子/天使)</span><span>产品化(2020-2025:A/B轮)</span><span>规模化(2025-2030:C/D轮/上市)</span><span>退出路径(IPO/被并购)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">赛道投资热度</span><span class="cc">· 4知识点</span></div><div class="kp"><span>eVTOL最热(亿航市值/Joby上市)</span><span>工业无人机(大疆未上市/第二梯队)</span><span>物流无人机(美团内部+创业公司)</span><span>UTM/反无人机(安全刚需/政府客户)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">估值逻辑</span><span class="cc">· 4知识点</span></div><div class="kp"><span>硬件公司PS 2-5x <br>软件平台PS 10-20x</span><span>解决方案公司PS 5-8x</span><span>eVTOL按进度估值(适航里程碑)</span><span>低空经济基金/政府引导基金</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">市场机会热力图</span><span class="cc">· 4知识点</span></div><div class="kp"><span>红海:消费无人机/植保/航拍</span><span>蓝海:AI巡检/UTM/方案咨询</span><span>深蓝:eVTOL运营/城市物流网络</span><span>你的song-portfolio定位:蓝海入口</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.6</span>
+        <span class="sn">社会接受与伦理</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">噪音治理</span><span class="cc">· 4知识点</span></div><div class="kp"><span>多旋翼噪音频谱特性(<80dBA@3m)</span><span>城市噪音标准(<45dBA夜间)</span><span>降噪螺旋桨设计方案</span><span>电动推进的噪音优势(比燃油低20db)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">隐私保护</span><span class="cc">· 4知识点</span></div><div class="kp"><span>无人机航拍vs个人隐私权</span><span>个人信息保护法(个保法)</span><span>数据采集告知/脱敏要求</span><span>GDPR跨境数据传输限制</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">公共安全感知</span><span class="cc">· 4知识点</span></div><div class="kp"><span>公众对飞越头顶的接受度调查</span><span>安全事故对行业的影响</span><span>社区参与/听证流程</span><span>透明运营+不扰民是商业前提</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">环境可持续</span><span class="cc">· 3知识点</span></div><div class="kp"><span>全生命周期碳排放(电动vs燃油)</span><span>电池回收/梯次利用</span><span>废弃物管理(电子垃圾)</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.7</span>
+        <span class="sn">国际比较与贸易</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">中国 vs 美国</span><span class="cc">· 5知识点</span></div><div class="kp"><span>中国:政府主导+全产业链+成本优势</span><span>美国:FAA监管+NASA UTM+资本驱动</span><span>中国eVTOL适航快于美国(亿航vs Joby)</span><span>大疆全球垄断(70%+份额)</span><span>对华无人机出口限制(美国2024法案)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">欧洲模式</span><span class="cc">· 4知识点</span></div><div class="kp"><span>EASA监管体系</span><span>U-Space统一框架</span><span>Airbus/Volocopter/Lilium生态</span><span>欧洲对安全/隐私标准更高</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">日韩东南亚</span><span class="cc">· 4知识点</span></div><div class="kp"><span>日本DIPS(低空航路+海岛物流)</span><span>韩国K-UAM(城市空中交通计划)</span><span>东南亚:物流无人机(偏远岛屿)</span><span>"一带一路"低空基建输出机会</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">中国优势与短板</span><span class="cc">· 4知识点</span></div><div class="kp"><span>优势:人机系统+品控+成本+政策执行力</span><span>短板:芯片/高性能传感器/适航话语权</span><span>机会:标准体系制定参与</span><span>低空经济是少数中国领先的科技赛道</span></div></div>
+      </div>
+    </div>
+
+    <!-- P4.8-P4.13: 顶层架构与趋势（原P5，归入P4） -->
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.8</span>
+        <span class="sn">数据中台与知识管理</span><span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">22万字结构化知识库</span><span class="cc">· 4知识点</span></div><div class="kp"><span>政策/机型/场景/方案/案例/市场六大板块</span><span>PARA分类管理</span><span>Obsidian双向链接+图谱</span><span>Zettelkasten原子化笔记</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">实时情报管道</span><span class="cc">· 4知识点</span></div><div class="kp"><span>my-ai-hub自动采集</span><span>政策/新闻/论文/竞品四维情报</span><span>每日AI摘要(自动+人工精炼)</span><span>情报→知识库→方案生成自动化</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">产品参数与对比</span><span class="cc">· 3知识点</span></div><div class="kp"><span>机型/载荷/电池/图传参数库</span><span>横向对比表格生成</span><span>竞品分析(Face-off)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">案例库</span><span class="cc">· 4知识点</span></div><div class="kp"><span>消防/物流/巡检实战案例</span><span>方案交付经验沉淀</span><span>客户调研记录</span><span>失败案例(比成功更重要)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">数据驱动决策</span><span class="cc">· 4知识点</span></div><div class="kp"><span>数据→信息→知识→智慧金字塔</span><span>低空领域关键KPI库</span><span>方案效果量化评估</span><span>数据飞轮的起点</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.9</span>
+        <span class="sn">决策支持系统</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">态势感知仪表</span><span class="cc">· 4知识点</span></div><div class="kp"><span>气象/空域/设备/人员四维融合</span><span>实时态势图(地图+空域+飞行器)</span><span>异常事件自动告警</span><span>历史态势回放与分析</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">资源调度优化</span><span class="cc">· 4知识点</span></div><div class="kp"><span>车辆/无人机/飞手/载荷最优匹配</span><span>约束满足(CSP)求解</span><span>应急响应:5分钟到达资源清单</span><span>多基地协同调度</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">风险评估引擎</span><span class="cc">· 4知识点</span></div><div class="kp"><span>天气/空域/设备/人员四维评分</span><span>任务可行性自动判定</span><span>动态风险更新(实时气象变化)</span><span>SOP建议生成(LLM+规则引擎)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">多层级应急联动</span><span class="cc">· 4知识点</span></div><div class="kp"><span>事件分级(一般/重大/特大)</span><span>自动启动预案+通知链</span><span>资源请求/跨域调度</span><span>与119/120/110联动</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.10</span>
+        <span class="sn">AI方案生成器 (song-portfolio)</span><span class="sb" style="background:rgba(245,158,11,.2);color:#f59e0b">🎯</span>
+        <span class="smeta">5章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">情报采集层</span><span class="cc">· 4知识点</span></div><div class="kp"><span>政策/新闻/论文/竞品自动抓取</span><span>每日更新/增量索引</span><span>按需深度搜索(Web+行业数据库)</span><span>情报质量评级(权威/相关/时效)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">AI分析层</span><span class="cc">· 4知识点</span></div><div class="kp"><span>RAG(检索增强生成)+22万字知识库</span><span>LLM推理(场景理解+需求分析)</span><span>多轮对话(需求澄清+方案迭代)</span><span>专家系统+规则约束(安全/法规边界)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">方案生成层</span><span class="cc">· 5知识点</span></div><div class="kp"><span>问题定义→设备选型→操作流程→成本估算→风险评估</span><span>结构化/半结构化/自由格式输出</span><span>设备选型决策树(消防/物流/巡检)</span><span>成本估算模型(设备+人力+周期+运维)</span><span>风险评估矩阵(基于知识库+规则)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">部署与交付</span><span class="cc">· 4知识点</span></div><div class="kp"><span>song-portfolio前端展示</span><span>API接口/对接外部系统</span><span>版本管理(方案版本对比/回溯)</span><span>协作共享(多用户/权限)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">产品规划Roadmap</span><span class="cc">· 4知识点</span></div><div class="kp"><span>Phase1:消防模块(展前完成)</span><span>Phase2:物流/巡检模块扩展</span><span>Phase3:通用方案引擎</span><span>终极:低空经济领域AI咨询平台</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.11</span>
+        <span class="sn">端到端方案设计方法论</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">需求捕获与问题定义</span><span class="cc">· 4知识点</span></div><div class="kp"><span>用户场景调研/痛点量化</span><span>当前方案局限性分析</span><span>可衡量目标设定(KPI/ROI)</span><span>约束清单(预算/法规/时间/环境)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">技术方案设计</span><span class="cc">· 4知识点</span></div><div class="kp"><span>飞行器选型(载荷+航程+环境匹配)</span><span>通信/导航/感知/数据全链路设计</span><span>成本-性能-安全三角trade-off</span><span>冗余设计(单点故障分析)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">实施与运维</span><span class="cc">· 4知识点</span></div><div class="kp"><span>部署计划(场内布线/通信/调试)</span><span>飞手培训+标准作业程序(SOP)</span><span>日常维护/巡检/耗材更换</span><span>数据回传/分析/持续优化</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">采购决策链分析</span><span class="cc">· 4知识点</span></div><div class="kp"><span>消防/政企/物流采购流程</span><span>招投标关键点(资质/案例/技术指标)</span><span>决策者地图(使用部门+采购+领导)</span><span>方案交付证明→口碑→下一单飞轮</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.12</span>
+        <span class="sn">城市低空经济规划</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">城市低空规划框架</span><span class="cc">· 4知识点</span></div><div class="kp"><span>空域可调度性分析(现有禁飞区/限制区)</span><span>起降场网络规划(选址+密度+分级)</span><span>航线分级:物流走廊/巡检网格/UAM走廊</span><span>产业发展规划(招商引资+人才+示范)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">深圳模式</span><span class="cc">· 4知识点</span></div><div class="kp"><span>立法先行(全国首部)</span><span>美团配送网络(常态化运营)</span><span>大疆生态+供应链</span><span>低空经济产业园</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">合肥模式</span><span class="cc">· 4知识点</span></div><div class="kp"><span>亿航商运(全球首例)</span><span>"低空+科技+旅游"三位一体</span><span>政务应用先行(消防+巡检+测绘)</span><span>产业引导基金+政策包</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">你的城市机会</span><span class="cc">· 4知识点</span></div><div class="kp"><span>青岛:海洋+物流+消防+旅游场景</span><span>低空经济从沿海城市优先爆发</span><span>本地政策/产业调研</span><span>先抓住项目再吸引投资</span></div></div>
+      </div>
+    </div>
+    <div class="subject">
+      <div class="subject-header" onclick="ts(this)">
+        <span class="arrow">▶</span><span class="scode" style="color:#f59e0b">P4.13</span>
+        <span class="sn">前沿趋势 & 未来展望</span><span class="smeta">4章</span>
+      </div>
+      <div class="chapters">
+        <div class="chapter"><div class="ct"><span class="cn">2026-2030趋势预判</span><span class="cc">· 4知识点</span></div><div class="kp"><span>2026(政策元年):法规框架+示范城市</span><span>2027-2028(商业启动):物流+eVTOL规模化</span><span>2029-2030(网络形成):UTM全国联网</span><span>2030+:万亿级低空经济市场成熟</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">技术拐点预测</span><span class="cc">· 4知识点</span></div><div class="kp"><span>固态电池量产(2026-2028):航程翻倍</span><span>L4全自主飞行(2026-2028):安全冗余成熟</span><span>城市级UTM联网(2027-2029):规模化前提</span><span>AI端侧推理成本持续下降(受边缘算力驱动)</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">你在这个趋势中的位置</span><span class="cc">· 4知识点</span></div><div class="kp"><span>低空经济方案生成器:现在正是从0到1的最佳窗口期</span><span>大疆解决方案工程师:展会赛道</span><span>独立开发者优势:轻资产/快速迭代/复合能力</span><span>"项目证明"路径:用案例敲门</span></div></div>
+        <div class="chapter"><div class="ct"><span class="cn">长期观察</span><span class="cc">· 4知识点</span></div><div class="kp"><span>低空经济的上限在哪？空天一体化趋势</span><span>与自动驾驶的城市协同(车-飞-路-云)</span><span>低空经济是智慧城市的新维度</span><span>十年后回看:现在是入场黄金时间</span></div></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:16px 20px;background:rgba(168,85,247,.04);border:1px solid rgba(168,85,247,.12);border-radius:8px;">
+      <div style="font-size:13px;font-weight:600;color:#a855f7;margin-bottom:6px">📌 对你而言：这个知识体系如何用</div>
+      <div style="font-size:12px;line-height:1.8;color:#c9d1d9">
+        <strong>展会场景(5/20)</strong>：重点是P4.10(方案生成器) + P1.2(大疆产品线深度) + P4.1(消防应急场景)。不要试图讲完整体系。<br>
+        <strong>学习路径</strong>：从P0→P1→P2→P3→P4。但你可以根据背景跳—有CS背景的人从P2.5(AI)切入会更快。<br>
+        <strong>输出转化</strong>：这个知识体系可以直接变成你的"产品说明书"——交互展示给潜在客户/面试官看：<em>"我不只懂一个点，我懂整个系统"</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 2: LEARNING PATHS -->
+  <div class="panel" id="p2">
+    <div class="sh"><h3>多入口学习路径</h3><span class="sc">根据你的背景选择起点</span></div>
+    <div class="path-intro">低空经济是一个交叉领域，不同背景的人应该从不同角度切入。这里给出3条推荐路径+1条速成全览路径。选择最适合你的一条，或者前两者结合使用。</div>
+    <div class="path-grid">
+      <div class="path-card" style="border-left-color:#3b82f6">
+        <div class="pc-icon">💻</div>
+        <h4>路径A：技术/CS背景</h4>
+        <div class="pc-sub">推荐：有编程/AI/系统开发经验</div>
+        <div class="pc-body">从软件+AI层切入，向下理解飞行器硬件，向上理解应用场景。你的技术深度是护城河。</div>
+        <ul class="pc-steps">
+          <li>P0.1 本质论(1天)</li>
+          <li>P2.3 传感器与感知(2天)</li>
+          <li>P2.5 AI与智能决策(3天)</li>
+          <li>P2.6 边缘计算(1天)</li>
+          <li>P1.2 DJI产品线设计哲学(2天)</li>
+          <li>P4.10 方案生成器(2天)</li>
+          <li>P4.1 应用场景(3天)</li>
+          <li>P3.1 UTM+P3.2 适航(3天)</li>
+          <li>P4.2+P4.4 商业模式+法规(2天)</li>
+        </ul>
+        <div class="pc-code">总时长：约19天 → 适合快速上手做产品</div>
+      </div>
+      <div class="path-card" style="border-left-color:#ef4444">
+        <div class="pc-icon">✈️</div>
+        <h4>路径B：航空/机械背景</h4>
+        <div class="pc-sub">推荐：有飞行器/系统工程/电子背景</div>
+        <div class="pc-body">从飞行器硬件+适航层切入，向下理解传感器和AI，向上理解运营和法规。</div>
+        <ul class="pc-steps">
+          <li>P0.3 航空基础(3天)</li>
+          <li>P1.1 eVTOL构型(2天)</li>
+          <li>P1.3+P1.4 动力+电池(3天)</li>
+          <li>P1.2 无人机系统(2天)</li>
+          <li>P2.1+P2.2 通信+导航(3天)</li>
+          <li>P2.3+P2.5 感知+AI(3天)</li>
+          <li>P3.2+P3.3 适航+安全(3天)</li>
+          <li>P3.1 UTM空域(2天)</li>
+          <li>P4.1 应用场景+P4.10(3天)</li>
+        </ul>
+        <div class="pc-code">总时长：约24天 → 适合做解决方案架构</div>
+      </div>
+      <div class="path-card" style="border-left-color:#f59e0b">
+        <div class="pc-icon">📊</div>
+        <h4>路径C：商业/产品背景</h4>
+        <div class="pc-sub">推荐：有产品/市场/投资背景</div>
+        <div class="pc-body">从产业经济+场景层切入，向上理解技术框架，向下理解法规制约。这是最务实的路径。</div>
+        <ul class="pc-steps">
+          <li>P0.1 本质论(1天)+P0.2 系统工程(2天)</li>
+          <li>P4.1 应用场景大全(3天)</li>
+          <li>P4.2+P4.4 商业模式+法规(3天)</li>
+          <li>P4.3+P4.5 产业链+投资(2天)</li>
+          <li>P1.1+P1.2 飞行器概览(2天)</li>
+          <li>P2.1+P2.5 通信+AI概览(2天)</li>
+          <li>P3.1+P3.2 空域+适航(2天)</li>
+          <li>P4.10 方案生成器(1天)</li>
+        </ul>
+        <div class="pc-code">总时长：约18天 → 适合快速掌握全局</div>
+      </div>
+      <div class="path-card" style="border-left-color:#a855f7">
+        <div class="pc-icon">🎯</div>
+        <h4>路径S：速成(展前冲刺)</h4>
+        <div class="pc-sub">只有3-5天时间，必须迅速见效</div>
+        <div class="pc-body">以输出为导向——先搞懂"能做什么"和"怎么讲清楚"，深度留到后面。</div>
+        <ul class="pc-steps">
+          <li>Day1: P0.1本质论 + P4.10方案生成器</li>
+          <li>Day2: P4.1消防应急(深度) + P1.2大疆全线</li>
+          <li>Day3: P2.5 AI能力 + P3.2适航节点</li>
+          <li>Day4: P3.1 UTM + P4.4法规动态</li>
+          <li>Day5: 演练+打磨输出方案</li>
+        </ul>
+        <div class="pc-code">目标：能讲清楚"为什么现在入局"+"你的方案能解决什么"</div>
+      </div>
+    </div>
+
+    <div class="sh" style="margin-top:8px"><h3>推荐学习资源</h3></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+      <div style="background:rgba(255,255,255,.012);border:1px solid rgba(255,255,255,.035);border-radius:8px;padding:14px 16px;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">📘 CAAC规章原文</div>
+        <div style="font-size:11px;color:#8b949e;line-height:1.6">CCAR-21/91/92官方全文、无人驾驶航空器飞行管理暂行条例、深圳低空经济立法</div>
+        <div style="font-size:10px;color:#58a6ff;margin-top:4px">caac.gov.cn · 深圳人大官网</div>
+      </div>
+      <div style="background:rgba(255,255,255,.012);border:1px solid rgba(255,255,255,.035);border-radius:8px;padding:14px 16px;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">📘 行业报告</div>
+        <div style="font-size:11px;color:#8b949e;line-height:1.6">艾瑞/赛迪低空经济白皮书、亿航/小鹏财报、大疆行业应用方案手册、深圳低空经济统计</div>
+      </div>
+      <div style="background:rgba(255,255,255,.012);border:1px solid rgba(255,255,255,.035);border-radius:8px;padding:14px 16px;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">📘 技术文档</div>
+        <div style="font-size:11px;color:#8b949e;line-height:1.6">DJI SDK文档、PIXHAWK飞控源码、Jetson AI教程、5G ATG规范、GPS/GNSS原理</div>
+      </div>
+      <div style="background:rgba(255,255,255,.012);border:1px solid rgba(255,255,255,.035);border-radius:8px;padding:14px 16px;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">📘 学术论文</div>
+        <div style="font-size:11px;color:#8b949e;line-height:1.6">IEEE T-AES(航空电子)、AIAA论文(eVTOL设计/UTM)、CVPR(视觉感知)、Nature Energy(电池)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 3: CROSS-REFERENCES -->
+  <div class="panel" id="p3">
+    <div class="sh"><h3>交叉链接地图</h3><span class="sc">每个专题与其他专题的依赖/关联关系</span></div>
+    <div class="cross-grid">
+      <div class="cross-card"><h4>eVTOL构型设计</h4><p>依赖→航空基础、推进系统、电池技术<br>被依赖←消防应急、UAM、物流配送</p><div class="xref"><span style="background:rgba(59,130,246,.1);color:#3b82f6">P0.3</span><span style="background:rgba(239,68,68,.1);color:#ef4444">P1.3</span><span style="background:rgba(239,68,68,.1);color:#ef4444">P1.4</span><span style="background:rgba(245,158,11,.1);color:#f59e0b">P4.1</span></div></div>
+      <div class="cross-card"><h4>无人机系统架构</h4><p>依赖→电推进、电池、感知<br>被依赖←自动机场、挂载、消防应用</p><div class="xref"><span style="background:rgba(239,68,68,.1);color:#ef4444">P1.3</span><span style="background:rgba(239,68,68,.1);color:#ef4444">P1.4</span><span style="background:rgba(59,130,246,.1);color:#3b82f6">P2.3</span><span style="background:rgba(239,68,68,.1);color:#ef4444">P1.7</span></div></div>
+      <div class="cross-card"><h4>电池与能源</h4><p>依赖→材料基础<br>被依赖←eVTOL、无人机、自动机场<br>低空经济的最大技术瓶颈</p><div class="xref"><span style="background:rgba(239,68,68,.1);color:#ef4444">P1.1</span><span style="background:rgba(239,68,68,.1);color:#ef4444">P1.2</span><span style="background:rgba(239,68,68,.1);color:#ef4444">P1.7</span></div></div>
+      <div class="cross-card"><h4>AI与智能决策</h4><p>依赖→感知、边缘计算、飞控<br>被依赖←UTM、方案生成器、集群<br>低空安全的第三极</p><div class="xref"><span style="background:rgba(59,130,246,.1);color:#3b82f6">P2.3</span><span style="background:rgba(59,130,246,.1);color:#3b82f6">P2.6</span><span style="background:rgba(59,130,246,.1);color:#3b82f6">P2.4</span><span style="background:rgba(34,197,94,.1);color:#22c55e">P3.1</span></div></div>
+      <div class="cross-card"><h4>通信系统(5G ATG)</h4><p>依赖→频谱管理<br>被依赖←UTM、导航、城市运行</p><div class="xref"><span style="background:rgba(59,130,246,.1);color:#3b82f6">P2.8</span><span style="background:rgba(34,197,94,.1);color:#22c55e">P3.1</span><span style="background:rgba(34,197,94,.1);color:#22c55e">P3.4</span></div></div>
+      <div class="cross-card"><h4>UTM空域管理</h4><p>依赖→通信、AI、导航<br>被依赖←所有应用场景<br>低空经济的"操作系统"</p><div class="xref"><span style="background:rgba(59,130,246,.1);color:#3b82f6">P2.1</span><span style="background:rgba(59,130,246,.1);color:#3b82f6">P2.5</span><span style="background:rgba(59,130,246,.1);color:#3b82f6">P2.2</span><span style="background:rgba(245,158,11,.1);color:#f59e0b">P4.1</span></div></div>
+      <div class="cross-card"><h4>适航认证体系</h4><p>依赖→航空基础、eVTOL设计<br>被依赖←方案落地的时间约束</p><div class="xref"><span style="background:rgba(107,114,128,.1);color:#9ca3af">P0.3</span><span style="background:rgba(239,68,68,.1);color:#ef4444">P1.1</span><span style="background:rgba(168,85,247,.1);color:#a855f7">P4.10</span></div></div>
+      <div class="cross-card"><h4>方案生成器</h4><p>依赖→知识库、AI、应用场景<br>被依赖←你的展会展示<br>所有知识的最终输出</p><div class="xref"><span style="background:rgba(245,158,11,.1);color:#f59e0b">P4.8</span><span style="background:rgba(59,130,246,.1);color:#3b82f6">P2.5</span><span style="background:rgba(245,158,11,.1);color:#f59e0b">P4.1</span></div></div>
+    </div>
+
+    <div style="margin-top:16px;padding:16px 20px;background:rgba(88,166,255,.04);border:1px solid rgba(88,166,255,.12);border-radius:8px">
+      <div style="font-size:13px;font-weight:600;color:#58a6ff;margin-bottom:8px">🔗 关键学科交叉关系</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+        <div style="font-size:11px;color:#c9d1d9;line-height:1.7">
+          <strong style="color:#ef4444">航空工程</strong>↔<strong style="color:#3b82f6">通信</strong><br>
+          eVTOL构型影响通信天线布局；机体遮挡直接影响5G链路预算
+        </div>
+        <div style="font-size:11px;color:#c9d1d9;line-height:1.7">
+          <strong style="color:#3b82f6">AI</strong>↔<strong style="color:#22c55e">适航安全</strong><br>
+          AI的不可解释性 vs 适航的可验证性——这是当前最大的技术争议
+        </div>
+        <div style="font-size:11px;color:#c9d1d9;line-height:1.7">
+          <strong style="color:#22c55e">UTM</strong>↔<strong style="color:#f59e0b">商业模式</strong><br>
+          UTM的开放程度决定了商业化的天花板——开放vs安全的永恒权衡
+        </div>
+        <div style="font-size:11px;color:#c9d1d9;line-height:1.7">
+          <strong style="color:#f59e0b">政策法规</strong>↔<strong style="color:#ef4444">技术演进</strong><br>
+          法规总是落后于技术。理解这个"代差"是方案设计的关键——超前半步是引领，超前三步是先烈
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PANEL 4: GROWTH TREE ===== -->
+  <div class="panel" id="p4">
+    <div class="sh"><h3>🎮 成长树 · 知识技能树</h3><span class="sc">就像Minecraft的合成系统——先有材料，才能合成更高级的工具</span></div>
+
+    <div class="tt-container">
+      <div class="tt-intro">
+        每个知识领域就像Minecraft里的<strong>材料</strong>（木材/石头/铁）。<br>
+        当你掌握了基础知识，就可以<strong>合成</strong>更高级的能力（工作台→工具→附魔台）。<br>
+        <strong>绿色</strong>=已掌握 · <strong>蓝色脉冲</strong>=可解锁 · <strong>黄色虚线</strong>=学习中 · <strong>灰色</strong>=还需前置 · <strong>紫色光晕</strong>=最终目标
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div class="tt-progress">
+        <span class="p-label">当前进度</span>
+        <div class="bar-wrap"><div class="bar-fill" style="width:20%"></div></div>
+        <span class="p-pct" id="tt-pct">20%</span>
+        <span class="p-label" style="font-size:11px;color:#484f58">目标：大疆解决方案工程师</span>
+      </div>
+
+      <!-- LEGEND -->
+      <div class="tt-legend">
+        <span><span class="dot" style="background:rgba(88,166,255,.4);border:1px solid rgba(88,166,255,.3)"></span>可解锁</span>
+        <span><span class="dot" style="background:rgba(250,204,21,.4);border:1px dashed rgba(250,204,21,.4)"></span>学习中</span>
+        <span><span class="dot" style="background:rgba(34,197,94,.4);border:1px solid rgba(34,197,94,.3)"></span>已掌握</span>
+        <span><span class="dot" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.04)"></span>未解锁</span>
+        <span><span class="dot" style="background:rgba(168,85,247,.4);border:1px solid rgba(168,85,247,.35)"></span>最终目标</span>
+      </div>
+
+      <!-- TIER 0 -->
+      <div class="tt-tier">
+        <div class="tt-tier-label"><div class="tl-num">TIER 0</div><div class="tl-name" style="color:#6b7280">认知起步</div><div class="tl-sub">入门基石</div></div>
+        <div class="tt-nodes">
+          <div class="tt-node state-mastered" onclick="ttDetail(this)">
+            <span class="t-icon">🌐</span>低空经济本质论<span class="t-status">✅</span>
+            <div class="t-prereqs">🎯 所有知识的起点</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 1: Basic Materials -->
+      <div class="tt-tier">
+        <div class="tt-tier-label"><div class="tl-num">TIER 1</div><div class="tl-name" style="color:#9ca3af">基础材料</div><div class="tl-sub">木材 · 石头 · 铁锭</div></div>
+        <div class="tt-nodes">
+          <div class="tt-node state-learning" onclick="ttDetail(this)">
+            <span class="t-icon">✈️</span>航空基础原理<span class="t-status">📖</span>
+            <div class="t-prereqs">需要: 本质论<br>解锁: DJI产品线、eVTOL构型</div>
+          </div>
+          <div class="tt-node state-mastered" onclick="ttDetail(this)">
+            <span class="t-icon">⚙️</span>系统工程方法论<span class="t-status">✅</span>
+            <div class="t-prereqs">需要: 本质论<br>解锁: 通信导航、传感器</div>
+          </div>
+          <div class="tt-node state-available" onclick="ttDetail(this)">
+            <span class="t-icon">📜</span>政策法规框架<span class="t-status">🔓</span>
+            <div class="t-prereqs">需要: 本质论<br>解锁: 适航审定、UTM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRAFTING row: 基础材料合成 -->
+      <div class="tt-craft-row">
+        <span class="item">🌐 本质论</span>
+        <span class="arrow">→</span>
+        <span class="item">✈️ 航空基础</span>
+        <span class="item">⚙️ 系统工程</span>
+        <span class="item">📜 政策法规</span>
+        <span class="arrow">🧱</span>
+        <span class="result">✅ 基础材料齐全 → 进入初级工具阶段</span>
+      </div>
+
+      <!-- TIER 2: Basic Tools -->
+      <div class="tt-tier">
+        <div class="tt-tier-label"><div class="tl-num">TIER 2</div><div class="tl-name" style="color:#60a5fa">初级工具</div><div class="tl-sub">木镐 · 木剑 · 木斧</div></div>
+        <div class="tt-nodes">
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">🚁</span>DJI产品线认知<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: 航空基础<br>解锁: eVTOL构型、消防方案</div>
+          </div>
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">📡</span>通信导航基础<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: 系统工程<br>解锁: 飞控、AI决策</div>
+          </div>
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">🔋</span>电池与能源<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: 航空基础<br>解锁: eVTOL构型</div>
+          </div>
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">👁️</span>传感器与感知<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: 系统工程<br>解锁: AI决策、飞控</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 3: Advanced Tools -->
+      <div class="tt-tier">
+        <div class="tt-tier-label"><div class="tl-num">TIER 3</div><div class="tl-name" style="color:#fbbf24">中级能力</div><div class="tl-sub">铁镐 · 铁剑 · 铁甲</div></div>
+        <div class="tt-nodes">
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">🏗️</span>eVTOL构型设计<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: DJI产品线 + 电池<br>解锁: UAM方案</div>
+          </div>
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">🧠</span>AI与智能决策<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: 传感器 + 通信导航<br>解锁: 方案生成器</div>
+          </div>
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">🎮</span>飞控与自动驾驶<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: 通信导航 + 传感器<br>解锁: UTM</div>
+          </div>
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">📋</span>适航审定体系<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: 政策法规<br>解锁: UTM、SMS安全</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRAFTING row: 关键合成 -->
+      <div class="tt-craft-row">
+        <span class="item">🚁 DJI认知</span>
+        <span class="item">+</span>
+        <span class="item">🔋 电池能源</span>
+        <span class="arrow">→</span>
+        <span class="result">🏗️ eVTOL构型</span>
+        <span style="color:#484f58;margin:0 6px">|</span>
+        <span class="item">📡 通信导航</span>
+        <span class="item">+</span>
+        <span class="item">👁️ 传感器</span>
+        <span class="arrow">→</span>
+        <span class="result">🧠 AI决策</span>
+      </div>
+
+      <!-- TIER 4: Masterwork -->
+      <div class="tt-tier">
+        <div class="tt-tier-label"><div class="tl-num">TIER 4</div><div class="tl-name" style="color:#34d399">高级系统</div><div class="tl-sub">附魔 · 药水 · 红石</div></div>
+        <div class="tt-nodes">
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">🗺️</span>UTM空域管理<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: 飞控 + 适航<br>解锁: 方案架构</div>
+          </div>
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">🔥</span>消防应急方案<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: eVTOL + AI + DJI产品<br>解锁: 方案生成器</div>
+          </div>
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">🛡️</span>SMS运行安全<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: 适航 + 飞控<br>解锁: 方案架构</div>
+          </div>
+          <div class="tt-node state-locked" onclick="ttDetail(this)">
+            <span class="t-icon">🏙️</span>城市低空规划<span class="t-status">🔒</span>
+            <div class="t-prereqs">需要: UTM + 消防 + AI<br>解锁: 行业影响力</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRAFTING row: 高级合成 -->
+      <div class="tt-craft-row">
+        <span class="item">🗺️ UTM</span>
+        <span class="item">+</span>
+        <span class="item">🔥 消防方案</span>
+        <span class="item">+</span>
+        <span class="item">🧠 AI决策</span>
+        <span class="arrow">⚡</span>
+        <span class="result">🏆 低空经济方案生成器</span>
+      </div>
+
+      <!-- TIER 5: Ultimate -->
+      <div class="tt-tier">
+        <div class="tt-tier-label"><div class="tl-num">TIER 5</div><div class="tl-name" style="color:#c084fc">终局能力</div><div class="tl-sub">下界之星</div></div>
+        <div class="tt-nodes">
+          <div class="tt-node state-locked state-ultimate" onclick="ttDetail(this)">
+            <span class="t-icon">💎</span>低空经济方案生成器<span class="t-status">🔒</span>
+            <div class="t-prereqs">🎯 核心产品 — song-portfolio<br>需要: UTM + 消防 + AI<br>解锁后: 独立交付方案</div>
+          </div>
+          <div class="tt-node state-locked state-ultimate" onclick="ttDetail(this)">
+            <span class="t-icon">🏆</span>行业影响力（大疆）<span class="t-status">🔒</span>
+            <div class="t-prereqs">🎯 终极目标<br>需要: 方案生成器 + 全链路知识<br>解锁: 大疆解决方案工程师</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Your current position highlight -->
+      <div style="margin-top:20px;padding:14px 18px;background:rgba(250,204,21,.04);border:1px solid rgba(250,204,21,.15);border-radius:8px">
+        <div style="font-size:13px;font-weight:600;color:#fbbf24;margin-bottom:4px">📍 当前状态 — 2026/5/17</div>
+        <div style="font-size:12px;color:#c9d1d9;line-height:1.8">
+          <strong style="color:#22c55e">✅知识库已完整</strong> — 5大支柱·37专题·51篇深度笔记全部就位<br>
+          <strong>建议学习路径</strong>：本质论(P0.1) → eVTOL构型(P1.1) → DJI产品线(P1.2) → 适航审定(P3.2) → 方案方法论(P4.11)<br>
+          <strong>展前3天</strong>：每天3篇深度阅读，优先P1.2→P4.10→P3.1→P4.12<br>
+          总阅读量约<strong style="color:#fbbf24">15-20小时</strong> · 已提供全部51篇可立即查阅
+        </div>
+      </div>
+
+      <!-- Interactive Detail Area -->
+      <div class="tt-detail" id="tt-detail">
+        <h5 id="tt-d-title">节点详情</h5>
+        <p id="tt-d-desc">点击上方任一知识节点查看详情和依赖关系</p>
+        <div class="dep" id="tt-d-deps"></div>
+        <a class="action" onclick="document.getElementById('tt-detail').classList.remove('open')">✕ 关闭</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Song Zongyuan · 低空经济学 · 交叉学科知识体系 · <a href="javascript:void 0" onclick="document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelector('[data-panel=p1]').classList.add('active');document.getElementById('p1').classList.add('active')">展开知识树</a></div>
+
+<script>
+// Obsidian path mapping (5 pillars architecture)
+const obsidianVault = '我的数字花园';
+const obsidianMap = {
+  'P0.1':'P0 基础基石/P0.1 低空经济本质论','P0.2':'P0 基础基石/P0.2 系统工程方法论','P0.3':'P0 基础基石/P0.3 航空基础原理',
+  'P1.1':'P1 飞行器系统/P1.1 eVTOL构型设计','P1.2':'P1 飞行器系统/P1.2 DJI产品线设计哲学','P1.3':'P1 飞行器系统/P1.3 电推进系统',
+  'P1.4':'P1 飞行器系统/P1.4 电池与能源系统','P1.5':'P1 飞行器系统/P1.5 结构与材料','P1.6':'P1 飞行器系统/P1.6 挂载与载荷系统',
+  'P1.7':'P1 飞行器系统/P1.7 自动机场与地面设备','P1.8':'P1 飞行器系统/P1.8 制造与供应链',
+  'P2.1':'P2 通信导航控制/P2.1 通信系统','P2.2':'P2 通信导航控制/P2.2 导航与定位','P2.3':'P2 通信导航控制/P2.3 传感器与环境感知',
+  'P2.4':'P2 通信导航控制/P2.4 飞控与自动驾驶','P2.5':'P2 通信导航控制/P2.5 AI与智能决策','P2.6':'P2 通信导航控制/P2.6 边缘计算',
+  'P2.7':'P2 通信导航控制/P2.7 集群与蜂群','P2.8':'P2 通信导航控制/P2.8 频谱管理','P2.9':'P2 通信导航控制/P2.9 仿真与数字孪生',
+  'P3.1':'P3 运行体系/P3.1 空域管理与UTM','P3.2':'P3 运行体系/P3.2 适航与安全审定/大型无人机适航审定流程','P3.3':'P3 运行体系/P3.3 运行安全与SMS',
+  'P3.4':'P3 运行体系/P3.4 基础设施网络','P3.5':'P3 运行体系/P3.5 反无人机系统','P3.6':'P3 运行体系/P3.6 低空气象服务',
+  'P3.7':'P3 运行体系/P3.7 培训与人员资质',
+  'P4.1':'P4 产业经济/P4.1 应急消防：高楼灭火','P4.2':'P4 产业经济/P4.2 商业模式与平台经济','P4.3':'P4 产业经济/P4.3 北京禁飞：市场信号解读',
+  'P4.4':'P4 产业经济/P4.4 政策法规体系总览','P4.5':'P4 产业经济/P4.5 投资与资本市场','P4.6':'P4 产业经济/P4.6 社会接受与伦理',
+  'P4.7':'P4 产业经济/P4.7 国际比较与贸易',
+  'P4.8':'P4 产业经济/P4.8 数据中台与知识管理','P4.9':'P4 产业经济/P4.9 决策支持系统','P4.10':'P4 产业经济/P4.10 AI方案生成器',
+  'P4.11':'P4 产业经济/P4.11 端到端方案设计方法论','P4.12':'P4 产业经济/P4.12 城市低空经济规划','P4.13':'P4 产业经济/P4.13 前沿趋势与未来展望','P4.14':'P4 产业经济/P4.14 消防无人机采购决策链'
+};
+// Inject Obsidian path badges into each subject
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.scode').forEach(function(el){
+    var code = el.textContent.trim();
+    var path = obsidianMap[code];
+    if (!path) return;
+    // Get the subject-header parent
+    var header = el.closest('.subject-header');
+    if (!header || header.querySelector('.ob-badge')) return;
+    // Build path string
+    var fullPath = '低空经济/' + path + '.md';
+    // Create badge
+    var badge = document.createElement('span');
+    badge.className = 'ob-badge';
+    badge.title = '复制Obsidian路径: ' + fullPath;
+    badge.innerHTML = '📂';
+    badge.onclick = function(e){
+      e.stopPropagation();
+      navigator.clipboard.writeText(fullPath).then(function(){
+        badge.innerHTML = '✅';
+        badge.style.color = '#3fb950';
+        setTimeout(function(){badge.innerHTML = '📂';badge.style.color=''},2000);
+      });
+    };
+    el.after(badge);
+  });
+});
+// Tab switching
+document.getElementById('tabs').addEventListener('click', function(e) {
+  const tab = e.target.closest('.tab');
+  if (!tab) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById(tab.dataset.panel).classList.add('active');
+});
+// Toggle subject chapters
+function ts(el) {
+  const parent = el.closest('.subject');
+  if (!parent) return;
+  const arrow = el.querySelector('.arrow');
+  const chapters = parent.querySelector('.chapters');
+  const isOpen = chapters.classList.contains('open');
+  chapters.classList.toggle('open');
+  if (arrow) arrow.classList.toggle('open');
+}
+// Tech tree detail panel
+function ttDetail(el) {
+  const detail = document.getElementById('tt-detail');
+  const title = document.getElementById('tt-d-title');
+  const desc = document.getElementById('tt-d-desc');
+  const deps = document.getElementById('tt-d-deps');
+  // Extract info from the clicked node
+  const icon = el.querySelector('.t-icon')?.textContent || '📌';
+  const name = el.childNodes[1]?.textContent?.trim() || '未知节点';
+  const prereqsDiv = el.querySelector('.t-prereqs');
+  const prereqs = prereqsDiv ? prereqsDiv.innerHTML.replace(/<br>/g,' · ') : '独立节点';
+  const status = el.classList.contains('state-mastered') ? '✅ 已掌握' :
+                 el.classList.contains('state-learning') ? '📖 学习中' :
+                 el.classList.contains('state-available') ? '🔓 可解锁' :
+                 el.classList.contains('state-ultimate') ? '🏆 终极目标' : '🔒 未解锁';
+  title.innerHTML = `${icon} ${name} <span style="font-size:11px;color:#8b949e;font-weight:400">${status}</span>`;
+  desc.textContent = `依赖/前置条件：需要先掌握「${prereqs}」`;
+  deps.innerHTML = prereqsDiv ? prereqsDiv.innerHTML.split('<br>').map(
+    s => `<span style="background:rgba(255,255,255,.05);color:#8b949e">${s.replace('需要:','📖').replace('解锁:','🗝️').replace('🎯','🎯')}</span>`
+  ).join('') : '<span>无前置依赖</span>';
+  detail.classList.add('open');
+}
+</script>
+</body>
+</html>'''
+

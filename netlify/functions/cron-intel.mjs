@@ -152,9 +152,8 @@ export default async (req) => {
   try {
     let items = []
 
-    // ── 1. DeepSeek 生成简报（主源，cron 时运行）──
-    if (isScheduled) {
-      try {
+    // ── 1. DeepSeek 生成简报（主源）──
+    try {
         const aiItems = await generateDailyBriefing()
         items = aiItems.map(it => ({
           title: it.title,
@@ -169,12 +168,10 @@ export default async (req) => {
         results.deepseek = items.length
       } catch (e) {
         console.warn("[cron-intel] DeepSeek 生成失败:", e.message)
-      }
     }
 
-    // ── 2. 百度新闻抓取（辅源，cron 时运行）──
-    if (isScheduled) {
-      try {
+    // ── 2. 百度新闻抓取（辅源）──
+    try {
         const baiduResults = await Promise.allSettled(
           BAIDU_QUERIES.map(q => fetchBaiduNews(q))
         )
@@ -191,7 +188,6 @@ export default async (req) => {
         }
       } catch (e) {
         console.warn("[cron-intel] 百度新闻抓取失败:", e.message)
-      }
     }
 
     items = deduplicate(items)
@@ -250,6 +246,5 @@ export default async (req) => {
   }
 }
 
-export const config = {
-  schedule: "0 1 * * *", // UTC 01:00 = 北京时间 09:00
-}
+// config.schedule 已移除 — 情报采集已迁移至 my-ai-hub + launchd 本地定时触发
+// 此函数保留供手动调试：GET /api/cron-intel?key=CRON_SECRET

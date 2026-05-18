@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>宋宗源 · 低空经济方案架构师 · 简历</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #000000;
+      --surface: #0d0d0d;
+      --surface-raised: #111111;
+      --border: rgba(255, 255, 255, 0.1);
+      --text: rgba(255, 255, 255, 0.78);
+      --text-heading: #ffffff;
+      --muted: #a1a1aa;
+      --accent: #6d28d9;
+      --accent-soft: rgba(109, 40, 217, 0.12);
+      --radius: 12px;
+      --radius-sm: 6px;
+      --line: rgba(255, 255, 255, 0.06);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", ui-sans-serif, system-ui, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(ellipse 80% 40% at 50% -8%, rgba(109, 40, 217, 0.10), transparent 50%);
+      color: var(--text);
+      font-size: 0.875rem;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      padding: 2rem 1rem;
+    }
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 2rem 1.5rem;
+      position: relative;
+    }
+    /* Print */
+    @media print {
+      body { background: #000 !important; padding: 0; }
+      .page { box-shadow: none; border: none; border-radius: 0; max-width: 100%; padding: 0.5in; }
+      .tag { break-inside: avoid; }
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+    .header__left h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin: 0 0 0.15rem;
+      letter-spacing: -0.02em;
+    }
+    .header__left .tagline {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 0;
+    }
+    .header__right {
+      text-align: right;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .header__right strong {
+      color: var(--text-heading);
+      font-weight: 600;
+    }
+
+    /* ONE-LINER */
+    .oneliner {
+      font-size: 0.82rem;
+      color: var(--accent);
+      font-weight: 500;
+      padding: 0.6rem 0.85rem;
+      background: var(--accent-soft);
+      border: 1px solid rgba(109, 40, 217, 0.15);
+      border-radius: var(--radius-sm);
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+
+    /* SECTION */
+    .section { margin-bottom: 1.25rem; }
+    .section:last-child { margin-bottom: 0; }
+    .section__title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 0 0 0.6rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    /* PROJECT */
+    .project { margin-bottom: 1rem; }
+    .project:last-child { margin-bottom: 0; }
+    .project__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+      flex-wrap: wrap;
+    }
+    .project__head h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin: 0;
+    }
+    .project__head .date {
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .project__url {
+      font-size: 0.72rem;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+    .project p { margin: 0 0 0.3rem; font-size: 0.82rem; }
+    .project ul {
+      margin: 0.15rem 0 0;
+      padding-left: 1rem;
+      font-size: 0.82rem;
+    }
+    .project li {
+      margin-bottom: 0.15rem;
+    }
+    .project .pipeline-label {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      margin: 0.1rem 0.1rem;
+    }
+
+    /* JOB */
+    .job { margin-bottom: 0.75rem; }
+    .job:last-child { margin-bottom: 0; }
+    .job__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.15rem;
+      flex-wrap: wrap;
+    }
+    .job__head h3 {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin: 0;
+    }
+    .job__head .company {
+      font-size: 0.82rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .job__head .date {
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .job ul {
+      margin: 0.1rem 0 0;
+      padding-left: 1rem;
+      font-size: 0.8rem;
+    }
+    .job li { margin-bottom: 0.1rem; }
+
+    /* SKILLS GRID */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0;
+    }
+    .skill-item {
+      padding: 0.25rem 0;
+      font-size: 0.8rem;
+    }
+    .skill-item__cat {
+      font-weight: 600;
+      color: var(--text-heading);
+      display: block;
+      font-size: 0.78rem;
+      margin-bottom: 0.05rem;
+    }
+    .skill-item__val {
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    /* EDUCATION */
+    .edu {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      font-size: 0.82rem;
+    }
+    .edu strong { color: var(--text-heading); font-weight: 600; }
+    .edu .date { color: var(--muted); font-size: 0.78rem; }
+
+    /* FOOTER */
+    .footer {
+      margin-top: 1rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.72rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .header { flex-direction: column; }
+      .header__right { text-align: left; }
+      .page { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header__left">
+        <h1>宋宗源</h1>
+        <p class="tagline">低空经济 · 方案架构 / 售前工程师</p>
+      </div>
+      <div class="header__right">
+        微信：<strong>iceszy0321</strong><br/>
+        邮箱：<strong>834104063@qq.com</strong><br/>
+        年龄：<strong>27</strong> 岁 &nbsp;|&nbsp; 工作经验 <strong>3</strong> 年
+      </div>
+    </div>
+
+    <!-- ONE-LINER -->
+    <div class="oneliner">
+      ◇ 独立打造了一条覆盖「情报采集 → AI 处理 → 方案生成 → 知识沉淀」的低空经济 AI 工作流。不只会写方案，能把方案做成可演示、可交付的产品。
+    </div>
+
+    <!-- CORE DELIVERABLES -->
+    <div class="section">
+      <h2 class="section__title">核心交付</h2>
+
+      <div class="project">
+        <div class="project__head">
+          <h3>1. 低空经济 AI 工作流系统</h3>
+          <span class="date">2026.04 – 2026.05 · 独立开发上线</span>
+        </div>
+        <div class="project__url">songzongyuan.com — 情报引擎 → AI Hub → 方案生成器 → 知识库</div>
+        <p>独立设计并交付一条完整产品流水线，四条流水线节点彼此依赖、闭环运转：</p>
+        <ul>
+          <li><span class="pipeline-label">情报引擎</span> 30+ RSS 源自动采集，DeepSeek 分类评分去重入库，每日 15-30 条结构化情报输出。40+ 关键词、16+ 白名单来源分级可信度。</li>
+          <li><span class="pipeline-label">AI Hub</span> DeepSeek / Kimi 双模型智能路由入口，FastAPI + React + CLI 三端覆盖。支持 MCP 桥接、RAG 检索、40+ 工具注册。</li>
+          <li><span class="pipeline-label">方案生成器</span> 面向政府应急场景的作战简报自动生成工具。输入建筑高度/风速等参数，一键生成含政策依据、推荐机型配置、作业流程、合规要点、客户沟通话术的结构化方案。</li>
+          <li><span class="pipeline-label">知识库</span> 22 万字双向链接笔记系统，PARA+Zettelkasten 混合架构，11 个活跃项目、7 大知识区域。情报与方案复盘回流反哺关键词。</li>
+        </ul>
+        <p style="font-size:0.78rem;color:var(--muted);">技术栈：FastAPI / Python / React / DeepSeek API / Kimi API / Supabase / MCP 协议 / Ollama</p>
+      </div>
+
+      <div class="project">
+        <div class="project__head">
+          <h3>2. 无人机高楼灭火解决方案（针对大疆 FC100 运载无人机）</h3>
+          <span class="date">2026.02 – 2026.03</span>
+        </div>
+        <p>针对城市高层建筑火灾救援中云梯不足、灭火投送难的行业痛点，设计适配国内消防体系的无人机灭火解决方案。</p>
+        <ul>
+          <li>独立完成需求调研 → 场景梳理 → FC100 技术选型 → 作业流程设计 → 合规性分析全流程，输出 15+ 份方案文档</li>
+          <li>设计三层客户沟通策略：采购部门（适航认证/保险/合规）→ 业务部门（3 天上手/自动航线）→ 领导层（应急管理部试点背书）</li>
+          <li>方案通过消防部门可行性评审，为 FC100 在高楼灭火场景的落地提供完整支撑</li>
+        </ul>
+      </div>
+
+      <div class="project">
+        <div class="project__head">
+          <h3>3. 高风险区应急支援一线记录专项</h3>
+          <span class="date">2022.11 · 青岛市公安局崂山分局</span>
+        </div>
+        <ul>
+          <li>担任应急现场记录分析师，每日 6:00-24:00 跟拍执法，独立策划、拍摄、剪辑输出 10 期《作战日报》视频</li>
+          <li>搭建「现场素材 → 快速编辑 → 领导决策参考」敏捷内容链路，获市局领导批示表扬</li>
+          <li>深度调研高压场景下一线人员决策模式，为无人机应急场景产品优化提供一手用户调研数据</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- WORK EXPERIENCE -->
+    <div class="section">
+      <h2 class="section__title">工作经历</h2>
+
+      <div class="job">
+        <div class="job__head">
+          <h3>低空经济 AI 产品独立开发</h3>
+          <span class="date">2025.09 – 至今</span>
+        </div>
+        <ul>
+          <li>0-1 打造低空经济 AI 工作流系统，22 万字知识库沉淀，搭建个人域名站点与演示产品线</li>
+          <li>完成高校就业指导教师专业鉴定（原件可提供）</li>
+        </ul>
+      </div>
+
+      <div class="job">
+        <div class="job__head">
+          <h3>网络售前工程师</h3>
+          <span class="company">青岛欧创自动化设备有限公司</span>
+          <span class="date">2024.08 – 2025.08</span>
+        </div>
+        <ul>
+          <li>独立完成客户需求挖掘、技术方案对接与落地，3 个区域客户项目采纳率达 80%</li>
+          <li>沉淀「模糊需求 → 技术方案 → 商业价值」的转化能力，强化 ToB 项目全生命周期管理</li>
+        </ul>
+      </div>
+
+      <div class="job">
+        <div class="job__head">
+          <h3>宣传科辅警 · 无人机作业与应急保障</h3>
+          <span class="company">青岛市公安局崂山分局</span>
+          <span class="date">2022.08 – 2024.08</span>
+        </div>
+        <ul>
+          <li>无人机航拍与应急保障：10+ 次作业零事故（大疆 Air 2S 等），全流程合规（空域申请/报备）</li>
+          <li>牵头高风险区应急支援一线记录专项，产出《作战日报》多期，获市局领导批示表扬</li>
+          <li>参与交警大队案件研判，推动跨中队督办闭环；抽调市局跟班学习，熟悉政府决策链路</li>
+        </ul>
+      </div>
+
+      <div class="job">
+        <div class="job__head">
+          <h3>销售助理（实习）</h3>
+          <span class="company">震旦集团</span>
+          <span class="date">2022.06 – 2022.07</span>
+        </div>
+        <ul>
+          <li>ToB 客户对接与商务沟通基础</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="section">
+      <h2 class="section__title">专业能力</h2>
+      <div class="skills-grid">
+        <div class="skill-item">
+          <span class="skill-item__cat">方案全流程</span>
+          <span class="skill-item__val">需求调研→技术选型→流程设计→合规验证</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item__cat">行业技术认知</span>
+          <span class="skill-item__val">大疆 FC100/M30/M400 · 图传/载荷/安全冗余</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item__cat">工程能力</span>
+          <span class="skill-item__val">FastAPI / React / Python / DeepSeek API / MCP</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item__cat">政府与合规</span>
+          <span class="skill-item__val">决策链三重门 · 招投标需求文档 · 背调配合</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item__cat">原创方法论</span>
+          <span class="skill-item__val">五层框架 · 系统思考 · PARA+Zettelkasten</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-item__cat">内容与设计</span>
+          <span class="skill-item__val">幕布/XMind/Visio · 视频剪辑 · 文档自动化</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDUCATION -->
+    <div class="section">
+      <h2 class="section__title">教育背景</h2>
+      <div class="edu">
+        <span><strong>本科 · 物联网工程</strong> · 山东航空学院</span>
+        <span class="date">2017.09 – 2021.07</span>
+      </div>
+      <p style="font-size:0.78rem;color:var(--muted);margin:0.2rem 0 0;">主修：数据结构、计算机组成原理、计算机网络、嵌入式系统</p>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <span>作品集：<a href="https://songzongyuan.com" target="_blank">songzongyuan.com</a></span>
+      <span>专业鉴定信可提供</span>
+    </div>
+
+  </div>
+</body>
+</html>

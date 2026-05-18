@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人工智能 · 知识体系</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh;overflow-x:hidden}
+  
+  /* Header */
+  .header{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border-bottom:1px solid #30363d;padding:40px 48px 32px}
+  .header h1{font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,#58a6ff,#3fb950);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+  .header .subtitle{color:#8b949e;font-size:1rem;font-weight:300;letter-spacing:.3px}
+  .header .stats{display:flex;gap:40px;margin-top:20px}
+  .header .stat{display:flex;flex-direction:column}
+  .header .stat-num{font-size:1.8rem;font-weight:700;color:#58a6ff}
+  .header .stat-label{font-size:.75rem;color:#8b949e;text-transform:uppercase;letter-spacing:1px}
+  
+  /* Status bar */
+  .status-bar{background:#161b22;border-bottom:1px solid #21262d;padding:12px 48px;display:flex;align-items:center;gap:16px;font-size:.85rem}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:#3fb950;display:inline-block}
+  .status-text{color:#8b949e}
+  .status-text strong{color:#e0e0e0}
+  
+  /* Main layout */
+  .main{display:flex;max-width:1440px;margin:0 auto;padding:24px 48px;gap:32px;min-height:calc(100vh - 200px)}
+  .tree-panel{flex:1;min-width:0}
+  .detail-panel{width:380px;flex-shrink:0;position:sticky;top:24px;align-self:flex-start;max-height:calc(100vh - 200px);overflow-y:auto}
+  
+  /* Pillar sections */
+  .pillar{border:1px solid #21262d;border-radius:12px;margin-bottom:16px;overflow:hidden;transition:border-color .2s}
+  .pillar:hover{border-color:#30363d}
+  .pillar-header{display:flex;align-items:center;padding:16px 20px;cursor:pointer;background:#161b22;user-select:none;gap:12px;transition:background .2s}
+  .pillar-header:hover{background:#1c2128}
+  .pillar-header .icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+  .pillar-header .info{flex:1;min-width:0}
+  .pillar-header .info h2{font-size:1rem;font-weight:600;color:#e0e0e0}
+  .pillar-header .info .desc{font-size:.78rem;color:#8b949e;margin-top:2px}
+  .pillar-header .count{font-size:.78rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:10px}
+  .pillar-header .arrow{color:#8b949e;font-size:.8rem;transition:transform .3s}
+  .pillar-header.collapsed .arrow{transform:rotate(-90deg)}
+  
+  /* Topic list */
+  .topic-list{padding:8px 16px 12px}
+  .pillar.collapsed .topic-list{display:none}
+  
+  .topic{display:flex;align-items:center;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s;gap:10px}
+  .topic:hover{background:#1c2128}
+  .topic.active{background:#1f384f;border:1px solid #1f6feb40}
+  .topic .t-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+  .topic .t-info{flex:1;min-width:0}
+  .topic .t-info .t-name{font-size:.88rem;font-weight:500;color:#e0e0e0}
+  .topic .t-info .t-desc{font-size:.72rem;color:#8b949e;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .topic .t-size{font-size:.7rem;color:#6e7681;background:#161b22;padding:1px 7px;border-radius:6px;white-space:nowrap}
+  .topic .t-link{cursor:pointer;font-size:.75rem;color:#484f58;padding:2px 5px;border-radius:4px;transition:color .2s;text-decoration:none}
+  .topic .t-link:hover{color:#58a6ff}
+  
+  /* Detail panel */
+  .detail-card{background:#161b22;border:1px solid #21262d;border-radius:12px;padding:24px}
+  .detail-card .empty{text-align:center;padding:40px 20px;color:#484f58}
+  .detail-card .empty .empty-icon{font-size:2.5rem;margin-bottom:12px}
+  .detail-card .empty .empty-text{font-size:.9rem}
+  .detail-card .d-header{margin-bottom:16px}
+  .detail-card .d-header .d-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:8px}
+  .detail-card .d-header h3{font-size:1.1rem;font-weight:600;color:#e0e0e0}
+  .detail-card .d-header .d-level{font-size:.75rem;color:#8b949e;margin-top:2px}
+  .detail-card .d-section{margin-bottom:12px}
+  .detail-card .d-section .d-label{font-size:.7rem;color:#484f58;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+  .detail-card .d-section .d-value{font-size:.85rem;color:#c9d1d9;line-height:1.5}
+  .detail-card .d-section .d-tags{display:flex;flex-wrap:wrap;gap:6px}
+  .detail-card .d-section .d-tag{font-size:.72rem;color:#8b949e;background:#21262d;padding:2px 8px;border-radius:4px}
+  .detail-card .d-path{background:#0d1117;border:1px solid #21262d;border-radius:6px;padding:10px 12px;margin-top:12px;display:flex;align-items:center;gap:8px}
+  .detail-card .d-path code{font-size:.75rem;color:#8b949e;flex:1;word-break:break-all}
+  .detail-card .d-path .copy-btn{cursor:pointer;font-size:.7rem;color:#58a6ff;background:#1f384f;border:none;padding:4px 8px;border-radius:4px;white-space:nowrap}
+  .detail-card .d-path .copy-btn:hover{background:#1f6feb40}
+  
+  /* Learning paths */
+  .learning-paths{padding:24px 48px 48px;max-width:1440px;margin:0 auto}
+  .learning-paths h3{font-size:1.1rem;font-weight:600;margin-bottom:16px;color:#e0e0e0}
+  .paths-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .path-card{background:#161b22;border:1px solid #21262d;border-radius:12px;padding:16px 20px;transition:border-color .2s}
+  .path-card:hover{border-color:#30363d}
+  .path-card h4{font-size:.9rem;font-weight:600;color:#58a6ff;margin-bottom:4px}
+  .path-card .p-role{font-size:.75rem;color:#8b949e;margin-bottom:8px}
+  .path-card .p-steps{list-style:none;padding:0;margin:0}
+  .path-card .p-steps li{font-size:.82rem;color:#c9d1d9;padding:4px 0;border-bottom:1px solid #21262d}
+  .path-card .p-steps li:last-child{border-bottom:none}
+  .path-card .p-steps li .step-num{color:#484f58;margin-right:6px}
+  
+  /* Info note */
+  .info-note{background:#1c2128;border:1px solid #30363d;border-radius:8px;padding:12px 16px;font-size:.78rem;color:#8b949e;display:flex;align-items:center;gap:8px;margin-top:16px;line-height:1.5}
+  
+  @media(max-width:900px){.main{flex-direction:column;padding:16px}.detail-panel{width:100%;position:static}.header{padding:24px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧠 人工智能 · 知识体系</h1>
+  <div class="subtitle">5大支柱 · 57篇深度笔记 · 从基础原理到产业经济的完整知识图谱</div>
+  <div class="stats">
+    <div class="stat"><span class="stat-num">57</span><span class="stat-label">深度笔记</span></div>
+    <div class="stat"><span class="stat-num">816</span><span class="stat-label">总KB</span></div>
+    <div class="stat"><span class="stat-num">6</span><span class="stat-label">P0基础</span></div>
+    <div class="stat"><span class="stat-num">14</span><span class="stat-label">P1核心模型</span></div>
+    <div class="stat"><span class="stat-num">12</span><span class="stat-label">P2使能技术</span></div>
+    <div class="stat"><span class="stat-num">10</span><span class="stat-label">P3运行体系</span></div>
+    <div class="stat"><span class="stat-num">15</span><span class="stat-label">P4产业经济</span></div>
+  </div>
+</div>
+
+<div class="status-bar">
+  <span class="status-dot"></span>
+  <span class="status-text">知识库完整 · <strong>57篇深度笔记</strong> · Frontmatter统一 · 交叉引用可跳转</span>
+</div>
+
+<div class="main">
+  <div class="tree-panel" id="tree"></div>
+  <div class="detail-panel" id="detail">
+    <div class="detail-card">
+      <div class="empty">
+        <div class="empty-icon">🧠</div>
+        <div class="empty-text">点击左侧任意专题查看详情</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="learning-paths">
+  <h3>📌 推荐学习路径</h3>
+  <div class="paths-grid">
+    <div class="path-card">
+      <h4>快速入门</h4>
+      <div class="p-role">适合新手，5篇</div>
+      <ul class="p-steps">
+        <li><span class="step-num">1.</span>AI本质论</li>
+        <li><span class="step-num">2.</span>深度学习核心原理</li>
+        <li><span class="step-num">3.</span>LLM架构总览</li>
+        <li><span class="step-num">4.</span>RAG与向量数据库</li>
+        <li><span class="step-num">5.</span>AI商业模式</li>
+      </ul>
+    </div>
+    <div class="path-card">
+      <h4>技术深度</h4>
+      <div class="p-role">适合工程师，7篇</div>
+      <ul class="p-steps">
+        <li><span class="step-num">1.</span>机器学习三大范式</li>
+        <li><span class="step-num">2.</span>深度学习核心原理</li>
+        <li><span class="step-num">3.</span>LLM架构总览</li>
+        <li><span class="step-num">4.</span>训练框架与分布式</li>
+        <li><span class="step-num">5.</span>推理优化引擎</li>
+        <li><span class="step-num">6.</span>微调与PEFT</li>
+        <li><span class="step-num">7.</span>可解释性与机械可解释性</li>
+      </ul>
+    </div>
+    <div class="path-card">
+      <h4>产业落地</h4>
+      <div class="p-role">适合产品经理，6篇</div>
+      <ul class="p-steps">
+        <li><span class="step-num">1.</span>LLM架构总览</li>
+        <li><span class="step-num">2.</span>Agent系统</li>
+        <li><span class="step-num">3.</span>RAG与向量数据库</li>
+        <li><span class="step-num">4.</span>AI商业模式</li>
+        <li><span class="step-num">5.</span>企业AI转型</li>
+        <li><span class="step-num">6.</span>AI投资与市场格局</li>
+      </ul>
+    </div>
+    <div class="path-card">
+      <h4>安全与治理</h4>
+      <div class="p-role">适合政策/风控，6篇</div>
+      <ul class="p-steps">
+        <li><span class="step-num">1.</span>AI安全与对齐</li>
+        <li><span class="step-num">2.</span>越狱攻防与红队测试</li>
+        <li><span class="step-num">3.</span>全球AI监管政策</li>
+        <li><span class="step-num">4.</span>AI伦理与偏见</li>
+        <li><span class="step-num">5.</span>AI版权与法律</li>
+        <li><span class="step-num">6.</span>企业AI治理</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const knowledgeData = {
+  pillars: [
+    {
+      id:'P0', title:'AI基础基石', icon:'🔬', color:'#3fb950',
+      desc:'什么是智能？AI如何工作？',
+      topics:[
+        {id:'P0.1',name:'AI本质论',size:'8.5KB',icon:'🧬',tags:['AI','智能理论','认知科学'],insight:'智能 = 表征 × 计算 × 目标'},
+        {id:'P0.2',name:'机器学习三大范式',size:'8.6KB',icon:'📊',tags:['监督学习','无监督','强化学习'],insight:'三范式的决策边界与适用场景'},
+        {id:'P0.3',name:'深度学习核心原理',size:'9.2KB',icon:'🔗',tags:['神经网络','Transformer','反向传播'],insight:'从感知机到Transformer的进化之路'},
+        {id:'P0.4',name:'统计学习与信息论',size:'9.0KB',icon:'📐',tags:['贝叶斯','熵','KL散度'],insight:'AI的本质是统计推断与信息压缩'},
+        {id:'P0.5',name:'AI发展简史与范式演变',size:'9.7KB',icon:'📜',tags:['AI历史','范式','Scaling'],insight:'三次浪潮：符号→连接→基础模型'},
+        {id:'P0.6',name:'认知科学与AI对比',size:'10.4KB',icon:'🧠',tags:['认知','人机对比','具身智能'],insight:'人类智能与AI的根本差异与互补'}
+      ]
+    },
+    {
+      id:'P1', title:'核心模型', icon:'🤖', color:'#d29922',
+      desc:'主流AI模型有哪些？怎么比较？',
+      topics:[
+        {id:'P1.1',name:'大语言模型架构总览',size:'10.9KB',icon:'🏗️',tags:['Transformer','LLM','架构'],insight:'Transformer是AI的通用处理器'},
+        {id:'P1.2',name:'GPT系列深度拆解',size:'10.7KB',icon:'🔺',tags:['OpenAI','GPT','o1'],insight:'从GPT-1到o3的四次范式跃迁'},
+        {id:'P1.3',name:'Claude系列深度拆解',size:'16.1KB',icon:'🟣',tags:['Anthropic','Constitutional AI'],insight:'以安全为核心差异化的模型路线'},
+        {id:'P1.4',name:'Llama & 开源大模型生态',size:'12.7KB',icon:'📖',tags:['Llama','Mistral','DeepSeek'],insight:'开源模型正在缩小与闭源的差距'},
+        {id:'P1.5',name:'多模态理解模型',size:'10.2KB',icon:'👁️',tags:['CLIP','GPT-4V','Gemini'],insight:'视觉+语言的理解是AI感知能力的飞跃'},
+        {id:'P1.6',name:'图像生成模型',size:'11.0KB',icon:'🎨',tags:['Diffusion','DALL-E','SD'],insight:'Diffusion改变了视觉内容的创造方式'},
+        {id:'P1.7',name:'视频与音频生成',size:'10.8KB',icon:'🎬',tags:['Sora','Whisper','MusicGen'],insight:'时空维度的生成是下一个前沿'},
+        {id:'P1.8',name:'推理与思维模型',size:'10.9KB',icon:'💡',tags:['CoT','o1','DeepSeek-R1'],insight:'Test-time compute让模型思考后再回答'},
+        {id:'P1.9',name:'Agent系统',size:'13.8KB',icon:'🤖',tags:['ReAct','Function Calling','Multi-Agent'],insight:'LLM+工具使用+规划=自主Agent'},
+        {id:'P1.10',name:'代码生成模型',size:'9.8KB',icon:'💻',tags:['Codex','Copilot','Claude Code'],insight:'代码是AI最成熟的生产级应用场景'},
+        {id:'P1.11',name:'小模型与边缘部署',size:'9.4KB',icon:'📱',tags:['Phi','Gemma','TinyLlama'],insight:'从大而强到小而精的第二曲线'},
+        {id:'P1.12',name:'嵌入与向量模型',size:'8.1KB',icon:'📌',tags:['Embeddings','CLIP','MTEB'],insight:'语义嵌入是所有AI系统的信息底座'},
+        {id:'P1.13',name:'推荐系统与排序',size:'10.1KB',icon:'⭐',tags:['推荐','排序','DCN'],insight:'推荐是AI最成功的商业应用之一'},
+        {id:'P1.14',name:'强化学习与决策模型',size:'9.8KB',icon:'🎯',tags:['RL','RLHF','DPO','GRPO'],insight:'RL让AI从理解到行动'}
+      ]
+    },
+    {
+      id:'P2', title:'使能技术', icon:'⚙️', color:'#58a6ff',
+      desc:'怎么训练和部署AI？',
+      topics:[
+        {id:'P2.1',name:'训练框架与分布式训练',size:'11.4KB',icon:'🖥️',tags:['PyTorch','JAX','FSDP','DeepSpeed'],insight:'大模型训练是系统工程而非算法问题'},
+        {id:'P2.2',name:'推理优化引擎',size:'12.3KB',icon:'⚡',tags:['vLLM','TensorRT','量化'],insight:'推理效率决定AI能否规模落地'},
+        {id:'P2.3',name:'数据工程与Scaling Law',size:'12.2KB',icon:'📊',tags:['数据管线','Scaling Law','FineWeb'],insight:'数据质量比数据量更重要'},
+        {id:'P2.4',name:'评估与基准体系',size:'12.0KB',icon:'📏',tags:['MMLU','GSM8K','Arena'],insight:'没有好的评估就没有好的AI'},
+        {id:'P2.5',name:'AI算力基础设施',size:'11.1KB',icon:'💾',tags:['GPU','TPU','InfiniBand'],insight:'GPU就是新石油'},
+        {id:'P2.6',name:'RAG与向量数据库',size:'13.1KB',icon:'📚',tags:['RAG','向量数据库','检索'],insight:'知识检索是弥补LLM短板的关键技术'},
+        {id:'P2.7',name:'微调与参数高效适配',size:'12.1KB',icon:'🔧',tags:['LoRA','QLoRA','PEFT'],insight:'用最小成本让基础模型适配特定任务'},
+        {id:'P2.8',name:'可解释性与机械可解释性',size:'17.7KB',icon:'🔍',tags:['SAE','SHAP','Logit Lens'],insight:'理解黑箱内部是AI安全的必经之路'},
+        {id:'P2.9',name:'提示工程与In-Context Learning',size:'15.3KB',icon:'💬',tags:['Prompting','CoT','Structured Output'],insight:'提示就是给AI的潜意识指令'},
+        {id:'P2.10',name:'模型压缩与知识蒸馏',size:'11.1KB',icon:'🗜️',tags:['蒸馏','量化','剪枝'],insight:'大教师教小学生，知识无损传递'},
+        {id:'P2.11',name:'合成数据',size:'10.6KB',icon:'🧪',tags:['合成数据','Self-Play','蒸馏'],insight:'数据的终极解法可能是AI自己生成'},
+        {id:'P2.12',name:'隐私保护与安全计算',size:'10.2KB',icon:'🔒',tags:['差分隐私','联邦学习','TEE'],insight:'隐私是AI信任的基石'}
+      ]
+    },
+    {
+      id:'P3', title:'运行体系', icon:'🛡️', color:'#f85149',
+      desc:'怎么让AI安全可信地运行？',
+      topics:[
+        {id:'P3.1',name:'AI安全与对齐研究',size:'11.8KB',icon:'🛡️',tags:['对齐','RLHF','Superalignment'],insight:'确保AI做人类想要的事是最根本的挑战'},
+        {id:'P3.2',name:'越狱攻防与红队测试',size:'12.3KB',icon:'🔓',tags:['越狱','红队','Prompt Injection'],insight:'红队测试是AI安全的压力测试'},
+        {id:'P3.3',name:'MLOps与生产部署',size:'17.1KB',icon:'🚀',tags:['MLOps','部署','监控'],insight:'AI上线不是终点是起点'},
+        {id:'P3.4',name:'全球AI监管政策',size:'14.4KB',icon:'🌍',tags:['EU AI Act','中国监管','美国政策'],insight:'三国演义：EU/中国/美国的监管路径分化'},
+        {id:'P3.5',name:'开源AI生态',size:'11.6KB',icon:'🌐',tags:['HuggingFace','开源','社区'],insight:'HuggingFace是AI的GitHub'},
+        {id:'P3.6',name:'AI伦理与偏见治理',size:'13.3KB',icon:'⚖️',tags:['偏见','公平性','负责任AI'],insight:'偏见是数据的问题不是算法的问题'},
+        {id:'P3.7',name:'AI版权与法律',size:'13.5KB',icon:'📜',tags:['版权','诉讼','NYT'],insight:'AI时代的知识产权面临根本性重构'},
+        {id:'P3.8',name:'企业AI治理',size:'13.7KB',icon:'🏢',tags:['治理','合规','NIST','ISO'],insight:'董事会需要AI素养'},
+        {id:'P3.9',name:'模型透明度与文档',size:'14.3KB',icon:'📋',tags:['Model Card','透明度','文档'],insight:'透明是信任的前提'},
+        {id:'P3.10',name:'AI可重复性与基准完整性',size:'13.7KB',icon:'🔄',tags:['可重复性','基准污染','LiveBench'],insight:'基准污染正在腐蚀AI评估的可信度'}
+      ]
+    },
+    {
+      id:'P4', title:'产业经济', icon:'💰', color:'#a371f7',
+      desc:'AI的商业价值和产业格局？',
+      topics:[
+        {id:'P4.1',name:'AI商业模式与API经济',size:'12.9KB',icon:'💳',tags:['OpenAI','Anthropic','API'],insight:'AI的API经济正在重塑软件价值链'},
+        {id:'P4.2',name:'AI编程与开发者工具',size:'12.7KB',icon:'⌨️',tags:['Copilot','Cursor','Claude Code'],insight:'编程是AI第一个被彻底改变的职业'},
+        {id:'P4.3',name:'医疗AI',size:'12.2KB',icon:'🏥',tags:['AlphaFold','影像诊断','药物发现'],insight:'医疗是AI社会价值最大的应用领域'},
+        {id:'P4.4',name:'金融AI',size:'12.7KB',icon:'📈',tags:['量化','风控','智能投顾'],insight:'金融是AI商业化最早最成熟的行业'},
+        {id:'P4.5',name:'教育AI',size:'13.4KB',icon:'🎓',tags:['个性化学习','AI Tutor','Khan Academy'],insight:'个性化学习是教育300年来的最大变量'},
+        {id:'P4.6',name:'法律AI',size:'9.1KB',icon:'⚖️',tags:['Harvey','合同审查','法律研究'],insight:'法律行业的AI渗透率正在加速'},
+        {id:'P4.7',name:'创意产业AI',size:'8.9KB',icon:'🎭',tags:['设计','音乐','影视'],insight:'AI正在解构创造力是人类最后堡垒的命题'},
+        {id:'P4.8',name:'AI投资与市场格局',size:'8.5KB',icon:'📊',tags:['VC','估值','独角兽'],insight:'AI投资进入估值分化阶段'},
+        {id:'P4.9',name:'AGI趋势与前沿',size:'11.2KB',icon:'🔮',tags:['AGI','Scaling Debate','奇点'],insight:'AGI不是技术问题，是时间问题'},
+        {id:'P4.10',name:'中国企业AI生态',size:'10.9KB',icon:'🐉',tags:['百度','阿里','腾讯','DeepSeek'],insight:'中国AI在应用层具有独特优势'},
+        {id:'P4.11',name:'AI与劳动力市场',size:'12.2KB',icon:'👥',tags:['就业','替代','UBI'],insight:'AI不会消灭工作，但会重新定义工作'},
+        {id:'P4.12',name:'企业AI转型策略',size:'11.8KB',icon:'🏗️',tags:['转型','ROI','组织'],insight:'80%的AI项目失败在组织而非技术'},
+        {id:'P4.13',name:'AI芯片产业',size:'14.0KB',icon:'🔌',tags:['NVIDIA','AMD','TPU'],insight:'AI芯片是中美科技竞争的核心战场'},
+        {id:'P4.14',name:'AI与机器人',size:'12.4KB',icon:'🤖',tags:['具身智能','人形机器人','自动驾驶'],insight:'具身智能是AI的终极形态之一'},
+        {id:'P4.15',name:'AI能源与可持续发展',size:'12.9KB',icon:'🌱',tags:['碳排放','绿色AI','能耗'],insight:'训练一次GPT-4的碳排=5辆汽车终身'}
+      ]
+    }
+  ]
+};
+
+const pillarDirs = {'P0':'P0-基础基石/','P1':'P1-核心模型/','P2':'P2-使能技术/','P3':'P3-运行体系/','P4':'P4-产业经济/'};
+const basePath = "人工智能/";
+const vaultBase = "obsidian://open?vault=我的数字花园&file=03%20Knowledge%20System%20%EF%BC%88%E7%9F%A5%E8%AF%86%E4%BD%93%E7%B3%BB%EF%BC%89%2F3.11%20Industry%20%26%20Case%20Studies%20%E8%A1%8C%E4%B8%9A%E4%B8%8E%E6%A1%88%E4%BE%8B%E7%A0%94%E7%A9%B6%2F" + encodeURIComponent(basePath);
+
+const pillarIcons = {'P0':'🔬','P1':'🤖','P2':'⚙️','P3':'🛡️','P4':'💰'};
+const pillarColors = {'P0':'#3fb950','P1':'#d29922','P2':'#58a6ff','P3':'#f85149','P4':'#a371f7'};
+
+function renderTree(){
+  const container = document.getElementById('tree');
+  container.innerHTML = '';
+  
+  knowledgeData.pillars.forEach((pillar, pi) => {
+    const section = document.createElement('div');
+    section.className = 'pillar collapsed';
+    section.innerHTML = `
+      <div class="pillar-header collapsed" onclick="togglePillar(this)">
+        <div class="icon" style="background:${pillar.color}22;color:${pillar.color}">${pillar.icon}</div>
+        <div class="info">
+          <h2>${pillar.id} · ${pillar.title}</h2>
+          <div class="desc">${pillar.desc}</div>
+        </div>
+        <span class="count">${pillar.topics.length}篇</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="topic-list">
+        ${pillar.topics.map((t, ti) => `
+          <div class="topic" data-pillar="${pi}" data-topic="${ti}" onclick="selectTopic(${pi},${ti})">
+            <div class="t-icon" style="background:${pillar.color}15;color:${pillar.color};font-size:.7rem">${t.icon}</div>
+            <div class="t-info">
+              <div class="t-name">${t.id} ${t.name}</div>
+              <div class="t-desc">${t.insight}</div>
+            </div>
+            <span class="t-size">${t.size}</span>
+            <a class="t-link" onclick="event.stopPropagation();copyObsidianPath('${t.id}')" title="复制Obsidian路径">📂</a>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(section);
+  });
+}
+
+function togglePillar(header){
+  header.classList.toggle('collapsed');
+  const section = header.parentElement;
+  section.classList.toggle('collapsed');
+}
+
+function selectTopic(pi, ti){
+  const t = knowledgeData.pillars[pi].topics[ti];
+  const p = knowledgeData.pillars[pi];
+  
+  document.querySelectorAll('.topic').forEach(el => el.classList.remove('active'));
+  const selector = `.topic[data-pillar="${pi}"][data-topic="${ti}"]`;
+  document.querySelector(selector)?.classList.add('active');
+  
+  const detail = document.getElementById('detail');
+  detail.innerHTML = `
+    <div class="detail-card">
+      <div class="d-header">
+        <div class="d-icon" style="background:${p.color}22;color:${p.color};font-size:.8rem">${t.icon}</div>
+        <h3>${p.id}${t.id.replace(p.id,'')} ${t.name}</h3>
+        <div class="d-level">${p.id}-${p.title}</div>
+      </div>
+      <div class="d-section">
+        <div class="d-label">核心洞察</div>
+        <div class="d-value">${t.insight}</div>
+      </div>
+      <div class="d-section">
+        <div class="d-label">文件大小</div>
+        <div class="d-value">${t.size} · 深度笔记</div>
+      </div>
+      <div class="d-section">
+        <div class="d-label">标签</div>
+        <div class="d-tags">
+          ${t.tags.map(tag => `<span class="d-tag">${tag}</span>`).join('')}
+        </div>
+      </div>
+      <div class="d-path">
+        <span>📁</span>
+        <code>${basePath}${pillarDirs[p.id]}${p.id}.${t.id.replace(p.id,'')} ${t.name}.md</code>
+        <button class="copy-btn" onclick="copyObsidianPath('${t.id}')">复制路径</button>
+      </div>
+    </div>
+  `;
+}
+
+function copyObsidianPath(id){
+  // Find topic info
+  let fname = '', pname = '';
+  for(const p of knowledgeData.pillars){
+    for(const t of p.topics){
+      if(t.id === id){
+        fname = `${id} ${t.name}.md`;
+        pname = p.id;
+        break;
+      }
+    }
+  }
+  const subdir = pillarDirs[pname] ? encodeURIComponent(pillarDirs[pname]) : '';
+  const fullPath = vaultBase + subdir + encodeURIComponent(fname);
+  // Try clipboard API
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(fullPath).then(() => {
+      const btn = event?.target || document.querySelector('.copy-btn');
+      if(btn){ const t=btn.textContent; btn.textContent='已复制!'; setTimeout(()=>btn.textContent=t,1500); }
+    });
+  }
+}
+
+// Expand all pillars by default
+function expandAll(){
+  document.querySelectorAll('.pillar').forEach(p => p.classList.remove('collapsed'));
+  document.querySelectorAll('.pillar-header').forEach(h => h.classList.remove('collapsed'));
+}
+
+renderTree();
+setTimeout(expandAll, 100);
+</script>
+</body>
+</html>

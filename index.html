@@ -1044,7 +1044,52 @@
       font-weight: 600;
     }
 
-    /* 能力养成 / 方案生成器 / 深度思考 / 数字花园 */
+    /* 流水线指示器 */
+    .pipeline-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      margin: 1.25rem auto 1.75rem;
+      flex-wrap: wrap;
+    }
+    .pipeline-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.78rem;
+      color: var(--muted-faint);
+      font-weight: 500;
+    }
+    .pipeline-step__num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted-faint);
+    }
+    .pipeline-arrow {
+      color: rgba(255, 255, 255, 0.12);
+      font-size: 0.8rem;
+    }
+    .pipeline-step.is-link {
+      text-decoration: none;
+      transition: color 0.2s, background 0.2s;
+    }
+    .pipeline-step.is-link:hover {
+      color: var(--accent);
+    }
+    .pipeline-step.is-link:hover .pipeline-step__num {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* 情报引擎 / 方案生成器 / AI Hub / 知识库 */
     .section--hub {
       padding-top: var(--space-2xl);
     }
@@ -1207,17 +1252,109 @@
       align-self: flex-start;
     }
 
-    /* 方案生成器 · 作战简报管道预览（与 generator.html 模块一致） */
-    #skills .nav-card__desc,
-    #thinking .nav-card__desc,
-    #generator .nav-card__desc,
-    #garden .nav-card__desc {
+    /* 情报引擎 · 采集流程预览 */
+    #intel .nav-card__desc {
       flex: 0 0 auto;
     }
 
-    #skills .skills-viz {
+    .intel-flow-preview {
       flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
       min-height: 0;
+      margin: 0.2rem 0;
+    }
+    .intel-flow-preview__line {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .intel-flow-preview__node {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .intel-flow-preview__arrow {
+      color: rgba(255,255,255,0.15);
+      font-size: 0.7rem;
+    }
+    .intel-flow-preview__status {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+      color: var(--muted-faint);
+    }
+    .intel-flow-preview__dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #34d399;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* AI Hub · 层级架构预览 */
+    #aihub .nav-card__desc {
+      flex: 0 0 auto;
+    }
+
+    .aihub-flow-preview {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 0;
+      margin: 0.2rem 0;
+    }
+    .aihub-flow-preview__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.25rem;
+      width: 100%;
+      max-width: 180px;
+    }
+    .aihub-flow-preview__tier {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+      padding: 0.25rem;
+      text-align: center;
+    }
+    .aihub-flow-preview__tier:nth-child(1),
+    .aihub-flow-preview__tier:nth-child(2) {
+      grid-column: span 1;
+    }
+    .aihub-flow-preview__tier--mid {
+      grid-column: 1 / -1;
+      border-color: rgba(109, 40, 217, 0.25);
+      background: rgba(109, 40, 217, 0.06);
+    }
+    .aihub-flow-preview__tier--bot {
+      border-color: rgba(96, 165, 250, 0.15);
+    }
+    .aihub-flow-preview__tier-label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* 方案生成器 · 作战简报管道预览（与 generator.html 模块一致） */
+    #generator .nav-card__desc,
+    #garden .nav-card__desc {
+      flex: 0 0 auto;
     }
 
     .generator-preview {
@@ -2325,6 +2462,130 @@
         opacity: 0.92;
       }
     }
+
+    /* ── 更多项目区域 ──────────────────────────── */
+    .section--projects {
+      padding-top: var(--space-2xl);
+    }
+
+    .section--projects .section__title {
+      text-align: center;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+      max-width: 900px;
+      margin: 2rem auto 0;
+    }
+
+    @media (max-width: 800px) {
+      .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .project-card {
+      display: flex;
+      flex-direction: column;
+      padding: clamp(0.85rem, 1.4vw, 1.1rem);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .project-card:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.03);
+    }
+
+    .project-card__icon {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 0.55rem;
+      color: var(--muted-faint);
+      flex-shrink: 0;
+      transition: color 0.3s;
+    }
+
+    .project-card__icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .project-card:hover .project-card__icon {
+      color: var(--accent);
+    }
+
+    .project-card__title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin: 0 0 0.3rem;
+      line-height: 1.3;
+    }
+
+    .project-card__desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.45;
+      margin: 0 0 0.65rem;
+      flex: 1;
+    }
+
+    .project-card__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      align-items: center;
+    }
+
+    .tag {
+      font-size: 0.65rem;
+      padding: 0.12rem 0.45rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      line-height: 1.4;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+
+    .tag--tech {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted-faint);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .tag--status {
+      border: 1px solid;
+      background: transparent;
+    }
+
+    .tag--status--live {
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.25);
+    }
+
+    .tag--status--local {
+      color: #60a5fa;
+      border-color: rgba(96, 165, 250, 0.25);
+    }
+
+    .tag--status--proto {
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.25);
+    }
   </style>
 </head>
 <body>
@@ -2338,10 +2599,12 @@
         <nav aria-label="主导航">
           <ul class="site-nav__links">
             <li><a href="#about">关于我</a></li>
-            <li><a href="garden/index.html">数字花园</a></li>
-            <li><a href="#skills">能力养成</a></li>
+            <li><a href="intel.html">情报引擎</a></li>
             <li><a href="#generator">方案生成器</a></li>
-            <li><a href="#thinking">深度思考</a></li>
+            <li><a href="ai-hub.html">AI Hub</a></li>
+            <li><a href="garden/index.html">知识库</a></li>
+            <li><a href="resume.html">简历</a></li>
+            <li><a href="#projects">项目</a></li>
             <li><a href="#contact">联系合作</a></li>
           </ul>
         </nav>
@@ -2352,10 +2615,12 @@
     </header>
     <div class="mobile-drawer" id="mobile-drawer">
       <a href="#about">关于我</a>
-      <a href="garden/index.html">数字花园</a>
-      <a href="#skills">能力养成</a>
+      <a href="intel.html">情报引擎</a>
       <a href="#generator">方案生成器</a>
-      <a href="#thinking">深度思考</a>
+      <a href="ai-hub.html">AI Hub</a>
+      <a href="garden/index.html">知识库</a>
+      <a href="resume.html">简历</a>
+      <a href="#projects">项目</a>
       <a href="#contact">联系合作</a>
     </div>
 
@@ -2370,7 +2635,7 @@
           构建<span class="hero__accent hero__grad-text">低空经济</span>的解决方案引擎
         </h1>
         <p class="hero__sub">
-          低空经济 · 个人知识库 · 产品化思维 · 政府决策链洞察
+          情报采集 → AI 处理 → 方案生成 → 知识沉淀 · 一条流水线，闭环运转
         </p>
         <div class="hero__actions">
           <a class="btn btn--primary" href="#generator">查看我的作品<span class="btn__icon" aria-hidden="true">↗</span></a>
@@ -2567,15 +2832,14 @@
               <div class="timeline-date">4月底 · 整合</div>
               <div class="timeline-card">
                 <strong>官网整合。</strong>
-                以 <strong>songzongyuan.com</strong> 为壳，把三件工具与个人背景收进同一套信息架构：关于我、本站演进、核心能力四宫格、生成器/深度思考入口、数字花园与联系等——访问者能一次看清「我是谁、我做了什么、怎么合作」。
+                以 <strong>songzongyuan.com</strong> 为壳，把个人背景与交付件收进同一套信息架构：关于我、本站演进、核心能力四宫格、方案生成器入口与数字花园——访问者能一次看清「我是谁、能做什么」。
               </div>
             </div>
             <div class="timeline-item reveal">
               <div class="timeline-date">4月底 · 视觉</div>
               <div class="timeline-card">
                 <strong>视觉升级。</strong>
-                对标一线 <strong>SaaS 官网</strong>的深色层次：<strong>毛玻璃</strong>面板、噪点与光晕、细颗粒 <strong>hover /
-                渐入</strong>，并统一字体与间距排印，让站点第一印象像「产品站」而不仅是简历。
+                对标一线 <strong>SaaS 官网</strong>的深色层次：<strong>毛玻璃</strong>面板、噪点与光晕、细颗粒 <strong>hover / 渐入</strong>，统一字体与间距排印，让站点第一印象像「产品站」而不仅是简历。
               </div>
             </div>
             <div class="timeline-item reveal">
@@ -2586,73 +2850,57 @@
                 <strong>五层框架</strong>、<strong>政府决策链三重门</strong>、<strong>韩信兵法与求职博弈</strong>等长文与方法论文——让可复用的判断从笔记长成可对外的「活图谱」。
               </div>
             </div>
+            <div class="timeline-item reveal">
+              <div class="timeline-date">5月中旬 · 流水线</div>
+              <div class="timeline-card">
+                <strong>从工具集升级为工作流。</strong>
+                重构首页叙事，把原来的方案生成器单点展示扩展为四条流水线：<strong>情报引擎</strong>自动采集 → <strong>AI Hub</strong> 中层处理 → <strong>方案生成器</strong>交付输出 → <strong>Obsidian 知识库</strong>反哺关键词。每个环节有独立展示页，第一步到最后一步可追踪可点击——说明这是一整套打法，而不止一个工具。
+              </div>
+            </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="section section--hub" aria-labelledby="hub-title">
-        <h2 class="section__title reveal" id="hub-title">核心能力与作品</h2>
-        <p class="section__lead reveal">一条路径：从能力养成 → 可交互方案生成 → 方法论沉淀 → 数字花园（链接与图谱）。</p>
+        <h2 class="section__title reveal" id="hub-title">AI + 低空经济 · 完整工作流</h2>
+        <p class="section__lead reveal">情报采集 → AI 处理 → 方案生成 → 知识沉淀。一条流水线，四个交付物，彼此依赖，闭环运转。</p>
+
+        <div class="pipeline-steps reveal">
+          <a href="intel.html" class="pipeline-step is-link"><span class="pipeline-step__num">1</span>情报采集</a>
+          <span class="pipeline-arrow">→</span>
+          <a href="ai-hub.html" class="pipeline-step is-link"><span class="pipeline-step__num">2</span>AI 处理</a>
+          <span class="pipeline-arrow">→</span>
+          <a href="generator.html" class="pipeline-step is-link"><span class="pipeline-step__num">3</span>方案生成</a>
+          <span class="pipeline-arrow">→</span>
+          <a href="garden/index.html" class="pipeline-step is-link"><span class="pipeline-step__num">4</span>知识沉淀</a>
+        </div>
 
         <div class="nav-cards-grid">
-          <!-- 能力养成 -->
-          <article class="nav-card reveal" id="skills" aria-labelledby="skills-card-title">
+          <!-- 情报引擎 -->
+          <article class="nav-card reveal" id="intel" aria-labelledby="intel-card-title">
             <div class="nav-card__icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 5-6 3 4 6-10"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
             </div>
-            <h3 class="nav-card__title" id="skills-card-title">能力养成</h3>
-            <p class="nav-card__desc">游戏化技能树，记录解决方案架构师的成长轨迹。</p>
-            <div class="skills-viz" aria-label="能力维度分析示意">
-              <div class="skills-viz__col skills-viz__col--radar">
-                <div class="skills-radar" role="presentation">
-                  <div class="skills-radar__rings"></div>
-                  <div class="skills-radar__beam skills-radar__beam--echo" aria-hidden="true"></div>
-                  <div class="skills-radar__beam" aria-hidden="true"></div>
-                </div>
-                <div class="skills-radar__stack">
-                  <p class="skills-radar__caption">分析当前能力树</p>
-                  <p class="skills-radar__trace" aria-live="polite">当前指向 · <span id="skills-hub-trace">学习成长</span></p>
-                </div>
+            <h3 class="nav-card__title" id="intel-card-title">情报引擎</h3>
+            <p class="nav-card__desc">30+ 低空经济 RSS 源自动采集，DeepSeek 分类评分，每日供给方案生成器与新知识库。</p>
+            <div class="intel-flow-preview" aria-label="情报采集流程示意">
+              <div class="intel-flow-preview__line">
+                <span class="intel-flow-preview__node">RSS</span>
+                <span class="intel-flow-preview__arrow">→</span>
+                <span class="intel-flow-preview__node">AI 评分</span>
+                <span class="intel-flow-preview__arrow">→</span>
+                <span class="intel-flow-preview__node">入库</span>
+                <span class="intel-flow-preview__arrow">→</span>
+                <span class="intel-flow-preview__node">供给下游</span>
               </div>
-              <div class="skills-viz__divider" aria-hidden="true"></div>
-              <div class="skills-viz__col skills-viz__col--list">
-                <ul class="skills-dim-list">
-                  <li class="skills-dim-list__item">
-                    <span class="skills-dim-list__icon" aria-hidden="true">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                    </span>
-                    <span class="skills-dim-list__label">学习成长</span>
-                  </li>
-                  <li class="skills-dim-list__item">
-                    <span class="skills-dim-list__icon" aria-hidden="true">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    </span>
-                    <span class="skills-dim-list__label">运动健身</span>
-                  </li>
-                  <li class="skills-dim-list__item">
-                    <span class="skills-dim-list__icon" aria-hidden="true">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </span>
-                    <span class="skills-dim-list__label">表达能力</span>
-                  </li>
-                  <li class="skills-dim-list__item">
-                    <span class="skills-dim-list__icon" aria-hidden="true">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M9 2v2"/><path d="M15 2v2"/><path d="M9 20v2"/><path d="M15 20v2"/><path d="M20 9h2"/><path d="M20 14h2"/><path d="M2 9h2"/><path d="M2 14h2"/></svg>
-                    </span>
-                    <span class="skills-dim-list__label">AI技能</span>
-                  </li>
-                  <li class="skills-dim-list__item">
-                    <span class="skills-dim-list__icon" aria-hidden="true">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                    </span>
-                    <span class="skills-dim-list__label">缺点改正</span>
-                  </li>
-                </ul>
+              <div class="intel-flow-preview__status">
+                <span class="intel-flow-preview__dot"></span>
+                <span>30+ 源 · 每日自动</span>
               </div>
             </div>
-            <span class="xp-badge">综合经验值 · 持续累计中</span>
             <div class="nav-card__cta">
-              <a class="btn btn--nav" href="skills.html">查看完整能力图谱</a>
+              <a class="btn btn--nav btn--nav--primary" href="intel.html">查看情报引擎</a>
             </div>
           </article>
 
@@ -2696,57 +2944,38 @@
             </div>
           </article>
 
-          <!-- 深度思考 -->
-          <article class="nav-card reveal" id="thinking" aria-labelledby="thinking-card-title">
+          <!-- AI Hub -->
+          <article class="nav-card reveal" id="aihub" aria-labelledby="aihub-card-title">
             <div class="nav-card__icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a10 10 0 0 1 10 10c0 3.3-2.1 6.1-5 7.2V17a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3v2.2C4.1 18.1 2 15.3 2 12A10 10 0 0 1 12 2Z"/><path d="M12 6v6"/><path d="M9 9h6"/></svg>
             </div>
-            <h3 class="nav-card__title" id="thinking-card-title">深度思考</h3>
-            <p class="nav-card__desc">方法论、历史研究与博弈推演的沉淀。</p>
-            <div
-              class="thinking-mindmap"
-              id="thinking-mindmap"
-              role="img"
-              aria-label="深度思考：素材积累与记录；结构化拆解与探究；多角度审视与验证；延迟判断与行动闭环"
-            >
-              <div class="thinking-mindmap__panel">
-                <svg
-                  class="thinking-mindmap__svg-connect"
-                  id="thinking-mm-svg"
-                  aria-hidden="true"
-                  focusable="false"
-                  width="100%"
-                  height="100%"
-                >
-                  <g id="thinking-mm-paths-g"></g>
-                </svg>
-                <div class="thinking-mindmap__row">
-                  <div class="thinking-mindmap__col thinking-mindmap__col--root">
-                    <div class="thinking-node thinking-node--root" id="thinking-mm-root">深度思考</div>
-                  </div>
-                  <ul class="thinking-mindmap__branches">
-                    <li class="thinking-branch-item" data-thinking-index="0">
-                      <div class="thinking-node thinking-node--branch" data-thinking-label="素材积累与记录">素材积累与记录</div>
-                    </li>
-                    <li class="thinking-branch-item" data-thinking-index="1">
-                      <div class="thinking-node thinking-node--branch" data-thinking-label="结构化拆解与探究">结构化拆解与探究</div>
-                    </li>
-                    <li class="thinking-branch-item" data-thinking-index="2">
-                      <div class="thinking-node thinking-node--branch" data-thinking-label="多角度审视与验证">多角度审视与验证</div>
-                    </li>
-                    <li class="thinking-branch-item" data-thinking-index="3">
-                      <div class="thinking-node thinking-node--branch" data-thinking-label="延迟判断与行动闭环">延迟判断与行动闭环</div>
-                    </li>
-                  </ul>
+            <h3 class="nav-card__title" id="aihub-card-title">AI Hub</h3>
+            <p class="nav-card__desc">DeepSeek / Kimi 双模型聚合入口，Web + CLI 双端。情报引擎的加工层，方案生成器的 AI 后端。</p>
+            <div class="aihub-flow-preview" aria-label="AI Hub 架构示意">
+              <div class="aihub-flow-preview__grid">
+                <div class="aihub-flow-preview__tier">
+                  <span class="aihub-flow-preview__tier-label">CLI</span>
+                </div>
+                <div class="aihub-flow-preview__tier">
+                  <span class="aihub-flow-preview__tier-label">Web</span>
+                </div>
+                <div class="aihub-flow-preview__tier aihub-flow-preview__tier--mid">
+                  <span class="aihub-flow-preview__tier-label">FastAPI</span>
+                </div>
+                <div class="aihub-flow-preview__tier aihub-flow-preview__tier--bot">
+                  <span class="aihub-flow-preview__tier-label">DeepSeek</span>
+                </div>
+                <div class="aihub-flow-preview__tier aihub-flow-preview__tier--bot">
+                  <span class="aihub-flow-preview__tier-label">Kimi</span>
                 </div>
               </div>
             </div>
             <div class="nav-card__cta">
-              <a class="btn btn--nav" href="thinking.html">进入深度思考</a>
+              <a class="btn btn--nav btn--nav--primary" href="ai-hub.html">了解 AI Hub</a>
             </div>
           </article>
 
-          <!-- 数字花园 -->
+          <!-- Obsidian 知识库 -->
           <article class="nav-card reveal" id="garden" aria-labelledby="garden-card-title">
             <div class="nav-card__icon" aria-hidden="true">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -2758,12 +2987,12 @@
                 <path d="M8.2 6.5 15.9 5.4" />
               </svg>
             </div>
-            <h3 class="nav-card__title" id="garden-card-title">数字花园</h3>
-            <p class="nav-card__desc">双向链接笔记、MOC 与力导向图谱，方法论持续生长的载体。</p>
+            <h3 class="nav-card__title" id="garden-card-title">Obsidian 知识库</h3>
+            <p class="nav-card__desc">双向链接笔记、11 个项目、PARA+Zettelkasten。情报与方案复盘回流到此，反哺下一轮情报关键词。</p>
             <script type="application/json" id="hub-garden-graph-json">
 {"nodes":[{"id":"knowledge-to-demo","title":"从知识库到可演示作品","category":"AI产品化","stage":"evergreen","summary":"","type":""},{"id":"low-altitude-narrative-moc","title":"低空经济叙事地图","category":"低空经济","stage":"budding","summary":"","type":"moc"},{"id":"low-altitude-ops-emergency","title":"低空运营与应急场景的交集","category":"低空经济","stage":"budding","summary":"","type":""},{"id":"hanxin-job-seeking","title":"韩信兵法与求职博弈 · 方案人的战略隐喻","category":"成长","stage":"evergreen","summary":"","type":"笔记"},{"id":"welcome","title":"欢迎来到数字花园","category":"元笔记","stage":"evergreen","summary":"","type":""},{"id":"five-layer-framework","title":"五层框架 · 从地基到演进","category":"方法论","stage":"evergreen","summary":"","type":"moc"},{"id":"government-procurement-lines","title":"政府侧采购话术的几条主线","category":"低空经济","stage":"seedling","summary":"","type":""},{"id":"government-decision-chain","title":"政府决策链三重门 · 采购、业务与领导的三层穿透","category":"方法论","stage":"evergreen","summary":"","type":"笔记"},{"id":"moc-architecture-thinking","title":"MOC · 解决方案架构思维","category":"方法论","stage":"evergreen","summary":"","type":"moc"},{"id":"moc-career-mental-models","title":"MOC · 职场心智与博弈","category":"成长","stage":"budding","summary":"","type":"moc"}],"links":[{"source":"knowledge-to-demo","target":"welcome"},{"source":"knowledge-to-demo","target":"government-procurement-lines"},{"source":"low-altitude-narrative-moc","target":"government-procurement-lines"},{"source":"low-altitude-narrative-moc","target":"low-altitude-ops-emergency"},{"source":"low-altitude-narrative-moc","target":"welcome"},{"source":"low-altitude-ops-emergency","target":"low-altitude-narrative-moc"},{"source":"low-altitude-ops-emergency","target":"government-procurement-lines"},{"source":"hanxin-job-seeking","target":"government-decision-chain"},{"source":"hanxin-job-seeking","target":"moc-career-mental-models"},{"source":"welcome","target":"low-altitude-narrative-moc"},{"source":"welcome","target":"knowledge-to-demo"},{"source":"five-layer-framework","target":"moc-architecture-thinking"},{"source":"five-layer-framework","target":"moc-career-mental-models"},{"source":"government-procurement-lines","target":"low-altitude-narrative-moc"},{"source":"government-procurement-lines","target":"knowledge-to-demo"},{"source":"government-decision-chain","target":"five-layer-framework"},{"source":"government-decision-chain","target":"moc-architecture-thinking"}]}
             </script>
-            <div class="garden-preview" aria-label="数字花园知识图谱动效预览">
+            <div class="garden-preview" aria-label="知识库力导向图谱预览">
               <div class="garden-preview__media">
                 <svg
                   class="hub-garden-graph"
@@ -2777,7 +3006,61 @@
               </div>
             </div>
             <div class="nav-card__cta">
-              <a class="btn btn--nav btn--nav--primary" href="garden/index.html">进入数字花园</a>
+              <a class="btn btn--nav btn--nav--primary" href="garden/index.html">探索知识库</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section--projects" id="projects" aria-labelledby="projects-title">
+        <h2 class="section__title reveal" id="projects-title">更多项目</h2>
+        <p class="section__lead reveal">除了主流水线，我对独立产品与消费场景的探索——已上线小程序、硬件原型与终端设计。</p>
+
+        <div class="projects-grid">
+          <!-- AI衣橱 -->
+          <article class="project-card reveal" aria-labelledby="proj-wardrobe-title">
+            <div class="project-card__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l1 3H5L6 2Z"/><path d="M4 5h16v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z"/><path d="M8 14v4"/><path d="M12 10v8"/><path d="M16 12v6"/></svg>
+            </div>
+            <h3 class="project-card__title" id="proj-wardrobe-title">AI衣橱</h3>
+            <p class="project-card__desc">AI 穿搭推荐工具，微信小程序已上线运营，搭配 Next.js 管理后台。</p>
+            <div class="project-card__meta">
+              <span class="tag tag--tech">Next.js</span>
+              <span class="tag tag--tech">小程序</span>
+              <span class="tag tag--tech">Supabase</span>
+              <span class="tag tag--status tag--status--live">已上线</span>
+            </div>
+            <div class="nav-card__cta">
+              <span class="btn btn--nav btn--nav--primary" style="font-size:0.75rem;padding:0.25rem 0.6rem;cursor:default;">微信小程序已上线</span>
+            </div>
+          </article>
+
+          <!-- Jarvis Orb -->
+          <article class="project-card reveal" aria-labelledby="proj-jarvis-title">
+            <div class="project-card__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M2 12h4"/><path d="M18 12h4"/></svg>
+            </div>
+            <h3 class="project-card__title" id="proj-jarvis-title">桌面级无人交互终端</h3>
+            <p class="project-card__desc">低空技术向消费场景的延伸探索。ESP32-S3 + 飞控 + my-ai-hub 大脑，概念原型阶段。</p>
+            <div class="project-card__meta">
+              <span class="tag tag--tech">ESP32</span>
+              <span class="tag tag--tech">飞控</span>
+              <span class="tag tag--tech">AI</span>
+              <span class="tag tag--status tag--status--proto">概念原型</span>
+            </div>
+          </article>
+
+          <!-- 全息变形终端 -->
+          <article class="project-card reveal" aria-labelledby="proj-holo-title">
+            <div class="project-card__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <h3 class="project-card__title" id="proj-holo-title">全息变形终端</h3>
+            <p class="project-card__desc">跨形态交互终端设计，覆盖方案演示 → 决策辅助 → 现场部署全链路，产品定义阶段。</p>
+            <div class="project-card__meta">
+              <span class="tag tag--tech">产品设计</span>
+              <span class="tag tag--tech">交互原型</span>
+              <span class="tag tag--status tag--status--proto">概念设计</span>
             </div>
           </article>
         </div>

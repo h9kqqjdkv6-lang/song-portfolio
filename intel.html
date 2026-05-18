@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="低空经济情报引擎 · 30+ RSS 源自动采集 → DeepSeek 分类评分 → Supabase 持久化" />
+  <title>宋宗源 · 情报引擎</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #000000;
+      --surface: #0d0d0d;
+      --surface-raised: #111111;
+      --border: rgba(255, 255, 255, 0.1);
+      --text: rgba(255, 255, 255, 0.72);
+      --text-heading: #ffffff;
+      --muted: #a1a1aa;
+      --accent: #6d28d9;
+      --accent-soft: rgba(109, 40, 217, 0.12);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", ui-sans-serif, system-ui, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(ellipse 85% 45% at 50% -10%, rgba(109, 40, 217, 0.12), transparent 50%), radial-gradient(ellipse 65% 50% at 100% 100%, rgba(109, 40, 217, 0.06), transparent 45%);
+      color: var(--text);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 3rem;
+    }
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem clamp(1rem, 4vw, 1.75rem);
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(16px) saturate(1.1);
+      -webkit-backdrop-filter: blur(16px) saturate(1.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .topbar__brand {
+      font-size: 0.8125rem; font-weight: 600; letter-spacing: -0.01em;
+      color: var(--text-heading);
+    }
+    .topbar__brand span { color: var(--muted); font-weight: 500; }
+    .back-link {
+      font-size: 0.8rem; color: var(--muted); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.4rem; transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--text-heading); }
+    .container {
+      max-width: 800px; margin: 0 auto; padding: 2rem clamp(1rem, 4vw, 1.75rem);
+    }
+    .page-hero { margin-bottom: 2.5rem; }
+    .page-hero__badge {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.75rem; color: var(--muted);
+      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 0.25rem 0.65rem; border-radius: 20px; margin-bottom: 0.75rem;
+    }
+    .page-hero__badge-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #34d399;
+    }
+    .page-hero h1 {
+      font-size: clamp(1.4rem, 3.5vw, 1.8rem); font-weight: 700;
+      color: var(--text-heading); margin: 0 0 0.5rem; letter-spacing: -0.02em;
+    }
+    .page-hero p {
+      margin: 0; color: var(--muted); font-size: 0.95rem; max-width: 600px;
+    }
+    .section-title {
+      font-size: 1rem; font-weight: 600; color: var(--text-heading);
+      margin: 2rem 0 0.75rem; letter-spacing: -0.01em;
+    }
+    .pipeline-flow {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.5rem; flex-wrap: wrap;
+      margin: 1.5rem auto; padding: 1rem 0;
+    }
+    .pipeline-flow__step {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .pipeline-flow__step.is-active {
+      color: var(--accent); font-weight: 600;
+    }
+    .pipeline-flow__step .step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700;
+      background: rgba(255, 255, 255, 0.06); color: var(--muted-faint);
+    }
+    .pipeline-flow__step.is-active .step-num {
+      background: var(--accent); color: #fff;
+    }
+    .pipeline-flow__arrow {
+      color: rgba(255, 255, 255, 0.15); font-size: 0.85rem;
+    }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: clamp(1rem, 2.5vw, 1.5rem);
+      margin-bottom: 1rem;
+    }
+    .card h3 {
+      font-size: 0.9rem; font-weight: 600; color: var(--text-heading);
+      margin: 0 0 0.5rem;
+    }
+    .card p { margin: 0 0 0.5rem; font-size: 0.875rem; }
+    .card p:last-child { margin-bottom: 0; }
+    .card ul { margin: 0.3rem 0; padding-left: 1.2rem; font-size: 0.85rem; }
+    .card li { margin-bottom: 0.2rem; }
+    .flow-diagram {
+      background: var(--surface-raised); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1.25rem;
+      overflow-x: auto; font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.78rem; line-height: 1.7;
+      margin: 0.75rem 0;
+    }
+    .flow-diagram .arrow { color: var(--accent); }
+    .flow-diagram .label { color: var(--text-heading); font-weight: 500; }
+    .flow-diagram .comment { color: var(--muted-faint); }
+    .tag-grid {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem;
+    }
+    .tag-grid__item {
+      font-size: 0.72rem; padding: 0.2rem 0.5rem;
+      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 4px; color: var(--muted);
+    }
+    .stat-row {
+      display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1rem 0;
+    }
+    .stat {
+      text-align: center; flex: 1; min-width: 80px;
+    }
+    .stat__num {
+      font-size: 1.6rem; font-weight: 700; color: var(--text-heading);
+      letter-spacing: -0.03em;
+    }
+    .stat__label {
+      font-size: 0.7rem; color: var(--muted-faint); margin-top: 0.15rem;
+    }
+    .connect-bar {
+      margin: 2rem 0 0;
+      padding: 1rem 1.25rem;
+      background: var(--accent-soft); border: 1px solid rgba(109, 40, 217, 0.2);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem; color: var(--muted);
+    }
+    .connect-bar strong { color: var(--text-heading); font-weight: 600; }
+    .connect-bar a {
+      color: var(--accent); text-decoration: none; font-weight: 500;
+    }
+    .connect-bar a:hover { text-decoration: underline; }
+    @media (max-width: 600px) {
+      .stat-row { gap: 0.8rem; }
+      .stat__num { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="back-link" href="index.html">&larr; 返回主页</a>
+    <span class="topbar__brand">宋宗源 <span>· 情报引擎</span></span>
+  </div>
+
+  <div class="container">
+    <div class="page-hero">
+      <div class="page-hero__badge">
+        <span class="page-hero__badge-dot"></span> 每日自动运行
+      </div>
+      <h1>低空经济情报引擎</h1>
+      <p>30+ 优质 RSS 源自动采集 → AI 分类评分 → 去重 → Supabase 持久化。情报清洗后供给 AI Hub 做中层处理，最终沉淀为方案生成器的垂直领域知识。</p>
+    </div>
+
+    <!-- 流水线位置指示 -->
+    <div class="pipeline-flow">
+      <span class="pipeline-flow__step is-active"><span class="step-num">1</span> 情报采集</span>
+      <span class="pipeline-flow__arrow">→</span>
+      <span class="pipeline-flow__step"><span class="step-num">2</span> AI 处理</span>
+      <span class="pipeline-flow__arrow">→</span>
+      <span class="pipeline-flow__step"><span class="step-num">3</span> 方案生成</span>
+      <span class="pipeline-flow__arrow">→</span>
+      <span class="pipeline-flow__step"><span class="step-num">4</span> 知识沉淀</span>
+    </div>
+
+    <!-- 核心数据 -->
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat__num">30+</div>
+        <div class="stat__label">RSS 源</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">5</div>
+        <div class="stat__label">分类维度</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">40+</div>
+        <div class="stat__label">关键词</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">16+</div>
+        <div class="stat__label">白名单来源</div>
+      </div>
+    </div>
+
+    <!-- 数据流 -->
+    <h2 class="section-title">数据流</h2>
+    <div class="card">
+      <div class="flow-diagram">
+        <span class="comment"># 五阶段管线 · daily_intel_sync.py</span><br/>
+        <br/>
+        <span class="label">RSS 源</span> (36氪/IT之家/虎嗅/中国民航网...)<br/>
+        &nbsp;&nbsp;│&nbsp;<span class="arrow">→</span>&nbsp;fetch_rss()<br/>
+        &nbsp;&nbsp;│&nbsp;<span class="arrow">→</span>&nbsp;filter_relevance()&nbsp;<span class="comment"># 关键词初筛</span><br/>
+        &nbsp;&nbsp;│&nbsp;<span class="arrow">→</span>&nbsp;deepseek_process()&nbsp;<span class="comment"># 分类+摘要+质量评分</span><br/>
+        &nbsp;&nbsp;│&nbsp;<span class="arrow">→</span>&nbsp;deduplicate()&nbsp;<span class="comment"># 同事件聚类去重</span><br/>
+        &nbsp;&nbsp;│&nbsp;<span class="arrow">→</span>&nbsp;quality_filter()&nbsp;<span class="comment"># 来源白名单+时效+质量分</span><br/>
+        &nbsp;&nbsp;▼<br/>
+        <span class="label">Supabase intel_items</span>
+      </div>
+      <p>每条情报自动附带：标题、分类、摘要、关键词、来源可信度、场景标签。可通过 <code>/api/intel</code> 按场景/分类过滤查询。</p>
+    </div>
+
+    <!-- 关键词体系 -->
+    <h2 class="section-title">关键词体系</h2>
+    <div class="card">
+      <p>所有条目命中任意关键词即保留，按领域分组：</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.5rem;margin-top:0.5rem;">
+        <div>
+          <div style="font-size:0.8rem;font-weight:600;color:var(--text-heading);margin-bottom:0.3rem;">政策</div>
+          <div class="tag-grid">
+            <span class="tag-grid__item">低空经济</span>
+            <span class="tag-grid__item">民航局</span>
+            <span class="tag-grid__item">空域</span>
+            <span class="tag-grid__item">适航</span>
+            <span class="tag-grid__item">低空安全</span>
+            <span class="tag-grid__item">起降场</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:0.8rem;font-weight:600;color:var(--text-heading);margin-bottom:0.3rem;">技术</div>
+          <div class="tag-grid">
+            <span class="tag-grid__item">eVTOL</span>
+            <span class="tag-grid__item">无人机</span>
+            <span class="tag-grid__item">飞行汽车</span>
+            <span class="tag-grid__item">UAM</span>
+            <span class="tag-grid__item">无人驾驶航空器</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:0.8rem;font-weight:600;color:var(--text-heading);margin-bottom:0.3rem;">产业</div>
+          <div class="tag-grid">
+            <span class="tag-grid__item">亿航</span>
+            <span class="tag-grid__item">峰飞</span>
+            <span class="tag-grid__item">小鹏汇天</span>
+            <span class="tag-grid__item">沃兰特</span>
+            <span class="tag-grid__item">大疆</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:0.8rem;font-weight:600;color:var(--text-heading);margin-bottom:0.3rem;">场景</div>
+          <div class="tag-grid">
+            <span class="tag-grid__item">低空物流</span>
+            <span class="tag-grid__item">低空巡检</span>
+            <span class="tag-grid__item">低空应急</span>
+            <span class="tag-grid__item">无人机配送</span>
+            <span class="tag-grid__item">低空旅游</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 来源白名单 -->
+    <h2 class="section-title">来源白名单</h2>
+    <div class="card">
+      <p>来源分四级可信度，高可信来源自动标记 <code>is_verified: true</code>：</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.3rem;margin-top:0.5rem;">
+        <span class="tag-grid__item" style="border-color:rgba(52,211,153,0.2);color:#34d399;">政策 · 民航局</span>
+        <span class="tag-grid__item" style="border-color:rgba(52,211,153,0.2);color:#34d399;">政策 · 中国民航网</span>
+        <span class="tag-grid__item" style="border-color:rgba(52,211,153,0.2);color:#34d399;">政策 · 工信部</span>
+        <span class="tag-grid__item">产业 · 36氪</span>
+        <span class="tag-grid__item">产业 · 虎嗅</span>
+        <span class="tag-grid__item">产业 · 新华社</span>
+        <span class="tag-grid__item">产业 · 第一财经</span>
+        <span class="tag-grid__item">产业 · 新浪财经</span>
+        <span class="tag-grid__item">产品 · 大疆</span>
+        <span class="tag-grid__item">产品 · 亿航智能</span>
+        <span class="tag-grid__item">产品 · 峰飞航空</span>
+        <span class="tag-grid__item">产品 · 小鹏汇天</span>
+      </div>
+    </div>
+
+    <!-- DeepSeek 处理 -->
+    <h2 class="section-title">AI 处理流程</h2>
+    <div class="card">
+      <p>每条情报经过 DeepSeek 三重处理：</p>
+      <ul>
+        <li><strong>分类</strong>：policy / article / speech / interview / funding / product</li>
+        <li><strong>摘要改写</strong>：提取 2-3 句核心信息，去噪去冗余</li>
+        <li><strong>质量评分</strong>：结合来源可信度 + 内容相关性 + 时效性综合打分</li>
+      </ul>
+      <p>低质量（低分 + 低可信来源 + 超出 48 小时）自动过滤。最终入库的情报每日约 15-30 条。</p>
+    </div>
+
+    <!-- 连接说明 -->
+    <div class="connect-bar">
+      <strong>&#9671; 上下游连接</strong><br/>
+      情报引擎每日输出的结构化数据，通过 Supabase 实时同步至 <a href="ai-hub.html">AI Hub</a> 做中层加工，再注入 <a href="generator.html">方案生成器</a> 的知识库体系。新知识同时回流至情报引擎的关键词白名单——形成采集 → 处理 → 输出 → 反哺的闭环。
+    </div>
+  </div>
+</body>
+</html>

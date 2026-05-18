@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI Hub · DeepSeek / Kimi 双模型智能路由，Web+CLI 双端本地 AI 入口" />
+  <title>宋宗源 · AI Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #000000;
+      --surface: #0d0d0d;
+      --surface-raised: #111111;
+      --border: rgba(255, 255, 255, 0.1);
+      --text: rgba(255, 255, 255, 0.72);
+      --text-heading: #ffffff;
+      --muted: #a1a1aa;
+      --muted-faint: #71717a;
+      --accent: #6d28d9;
+      --accent-soft: rgba(109, 40, 217, 0.12);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", ui-sans-serif, system-ui, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(ellipse 85% 45% at 50% -10%, rgba(109, 40, 217, 0.12), transparent 50%), radial-gradient(ellipse 65% 50% at 100% 100%, rgba(109, 40, 217, 0.06), transparent 45%);
+      color: var(--text);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 3rem;
+    }
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem clamp(1rem, 4vw, 1.75rem);
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(16px) saturate(1.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .topbar__brand { font-size: 0.8125rem; font-weight: 600; color: var(--text-heading); }
+    .topbar__brand span { color: var(--muted); font-weight: 500; }
+    .back-link {
+      font-size: 0.8rem; color: var(--muted); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.4rem; transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--text-heading); }
+    .container { max-width: 800px; margin: 0 auto; padding: 2rem clamp(1rem, 4vw, 1.75rem); }
+    .page-hero { margin-bottom: 2.5rem; }
+    .page-hero__badge {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.75rem; color: var(--muted);
+      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 0.25rem 0.65rem; border-radius: 20px; margin-bottom: 0.75rem;
+    }
+    .page-hero h1 {
+      font-size: clamp(1.4rem, 3.5vw, 1.8rem); font-weight: 700;
+      color: var(--text-heading); margin: 0 0 0.5rem; letter-spacing: -0.02em;
+    }
+    .page-hero p { margin: 0; color: var(--muted); font-size: 0.95rem; max-width: 600px; }
+    .section-title {
+      font-size: 1rem; font-weight: 600; color: var(--text-heading);
+      margin: 2rem 0 0.75rem; letter-spacing: -0.01em;
+    }
+    .pipeline-flow {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.5rem; flex-wrap: wrap;
+      margin: 1.5rem auto; padding: 1rem 0;
+    }
+    .pipeline-flow__step {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .pipeline-flow__step.is-active { color: var(--accent); font-weight: 600; }
+    .pipeline-flow__step .step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700;
+      background: rgba(255, 255, 255, 0.06); color: var(--muted-faint);
+    }
+    .pipeline-flow__step.is-active .step-num { background: var(--accent); color: #fff; }
+    .pipeline-flow__arrow { color: rgba(255, 255, 255, 0.15); font-size: 0.85rem; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: clamp(1rem, 2.5vw, 1.5rem);
+      margin-bottom: 1rem;
+    }
+    .card h3 { font-size: 0.9rem; font-weight: 600; color: var(--text-heading); margin: 0 0 0.5rem; }
+    .card p { margin: 0 0 0.5rem; font-size: 0.875rem; }
+    .card p:last-child { margin-bottom: 0; }
+    .card ul { margin: 0.3rem 0; padding-left: 1.2rem; font-size: 0.85rem; }
+    .card li { margin-bottom: 0.2rem; }
+    .flow-diagram {
+      background: var(--surface-raised); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1.25rem;
+      overflow-x: auto; font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.78rem; line-height: 1.7; margin: 0.75rem 0;
+    }
+    .flow-diagram .arrow { color: var(--accent); }
+    .flow-diagram .label { color: var(--text-heading); font-weight: 500; }
+    .flow-diagram .comment { color: var(--muted-faint); }
+    .feat-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.75rem; margin: 0.75rem 0;
+    }
+    .feat-card {
+      background: var(--surface-raised); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1rem;
+    }
+    .feat-card__title {
+      font-size: 0.82rem; font-weight: 600; color: var(--text-heading);
+      margin-bottom: 0.3rem;
+    }
+    .feat-card__desc { font-size: 0.78rem; color: var(--muted); margin: 0; line-height: 1.5; }
+    .stat-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1rem 0; }
+    .stat { text-align: center; flex: 1; min-width: 80px; }
+    .stat__num { font-size: 1.6rem; font-weight: 700; color: var(--text-heading); letter-spacing: -0.03em; }
+    .stat__label { font-size: 0.7rem; color: var(--muted-faint); margin-top: 0.15rem; }
+    .tag-grid { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.3rem; }
+    .tag-grid__item {
+      font-size: 0.72rem; padding: 0.2rem 0.5rem;
+      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 4px; color: var(--muted);
+    }
+    .connect-bar {
+      margin: 2rem 0 0; padding: 1rem 1.25rem;
+      background: var(--accent-soft); border: 1px solid rgba(109, 40, 217, 0.2);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem; color: var(--muted);
+    }
+    .connect-bar strong { color: var(--text-heading); font-weight: 600; }
+    .connect-bar a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .connect-bar a:hover { text-decoration: underline; }
+    @media (max-width: 600px) {
+      .feat-grid { grid-template-columns: 1fr; }
+      .stat-row { gap: 0.8rem; }
+      .stat__num { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="back-link" href="index.html">&larr; 返回主页</a>
+    <span class="topbar__brand">宋宗源 <span>· AI Hub</span></span>
+  </div>
+
+  <div class="container">
+    <div class="page-hero">
+      <div class="page-hero__badge">
+        <span style="width:6px;height:6px;border-radius:50%;background:#60a5fa;display:inline-block;"></span> 本地运行 · FastAPI
+      </div>
+      <h1>AI Hub — 本地智能中枢</h1>
+      <p>DeepSeek / Kimi 双模型聚合入口，Web + CLI 双端覆盖。兼顾 MCP 桥接、RAG 检索与工具执行——情报引擎的产出在此被加工，再供给方案生成器。</p>
+    </div>
+
+    <!-- 流水线位置指示 -->
+    <div class="pipeline-flow">
+      <span class="pipeline-flow__step"><span class="step-num">1</span> 情报采集</span>
+      <span class="pipeline-flow__arrow">→</span>
+      <span class="pipeline-flow__step is-active"><span class="step-num">2</span> AI 处理</span>
+      <span class="pipeline-flow__arrow">→</span>
+      <span class="pipeline-flow__step"><span class="step-num">3</span> 方案生成</span>
+      <span class="pipeline-flow__arrow">→</span>
+      <span class="pipeline-flow__step"><span class="step-num">4</span> 知识沉淀</span>
+    </div>
+
+    <!-- 核心数据 -->
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat__num">3</div>
+        <div class="stat__label">模型后端</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">2</div>
+        <div class="stat__label">交互终端</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">8</div>
+        <div class="stat__label">MCP 工具</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">40+</div>
+        <div class="stat__label">注册工具</div>
+      </div>
+    </div>
+
+    <!-- 架构图 -->
+    <h2 class="section-title">架构图</h2>
+    <div class="card">
+      <div class="flow-diagram">
+        <span class="comment"># 三层架构：Client → API → 智能路由</span><br/>
+        <br/>
+        <span class="label">客户端层</span><br/>
+        &nbsp;&nbsp;React Web (Vite) ←→ CLI (ai_hub.py) ←→ macOS App (.command)<br/>
+        &nbsp;&nbsp;│<br/>
+        &nbsp;&nbsp;▼<br/>
+        <span class="label">API 层</span><br/>
+        &nbsp;&nbsp;FastAPI (api_server.py :8787)<br/>
+        &nbsp;&nbsp;├── POST /chat &nbsp;<span class="comment"># 对话</span><br/>
+        &nbsp;&nbsp;├── POST /tools &nbsp;<span class="comment"># 工具执行</span><br/>
+        &nbsp;&nbsp;├── POST /mcp &nbsp;&nbsp;&nbsp;<span class="comment"># MCP 桥接</span><br/>
+        &nbsp;&nbsp;├── GET  /health &nbsp;<span class="comment"># 健康检查</span><br/>
+        &nbsp;&nbsp;│<br/>
+        &nbsp;&nbsp;▼<br/>
+        <span class="label">智能路由层</span><br/>
+        &nbsp;&nbsp;dispatcher.py<br/>
+        &nbsp;&nbsp;├── 短文本 → DeepSeek Chat<br/>
+        &nbsp;&nbsp;├── 超长文本 → Kimi (1M context)<br/>
+        &nbsp;&nbsp;├── 本地图片 → Kimi 视觉 + DeepSeek<br/>
+        &nbsp;&nbsp;└── 本地优先 → Ollama (gemma/llama)<br/>
+        &nbsp;&nbsp;│<br/>
+        &nbsp;&nbsp;▼<br/>
+        <span class="label">数据层</span><br/>
+        &nbsp;&nbsp;├── Supabase intel_items &nbsp;<span class="comment">← 情报引擎输入</span><br/>
+        &nbsp;&nbsp;├── RAG 索引 (data/)<br/>
+        &nbsp;&nbsp;├── SQLite 对话历史<br/>
+        &nbsp;&nbsp;└── MCP servers<br/>
+      </div>
+    </div>
+
+    <!-- 核心能力 -->
+    <h2 class="section-title">核心能力</h2>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-card__title">智能路由</div>
+        <p class="feat-card__desc">根据文本长度、图片输入自动选择 DeepSeek / Kimi / Ollama。40+ 工具注册，支持动态执行。</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-card__title">MCP 桥接</div>
+        <p class="feat-card__desc">通过 mcp_client.py 对接外部 MCP 服务器，扩展 Agent 工具边界。支持 stdio / SSE 模式。</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-card__title">RAG 检索</div>
+        <p class="feat-card__desc">本地知识库嵌入检索，build_rag.py 每日重建索引。情报引擎数据自动纳入。</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-card__title">工具执行器</div>
+        <p class="feat-card__desc">tool_executor.py 支持文件读写、Shell、Python、文档生成。Agent Profile 约束权限。</p>
+      </div>
+    </div>
+
+    <!-- 技术栈 -->
+    <h2 class="section-title">技术栈</h2>
+    <div class="card">
+      <div class="tag-grid">
+        <span class="tag-grid__item">Python 3.12</span>
+        <span class="tag-grid__item">FastAPI</span>
+        <span class="tag-grid__item">Uvicorn</span>
+        <span class="tag-grid__item">Vite + React</span>
+        <span class="tag-grid__item">MCP 协议</span>
+        <span class="tag-grid__item">DeepSeek API</span>
+        <span class="tag-grid__item">Kimi API</span>
+        <span class="tag-grid__item">Ollama</span>
+        <span class="tag-grid__item">Supabase</span>
+        <span class="tag-grid__item">SQLite</span>
+        <span class="tag-grid__item">httpx</span>
+        <span class="tag-grid__item">feedparser</span>
+        <span class="tag-grid__item">BeautifulSoup</span>
+        <span class="tag-grid__item">uv</span>
+      </div>
+    </div>
+
+    <!-- 连接说明 -->
+    <div class="connect-bar">
+      <strong>&#9671; 上下游连接</strong><br/>
+      AI Hub 接收来自 <a href="intel.html">情报引擎</a> 的结构化情报数据，通过 RAG 索引和 MCP 桥接加工成方案生成器可用的知识。同时它也是 <a href="generator.html">方案生成器</a> 的 AI 后端调用层——用户点击"AI 生成方案"时，请求经过 AI Hub 的路由逻辑分发到最优模型。
+    </div>
+  </div>
+</body>
+</html>
