@@ -3,8 +3,8 @@ import { readFileSync } from "fs"
 import { resolve, dirname } from "path"
 import { fileURLToPath } from "url"
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const DATA_DIR = resolve(__dirname, "../..")
+const MODULE_DIR = dirname(fileURLToPath(import.meta.url))
+const DATA_DIR = resolve(MODULE_DIR, "../..")
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || ""
 const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com/v1"
