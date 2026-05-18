@@ -70,10 +70,10 @@
         </button>
         <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="intel" data-step="3">
           <span class="tog-step-num" aria-hidden="true">3</span>
-          <span class="tog-step-text"><span class="tog-step-label">行业情报</span><span class="tog-step-desc">动态 · 政策 · 融资</span></span>
+          <span class="tog-step-text"><span class="tog-step-label">行业情报</span><span class="tog-step-desc">本周速览</span></span>
         </button>
         <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="pain" data-step="4">
-          <span class="tog-step-num" aria-hidden="true">3</span>
+          <span class="tog-step-num" aria-hidden="true">4</span>
           <span class="tog-step-text"><span class="tog-step-label">痛点分析</span><span class="tog-step-desc">运行与组织</span></span>
         </button>
         <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="cases" data-step="5">
@@ -188,12 +188,27 @@
         </div>
 
         <div id="wb-panel-intel" class="wb-panel gov-hub-panel" role="tabpanel" hidden>
-          <div class="intel-step-panel">
-            <header class="intel-step-head">
-              <h2 class="intel-step-title">行业情报动态</h2>
-              <p class="intel-step-desc">低空经济 · UAM · eVTOL 领域最新政策、产品、融资与行业资讯，定时从公开渠道采集更新。</p>
-            </header>
-            <div id="intel-container" class="intel-container"><p class="intel-loading">加载中...</p></div>
+          <div class="gov-hub" data-gov-hub="intel">
+            <aside class="gov-hub-aside">
+              <p class="gov-hub-aside-title">分类筛选</p>
+              <nav class="gov-hub-subnav" aria-label="情报分类导航"></nav>
+            </aside>
+            <div class="gov-hub-body panel--tog">
+              <header class="gov-hub-head">
+                <div class="gov-hub-head-row">
+                  <h2 class="gov-hub-head-title"><span class="gov-hub-head-bar" aria-hidden="true"></span><span class="gov-hub-head-text">本周行业情报速览</span></h2>
+                  <span class="gov-hub-head-more" aria-hidden="true">过去 7 天</span>
+                </div>
+              </header>
+              <div class="gov-hub-list-wrap">
+                <ul class="gov-hub-article-list"><li class="gov-hub-article-li"><span class="gov-hub-article-title">加载中...</span></li></ul>
+              </div>
+              <article class="gov-hub-article-detail" hidden>
+                <button type="button" class="gov-hub-back btn-wb-ghost">← 返回列表</button>
+                <h3 class="gov-hub-detail-title"></h3>
+                <div class="gov-hub-detail-content"></div>
+              </article>
+            </div>
           </div>
         </div>
 

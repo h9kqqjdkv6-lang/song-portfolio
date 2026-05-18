@@ -3895,110 +3895,277 @@
       }
     }
 
-    // ── Phase 4: Intel 情报面板 ──
+    // ── Phase 4: Intel 情报面板（重构：步骤 3 速览 + 渗透到各步骤）──
+
+    /** 情报分类 → 步骤映射 */
+    var INTEL_CATEGORY_TO_STEP = {
+      policy: "policy",
+      pain_point: "pain",
+      case: "cases",
+      article: "cases",
+      technology: "tech",
+      safety: "security"
+    };
+
+    /** 步骤面板 ID → 友好名称（用于 section label） */
+    var STEP_LABEL_MAP = {
+      policy: "政策动态",
+      pain: "行业痛点",
+      cases: "案例动态",
+      tech: "技术动态",
+      security: "安全动态"
+    };
 
     function loadIntel() {
-      var container = document.getElementById("intel-container");
       var badge = document.getElementById("intel-count-badge-sm");
-      if (!container) return;
-      container.innerHTML = '<p class="intel-loading">加载中...</p>';
 
-      fetch("/api/intel?limit=20")
+      fetch("/api/intel?limit=50")
         .then(function (r) {
           if (!r.ok) throw new Error("HTTP " + r.status);
           return r.json();
         })
         .then(function (data) {
           var items = data.intel || [];
-          if (badge) badge.textContent = items.length;
-          renderIntelItems(container, items);
+
+          // 计算过去 7 天的边界
+          var now = new Date();
+          var sevenDaysAgo = new Date(now);
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+          // 分离最近 7 天 vs 旧条目
+          var recent = [];
+          for (var i = 0; i < items.length; i++) {
+            var it = items[i];
+            var d = it.date ? new Date(it.date) : null;
+            if (d && d >= sevenDaysAgo) {
+              recent.push(it);
+            } else {
+              older.push(it);
+            }
+          }
+
+          // 步骤 3：渲染最近 7 天
+          renderIntelStep3(recent);
+          if (badge) badge.textContent = recent.length;
+
+          // 渗透到各步骤面板（旧条目 + 未被步骤 3 匹配的条目）
+          var forSteps = {};
+          for (var si = 0; si < items.length; si++) {
+            var item = items[si];
+            var cat = item.category || "article";
+            var stepKey = INTEL_CATEGORY_TO_STEP[cat];
+            if (stepKey) {
+              if (!forSteps[stepKey]) forSteps[stepKey] = [];
+              forSteps[stepKey].push(item);
+            }
+          }
+          injectIntelToSteps(forSteps);
         })
         .catch(function (err) {
-          container.innerHTML = '<p class="intel-error">情报加载失败：' + escapeHtml(err.message) + "</p>";
+          console.warn("[intel] 加载失败:", err && err.message ? err.message : err);
+          // step 3 显示错误
+          var intelPanel = document.querySelector('#wb-panel-intel .gov-hub-article-list');
+          if (intelPanel) {
+            intelPanel.innerHTML = '<li class="gov-hub-article-li"><span class="gov-hub-article-title">情报加载失败</span><span class="gov-hub-article-sum" style="color:var(--danger)">' + escapeHtml(err.message) + '</span></li>';
+          }
           if (badge) badge.textContent = "0";
         });
     }
 
-    function renderIntelItems(container, items) {
+    /** 渲染步骤 3：最近 7 天情报，按分类分 section */
+    function renderIntelStep3(items) {
+      var root = document.querySelector('#wb-panel-intel .gov-hub[data-gov-hub="intel"]');
+      if (!root) return;
+
+      var listEl = root.querySelector(".gov-hub-article-list");
+      var subnav = root.querySelector(".gov-hub-subnav");
+      if (!listEl || !subnav) return;
+
       if (!items.length) {
-        container.innerHTML = '<p class="intel-empty">暂无情报数据</p>';
+        listEl.innerHTML = '<li class="gov-hub-article-li"><span class="gov-hub-article-title">近 7 天暂无情报</span></li>';
+        subnav.innerHTML = "";
         return;
       }
 
-      // 提取所有 category
-      var cats = {};
-      var allCats = [];
-      for (var i = 0; i < items.length; i++) {
-        var cat = items[i].category || "article";
-        if (!cats[cat]) { cats[cat] = true; allCats.push(cat); }
-      }
+      // 按 category 分组
+      var catGroups = {};
+      var catOrder = [];
       var catLabels = {
         policy: "政策", product: "产品", funding: "融资",
         article: "文章", speech: "演讲", interview: "访谈",
-        report: "报告", partnership: "合作"
+        report: "报告", partnership: "合作", pain_point: "痛点",
+        case: "案例", technology: "技术", safety: "安全"
       };
-      // "全部" 放在最前
-      allCats.unshift("__all");
-
-      var html = '<div class="intel-tabs" id="intel-tabs">';
-      for (var ci = 0; ci < allCats.length; ci++) {
-        var c = allCats[ci];
-        var label = c === "__all" ? "全部" : (catLabels[c] || c);
-        html += '<button type="button" class="intel-tab' + (ci === 0 ? " intel-tab--active" : "") + '" data-cat="' + c + '">' + escapeHtml(label) + "</button>";
-      }
-      html += '</div><div class="intel-list" id="intel-list">';
-      html += renderIntelItemsByCat(items, "__all");
-      html += "</div>";
-
-      container.innerHTML = html;
-
-      // Tab 切换事件（委托）
-      container.addEventListener("click", function (e) {
-        var tab = e.target && e.target.closest && e.target.closest(".intel-tab");
-        if (!tab) return;
-        var cat = tab.getAttribute("data-cat");
-        // 去激活
-        var tabs = container.querySelectorAll(".intel-tab");
-        for (var ti = 0; ti < tabs.length; ti++) tabs[ti].classList.remove("intel-tab--active");
-        tab.classList.add("intel-tab--active");
-        var list = document.getElementById("intel-list");
-        if (list) list.innerHTML = renderIntelItemsByCat(items, cat);
-      });
-    }
-
-    function renderIntelItemsByCat(items, filterCat) {
-      var html = "";
-      var count = 0;
       for (var i = 0; i < items.length; i++) {
         var it = items[i];
-        var cat = it.category || "article";
-        if (filterCat !== "__all" && cat !== filterCat) continue;
-        count++;
-        var catLabel = ({
-          policy: "政策", product: "产品", funding: "融资",
-          article: "文章", speech: "演讲", interview: "访谈",
-          report: "报告", partnership: "合作"
-        })[cat] || cat;
-        var dateStr = (it.date || "").slice(0, 10);
-        var url = it.url || "";
-        var title = it.title || "未命名情报";
-        var summary = it.summary || "";
-        var source = it.source || "";
-        html += '<div class="intel-item intel-item--' + cat + '">';
-        html += '<div class="intel-item-head"><span class="intel-item-cat">' + escapeHtml(catLabel) + "</span>";
-        html += '<span class="intel-item-title">';
-        if (url) html += '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener">';
-        html += escapeHtml(title);
-        if (url) html += "</a>";
-        html += "</span></div>";
-        if (summary) html += '<p class="intel-item-summary">' + escapeHtml(summary) + "</p>";
-        html += '<div class="intel-item-meta">';
-        if (dateStr) html += "<span>" + dateStr + "</span>";
-        if (source) html += '<span class="intel-item-source">' + escapeHtml(source) + "</span>";
-        html += "</div></div>";
+        var c = it.category || "article";
+        if (!catGroups[c]) { catGroups[c] = []; catOrder.push(c); }
+        catGroups[c].push(it);
       }
-      if (count === 0) html = '<p class="intel-empty">该分类暂无情报</p>';
-      return html;
+
+      // 为每个 category 创建一个 section 并添加到 gov-hub
+      var secs = [];
+
+      for (var ci = 0; ci < catOrder.length; ci++) {
+        var catKey = catOrder[ci];
+        var catGroup = catGroups[catKey];
+        var catLabel = catLabels[catKey] || catKey;
+
+        var articles = [];
+        for (var ai = 0; ai < catGroup.length; ai++) {
+          var it2 = catGroup[ai];
+          var dateStr = (it2.date || "").slice(0, 10);
+          var sourceStr = it2.source || "";
+          var metaLine = dateStr + (sourceStr ? " · " + sourceStr : "");
+          articles.push({
+            title: it2.title || "未命名情报",
+            summary: metaLine + (it2.summary ? " — " + it2.summary : ""),
+            bodyHtml: buildIntelBodyHtml(it2)
+          });
+        }
+
+        var sec = {
+          id: "intel-" + catKey,
+          label: catLabel + " (" + catGroup.length + ")",
+          articles: articles
+        };
+        secs.push(sec);
+      }
+
+      // 重建左侧导航 + 文章列表
+      function renderIntelSection(idx) {
+        var sec = secs[idx];
+        if (!sec) return;
+        // 更新 subnav
+        subnav.querySelectorAll(".gov-hub-subnav-item").forEach(function (b) {
+          b.classList.remove("is-active");
+          b.setAttribute("aria-pressed", "false");
+        });
+        var btns = subnav.querySelectorAll(".gov-hub-subnav-item");
+        if (btns[idx]) {
+          btns[idx].classList.add("is-active");
+          btns[idx].setAttribute("aria-pressed", "true");
+        }
+        // 渲染列表
+        var listWrap = root.querySelector(".gov-hub-list-wrap");
+        var detailEl = root.querySelector(".gov-hub-article-detail");
+        if (listWrap) listWrap.hidden = false;
+        if (detailEl) detailEl.hidden = true;
+        listEl.innerHTML = "";
+        sec.articles.forEach(function (art) {
+          var li = document.createElement("li");
+          li.className = "gov-hub-article-li";
+          var b2 = document.createElement("button");
+          b2.type = "button";
+          b2.className = "gov-hub-article-link";
+          var t = document.createElement("span");
+          t.className = "gov-hub-article-title";
+          t.textContent = art.title;
+          b2.appendChild(t);
+          if (art.summary) {
+            var sum = document.createElement("span");
+            sum.className = "gov-hub-article-sum";
+            sum.textContent = art.summary;
+            b2.appendChild(sum);
+          }
+          b2.addEventListener("click", function () {
+            if (listWrap) listWrap.hidden = true;
+            if (detailEl) detailEl.hidden = false;
+            var dt = root.querySelector(".gov-hub-detail-title");
+            var dc = root.querySelector(".gov-hub-detail-content");
+            if (dt) dt.textContent = art.title;
+            if (dc) dc.innerHTML = art.bodyHtml || "<p>" + escapeHtml(art.body || "") + "</p>";
+          });
+          li.appendChild(b2);
+          listEl.appendChild(li);
+        });
+        // 更新头部标题
+        var headText = root.querySelector(".gov-hub-head-text");
+        if (headText) {
+          headText.textContent = "本周行业情报速览——" + sec.label;
+        }
+      }
+
+      // 清空 subnav 并重建
+      subnav.innerHTML = "";
+      secs.forEach(function (sec, idx) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "gov-hub-subnav-item" + (idx === 0 ? " is-active" : "");
+        btn.setAttribute("aria-pressed", idx === 0 ? "true" : "false");
+        btn.textContent = sec.label;
+        btn.addEventListener("click", function () { renderIntelSection(idx); });
+        subnav.appendChild(btn);
+      });
+
+      // 渲染第一个 section
+      if (secs.length > 0) {
+        renderIntelSection(0);
+      }
+    }
+
+    /** 生成情报条目详情 HTML */
+    function buildIntelBodyHtml(it) {
+      var parts = [];
+      var dateStr = (it.date || "").slice(0, 10);
+      var sourceStr = it.source || "";
+      var url = it.url || "";
+      var keywords = it.keywords || [];
+
+      if (dateStr || sourceStr) {
+        parts.push('<p class="wb-muted" style="font-size:0.82rem;margin:0 0 0.75rem;color:var(--muted);">');
+        if (dateStr) parts.push("日期：" + escapeHtml(dateStr));
+        if (sourceStr) parts.push(" · 来源：" + escapeHtml(sourceStr));
+        parts.push("</p>");
+      }
+
+      if (it.summary) {
+        parts.push('<p style="font-size:0.9rem;line-height:1.65;margin:0 0 0.75rem;">' + escapeHtml(it.summary) + "</p>");
+      }
+
+      if (url) {
+        parts.push('<p style="margin:0 0 0.5rem;"><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer" style="color:var(--theme-color);">🔗 查看原文</a></p>');
+      }
+
+      if (keywords.length) {
+        parts.push('<p style="font-size:0.78rem;color:var(--muted);margin:0;">关键词：' + keywords.map(function (k) { return '<span style="display:inline-block;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:3px;padding:0 6px;margin:0 3px 3px 0;font-size:0.75rem;">' + escapeHtml(k) + "</span>"; }).join("") + "</p>");
+      }
+
+      return parts.join("");
+    }
+
+    /** 将情报注入到各步骤面板 */
+    function injectIntelToSteps(stepGroups) {
+      for (var stepKey in stepGroups) {
+        if (!stepGroups.hasOwnProperty(stepKey)) continue;
+        var items = stepGroups[stepKey];
+        if (!items || !items.length) continue;
+
+        var root = document.querySelector('.gov-hub[data-gov-hub="' + stepKey + '"]');
+        if (!root) continue;
+
+        var label = STEP_LABEL_MAP[stepKey] || "行业动态";
+        var articles = [];
+        for (var i = 0; i < items.length; i++) {
+          var it = items[i];
+          var dateStr = (it.date || "").slice(0, 10);
+          var sourceStr = it.source || "";
+          var metaLine = dateStr + (sourceStr ? " · " + sourceStr : "");
+          articles.push({
+            title: it.title || "未命名情报",
+            summary: metaLine + (it.summary ? " — " + it.summary : ""),
+            bodyHtml: buildIntelBodyHtml(it)
+          });
+        }
+
+        if (window.GovHubUi && typeof window.GovHubUi.addHubSection === "function") {
+          window.GovHubUi.addHubSection(root, {
+            id: "intel-dynamic",
+            label: label + " (" + articles.length + ")",
+            articles: articles
+          });
+        }
+      }
     }
 
     // ── Phase 4: 导出 Markdown ──

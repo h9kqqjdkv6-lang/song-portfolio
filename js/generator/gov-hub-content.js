@@ -41,6 +41,10 @@
     );
 
   global.GovHubContent = {
+    intel: {
+      title: "本周行业情报速览",
+      sections: []
+    },
     policy: {
       title: "政策法规",
       sections: [
