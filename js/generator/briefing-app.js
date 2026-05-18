@@ -3899,7 +3899,7 @@
 
     function loadIntel() {
       var container = document.getElementById("intel-container");
-      var badge = document.getElementById("intel-count-badge");
+      var badge = document.getElementById("intel-count-badge-sm");
       if (!container) return;
       container.innerHTML = '<p class="intel-loading">加载中...</p>';
 

@@ -68,24 +68,28 @@
           <span class="tog-step-num" aria-hidden="true">2</span>
           <span class="tog-step-text"><span class="tog-step-label">政策法规</span><span class="tog-step-desc">标准 · 空域 · 采购</span></span>
         </button>
-        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="pain" data-step="3">
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="intel" data-step="3">
+          <span class="tog-step-num" aria-hidden="true">3</span>
+          <span class="tog-step-text"><span class="tog-step-label">行业情报</span><span class="tog-step-desc">动态 · 政策 · 融资</span></span>
+        </button>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="pain" data-step="4">
           <span class="tog-step-num" aria-hidden="true">3</span>
           <span class="tog-step-text"><span class="tog-step-label">痛点分析</span><span class="tog-step-desc">运行与组织</span></span>
         </button>
-        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="cases" data-step="4">
-          <span class="tog-step-num" aria-hidden="true">4</span>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="cases" data-step="5">
+          <span class="tog-step-num" aria-hidden="true">5</span>
           <span class="tog-step-text"><span class="tog-step-label">真实案例</span><span class="tog-step-desc">行业叙事参考</span></span>
         </button>
-        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="tech" data-step="5">
-          <span class="tog-step-num" aria-hidden="true">5</span>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="tech" data-step="6">
+          <span class="tog-step-num" aria-hidden="true">6</span>
           <span class="tog-step-text"><span class="tog-step-label">技术实施</span><span class="tog-step-desc">端侧与集成</span></span>
         </button>
-        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="security" data-step="6">
-          <span class="tog-step-num" aria-hidden="true">6</span>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="security" data-step="7">
+          <span class="tog-step-num" aria-hidden="true">7</span>
           <span class="tog-step-text"><span class="tog-step-label">安全管控</span><span class="tog-step-desc">飞行与数据</span></span>
         </button>
-        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="contact" data-step="7">
-          <span class="tog-step-num" aria-hidden="true">7</span>
+        <button type="button" class="wb-tab tog-step" role="tab" aria-selected="false" data-panel="contact" data-step="8">
+          <span class="tog-step-num" aria-hidden="true">8</span>
           <span class="tog-step-text"><span class="tog-step-label">联系我们</span><span class="tog-step-desc">商务与生态</span></span>
         </button>
       </nav>
@@ -152,10 +156,7 @@
                   </div>
                 </details>
                 <footer class="tog-panel-footer-note">数据自 scenes.json、aircrafts.json 加载；离线使用页面内嵌 fallback；PNG 依赖 html2canvas。</footer>
-                <details class="intel-panel">
-                  <summary><span class="intel-panel-icon">📡</span> 行业情报动态 <span class="intel-panel-badge" id="intel-count-badge">0</span></summary>
-                  <div id="intel-container" class="intel-container"><p class="intel-loading">加载中...</p></div>
-                </details>
+                <button type="button" class="intel-quick-link" onclick="document.querySelector('.wb-tab[data-panel=&quot;intel&quot;]').click()">📡 <span id="intel-count-badge-sm">0</span> 条行业情报 → 步骤 3</button>
               </div>
             </div>
           </div>
@@ -183,6 +184,16 @@
                 <div class="gov-hub-detail-content"></div>
               </article>
             </div>
+          </div>
+        </div>
+
+        <div id="wb-panel-intel" class="wb-panel gov-hub-panel" role="tabpanel" hidden>
+          <div class="intel-step-panel">
+            <header class="intel-step-head">
+              <h2 class="intel-step-title">行业情报动态</h2>
+              <p class="intel-step-desc">低空经济 · UAM · eVTOL 领域最新政策、产品、融资与行业资讯，定时从公开渠道采集更新。</p>
+            </header>
+            <div id="intel-container" class="intel-container"><p class="intel-loading">加载中...</p></div>
           </div>
         </div>
 

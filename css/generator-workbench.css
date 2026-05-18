@@ -4506,3 +4506,52 @@
 }
 .btn-export-compare:hover { filter: brightness(1.06); }
 .btn-export-compare:disabled { opacity: 0.5; cursor: default; }
+
+/* ── 情报面板移入工作台后新增样式 ── */
+
+.intel-step-panel {
+  padding: 1.5rem 2rem;
+  max-width: 900px;
+}
+.intel-step-head {
+  margin-bottom: 1.5rem;
+}
+.intel-step-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin: 0 0 0.3rem;
+}
+.intel-step-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+.intel-step-panel .intel-container {
+  padding: 0;
+}
+.intel-step-panel .intel-loading {
+  padding: 2rem 0;
+}
+
+.intel-quick-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.intel-quick-link:hover {
+  border-color: var(--theme-color);
+  color: var(--theme-color);
+  background: var(--surface-raised);
+}
