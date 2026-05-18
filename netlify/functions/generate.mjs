@@ -1,8 +1,16 @@
 import { supabaseAdmin } from "./_lib/supabase.mjs"
+import { readFileSync } from "fs"
+import { resolve, dirname } from "path"
+import { fileURLToPath } from "url"
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const DATA_DIR = resolve(__dirname, "../..")
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || ""
 const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com/v1"
 const DEEPSEEK_MODEL = process.env.DEEPSEEK_GENERATION_MODEL || "deepseek-v4-flash"
+
+// ── System Prompts ──
 
 const COMPLIANCE_SYSTEM = `你是一位低空经济政策法规合规审查专家，专注无人机行业合规体检。
 你的审查面向政府 / 企业采购与合规部门，要求：
@@ -51,15 +59,108 @@ const PROPOSAL_TEMPLATE = `为「{topic}」撰写一份结构化方案。
 <h3>6. 风险与对策</h3>
 <h3>7. 预算框架</h3>`
 
+// ── Compare Mode (Phase 2) ──
+
+const COMPARE_SYSTEM = `你是一位低空经济方案选型顾问，掌握中国所有主流无人机的核心参数和适用场景。你的任务是分析用户需求，输出2-4个候选方案的对比分析。
+
+每个方案必须包含：方案名称、推荐机型、4维评分、优劣势、成本估算、适航状态。
+
+评分维度（每项0-5分）：
+- feasibility（可行性）：法规合规通过率 × TRL技术成熟度 × 供应链可用性
+- cost（成本）：3年TCO（设备+运维+人员+审批+保险）
+- efficiency（效率）：响应时间 × 任务覆盖率 × 航程匹配度
+- safety（安全）：冗余设计等级 × 环境适应性 × 历史事故率
+
+输出规范：
+- 输出纯JSON，不要Markdown包装、不要代码块标记
+- JSON结构严格如下（无尾随逗号）：
+{
+  "proposals": [
+    {
+      "id": "recommended",
+      "name": "方案名称",
+      "aircraft": "机型key",
+      "overall_score": 4.2,
+      "scores": { "feasibility": 4.5, "cost": 4.0, "efficiency": 4.0, "safety": 4.3 },
+      "summary": "一句话方案概要",
+      "pros": ["优势1", "优势2", "优势3"],
+      "cons": ["劣势1", "劣势2"],
+      "cost_estimate": "成本估算",
+      "cert_status": "适航状态"
+    }
+  ],
+  "analysis_note": "选型分析说明"
+}`
+
+const COMPARE_TEMPLATE = `请为以下场景生成无人机方案对比选型。
+
+## 用户需求
+{topic}
+
+## 可用机型数据
+{aircrafts_context}
+
+## 场景数据
+{scene_data_context}
+
+## 要求
+1. 分析用户需求的载荷、航程、环境、合规等约束
+2. 从可用机型中筛选最匹配的2-4个方案
+3. 按4维评分标准逐项打分
+4. 务必包含一个"推荐"方案和一个"备选"方案
+5. 如果适用，可以包含"经济"方案（低预算选项）
+6. 确保所有数据基于提供的机型参数，不要虚构参数
+7. 评分要合理有区分度（不能所有方案都高分）`
+
+// ── Helpers ──
+
 function estimateTokens(text) {
   if (!text) return 0
   let cjk = 0, other = 0
   for (const ch of text) {
-    if (ch >= "一" && ch <= "鿿") cjk++
+    if (ch >= "\u4e00" && ch <= "\u9fff") cjk++
     else other++
   }
   return Math.ceil(cjk * 0.5 + other * 0.25) || 1
 }
+
+function loadData() {
+  let scenes = {}, aircrafts = {}, regulations = {}
+  try {
+    scenes = JSON.parse(readFileSync(resolve(DATA_DIR, "scenes.json"), "utf-8"))
+  } catch {}
+  try {
+    aircrafts = JSON.parse(readFileSync(resolve(DATA_DIR, "aircrafts.json"), "utf-8"))
+  } catch {}
+  try {
+    regulations = JSON.parse(readFileSync(resolve(DATA_DIR, "regulations.json"), "utf-8"))
+  } catch {}
+  return { scenes, aircrafts, regulations }
+}
+
+function buildAircraftsContext(aircrafts, sceneName) {
+  const entries = Object.entries(aircrafts).filter(([k, v]) => {
+    if (k === "_emergingTech") return false
+    if (!sceneName) return true
+    const applicable = v.applicableScenes || []
+    if (applicable.length === 0) return true // generic aircraft
+    return applicable.includes(sceneName)
+  })
+  return entries.map(([key, val]) => {
+    return `${key}: ${val.model || val.type || ""}，载荷${val.maxPayload || "?"}kg，航程${val.endurance || "?"}，${val.propulsion || "?"}，${val.certificationStatus || "适航状态待查"}，价格${val.price || "待查"}`
+  }).join("\n")
+}
+
+function buildSceneContext(scenes, sceneName) {
+  if (!sceneName || !scenes[sceneName]) return "用户未指定具体场景"
+  const s = scenes[sceneName]
+  return `场景：${sceneName}
+描述：${s.subtitle || ""}
+推荐机型：${s.aircraftModel ? JSON.stringify(s.aircraftModel) : ""}
+策略原则：${s.strategyPrinciples ? JSON.stringify(s.strategyPrinciples).slice(0, 500) : ""}`
+}
+
+// ── Main Handler ──
 
 export default async (request) => {
   if (request.method !== "POST") {
@@ -88,13 +189,120 @@ export default async (request) => {
     })
   }
 
-  // 选择系统提示：合规模式 vs 方案模式
+  // ── Compare Mode ──
+  if (mode === "compare") {
+    const { scenes: sceneData, aircrafts: acData } = loadData()
+
+    const aircraftsContext = buildAircraftsContext(acData, scene_name)
+    const sceneContext = buildSceneContext(sceneData, scene_name)
+
+    const prompt = COMPARE_TEMPLATE
+      .replace("{topic}", topic.trim())
+      .replace("{aircrafts_context}", aircraftsContext)
+      .replace("{scene_data_context}", sceneContext)
+
+    const messages = [
+      { role: "system", content: COMPARE_SYSTEM },
+      { role: "user", content: prompt },
+    ]
+
+    const inputTokens = estimateTokens(prompt) + estimateTokens(COMPARE_SYSTEM)
+
+    try {
+      const dsResp = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: DEEPSEEK_MODEL,
+          messages,
+          max_tokens: 4096,
+          temperature: 0.4,
+          stream: false,
+        }),
+      })
+
+      if (!dsResp.ok) {
+        const errBody = await dsResp.text().catch(() => "")
+        return new Response(JSON.stringify({
+          error: `DeepSeek HTTP ${dsResp.status}: ${errBody.slice(0, 200)}`,
+        }), {
+          status: 502, headers: { "Content-Type": "application/json" },
+        })
+      }
+
+      const dsData = await dsResp.json()
+      const rawContent = dsData.choices?.[0]?.message?.content || ""
+
+      // Parse the JSON response (handle potential markdown wrapping)
+      let jsonStr = rawContent.trim()
+      if (jsonStr.startsWith("```")) {
+        jsonStr = jsonStr.replace(/^```(?:json)?\s*\n?/, "").replace(/\n?```\s*$/, "")
+      }
+
+      let compareResult
+      try {
+        compareResult = JSON.parse(jsonStr)
+      } catch {
+        compareResult = { proposals: [], error: "AI返回格式解析失败", raw: rawContent.slice(0, 500) }
+      }
+
+      const outputTokens = estimateTokens(rawContent)
+      const costEst = (inputTokens / 1_000_000) * 1.0 + (outputTokens / 1_000_000) * 2.0
+
+      // Background write to Supabase
+      supabaseAdmin.from("usage_log").insert({
+        model: DEEPSEEK_MODEL,
+        endpoint: "/api/generate (compare)",
+        input_tokens: inputTokens,
+        output_tokens: outputTokens,
+        cost_cny: parseFloat(costEst.toFixed(6)),
+      }).catch(() => {})
+
+      supabaseAdmin.from("proposals").insert({
+        topic: topic.trim(),
+        industry: industry || "",
+        audience: audience || "政府",
+        content: rawContent,
+        model_used: "deepseek",
+        route_reason: "Netlify Function (compare)",
+        input_tokens_est: inputTokens,
+        output_tokens_est: outputTokens,
+      }).catch(() => {})
+
+      return new Response(JSON.stringify({
+        type: "compare_result",
+        ...compareResult,
+        meta: {
+          model: DEEPSEEK_MODEL,
+          input_tokens: inputTokens,
+          output_tokens: outputTokens,
+          cost_est_cny: parseFloat(costEst.toFixed(6)),
+        },
+      }), {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      })
+    } catch (e) {
+      return new Response(JSON.stringify({
+        error: `方案对比生成失败: ${e.message}`,
+      }), {
+        status: 500, headers: { "Content-Type": "application/json" },
+      })
+    }
+  }
+
+  // ── Existing Modes (proposal / compliance / follow-up) ──
+
   const systemPrompt = mode === "compliance" ? COMPLIANCE_SYSTEM : PROPOSAL_SYSTEM
 
   let messages
 
   if (follow_up_to && follow_up_question) {
-    // 追问模式：多轮对话
     const originalPrompt = PROPOSAL_TEMPLATE
       .replace("{topic}", topic.trim())
       .replace("{industry}", industry || "低空经济")
@@ -108,7 +316,6 @@ export default async (request) => {
       { role: "user", content: `基于上述方案，请回答以下追问：${follow_up_question.trim()}` },
     ]
   } else {
-    // 标准单次生成
     const prompt = PROPOSAL_TEMPLATE
       .replace("{topic}", topic.trim())
       .replace("{industry}", industry || "低空经济")
@@ -155,18 +362,17 @@ export default async (request) => {
 
     const stream = new ReadableStream({
       async start(controller) {
-        // 心跳保活 —— DeepSeek 首 token 可能需 10-20s，CDN 不等
         const heartbeat = setInterval(() => {
           try { controller.enqueue(encoder.encode(": heartbeat\n\n")); } catch (_) {}
-        }, 3000);
+        }, 3000)
 
         const reader = dsResp.body.getReader()
         try {
           while (true) {
             const { done, value } = await reader.read()
             if (done) {
-              clearInterval(heartbeat);
-              break;
+              clearInterval(heartbeat)
+              break
             }
 
             const text = decoder.decode(value, { stream: true })
@@ -187,7 +393,6 @@ export default async (request) => {
           const outputTokens = estimateTokens(fullContent)
           const costEst = (inputTokens / 1_000_000) * 1.0 + (outputTokens / 1_000_000) * 2.0
 
-          // 后台写 Supabase（不阻塞响应）
           supabaseAdmin.from("usage_log").insert({
             model: DEEPSEEK_MODEL,
             endpoint: "/api/generate",
