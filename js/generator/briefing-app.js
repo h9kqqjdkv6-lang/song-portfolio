@@ -18,6 +18,8 @@
     var GENERATE_API_BASE = (typeof window !== "undefined" && window.GENERATE_API_BASE) || "";
     var SCENE_INTEL_CACHE = {};  // { sceneKey: { items, timeline, updated_at } }
     var INTEL_FETCH_IN_FLIGHT = null;
+    /** 全局 AI 生成中止控制器 —— 切换场景/静态生成时自动中止后台 AI 请求 */
+    var _aiAbortController = null;
 
     function fetchSceneIntel(sceneKey) {
       if (!sceneKey) return Promise.resolve(null);
@@ -2223,6 +2225,9 @@
       var DATA = getData();
       if (!DATA) return;
 
+      // 中止后台 AI 生成，避免残留请求写入已被覆盖的 DOM
+      if (_aiAbortController) { _aiAbortController.abort(); _aiAbortController = null; }
+
       var h = readHeightMeters();
       var windRaw = document.getElementById("wind").value.trim();
       var wind = windRaw === "" ? NaN : parseFloat(windRaw);
@@ -2724,6 +2729,9 @@
       var btn = document.getElementById("btn-ai");
       if (!btn || btn.getAttribute("aria-busy") === "true") return;
 
+      // 中止上一次 AI 生成（如果还在跑）
+      if (_aiAbortController) { _aiAbortController.abort(); _aiAbortController = null; }
+
       var isCustom = getScenarioKey() === "__custom__";
       var customSceneName = "";
       if (isCustom) {
@@ -2787,6 +2795,7 @@
       var contentEl = out.querySelector(".proposal-content");
 
       var ctrl = new AbortController();
+      _aiAbortController = ctrl;
       var timeoutId = setTimeout(function () { ctrl.abort(); }, 120_000);
 
       fetch(GENERATE_API_BASE + "/api/generate", {
@@ -2899,6 +2908,7 @@
         })
         .finally(function () {
           clearTimeout(timeoutId);
+          _aiAbortController = null;
           btn.disabled = false;
           btn.removeAttribute("aria-busy");
           btn.textContent = "AI 生成方案";
@@ -3492,6 +3502,8 @@
           applyHeaderFromScenario();
           prefetchSceneIntel(getScenarioKey());
           var out = document.getElementById("output");
+          // 切换场景时中止后台 AI 生成
+          if (_aiAbortController) { _aiAbortController.abort(); _aiAbortController = null; }
           if (out) out.innerHTML = "";
           setBriefingActionsEnabled(false);
           hideFollowUpSection();
