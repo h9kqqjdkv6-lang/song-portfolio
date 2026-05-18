@@ -3519,6 +3519,7 @@
         });
         document.getElementById("btn").addEventListener("click", render);
         document.getElementById("btn-ai").addEventListener("click", generateWithAI);
+        document.getElementById("btn-compare").addEventListener("click", generateCompare);
         document.getElementById("btn-export").addEventListener("click", exportBriefingPng);
         document.getElementById("btn-export-pdf").addEventListener("click", exportBriefingPDF);
         document.getElementById("btn-follow-up").addEventListener("click", submitFollowUp);
@@ -3587,6 +3588,279 @@
         });
       });
     });
+
+// ── Phase 3: 对比选型 ──
+
+    function generateCompare() {
+      var btn = document.getElementById("btn-compare");
+      if (!btn || btn.getAttribute("aria-busy") === "true") return;
+
+      if (_aiAbortController) { _aiAbortController.abort(); _aiAbortController = null; }
+
+      var isCustom = getScenarioKey() === "__custom__";
+      var customSceneName = "";
+      if (isCustom) {
+        customSceneName = (document.getElementById("custom-scene-name") || {}).value || "";
+        if (!customSceneName.trim()) { alert("请输入自定义场景名称"); return; }
+      }
+
+      var DATA = isCustom ? null : getData();
+      if (!isCustom && !DATA) return;
+
+      var h = readHeightMeters();
+      var windRaw = document.getElementById("wind").value.trim();
+      var wind = windRaw === "" ? NaN : parseFloat(windRaw);
+      var reqDesc = (document.getElementById("requirement-desc") || {}).value || "";
+
+      var topic, extraParts;
+      if (isCustom) {
+        topic = customSceneName.trim();
+        extraParts = ["场景类型：" + topic, "作业高度：" + h + "m", Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s", reqDesc ? "客户需求描述：" + reqDesc : ""].filter(Boolean);
+      } else {
+        topic = str(DATA.displayName) + " - " + str(DATA.primaryScenario || "");
+        extraParts = ["场景：" + str(DATA.displayName), "作业高度：" + h + "m", Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s", reqDesc ? "客户补充需求：" + reqDesc : ""].filter(Boolean);
+      }
+
+      var sceneContext = DATA ? buildAIContext(DATA) : buildAircraftCatalogForAI();
+      if (sceneContext) { extraParts.push("【以下为真实参数数据】\n" + sceneContext); }
+      var extra = extraParts.join("；");
+
+      btn.setAttribute("aria-busy", "true");
+      btn.disabled = true;
+      btn.innerHTML = '<span class="btn-generate-inner" role="status" aria-live="polite"><span class="btn-spinner" aria-hidden="true"></span><span>对比分析中...</span></span>';
+
+      var out = document.getElementById("output");
+      var chrome = briefingChrome(DATA || { displayName: customSceneName.trim() });
+      out.innerHTML = chrome.start + '<div class="compare-results"><div class="compare-loading">方案对比分析中，请稍候...</div></div>' + chrome.end;
+
+      var ctrl = new AbortController();
+      _aiAbortController = ctrl;
+      var timeoutId = setTimeout(function () { ctrl.abort(); }, 120_000);
+
+      fetch(GENERATE_API_BASE + "/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topic: topic,
+          industry: "低空经济",
+          audience: "政府",
+          extra_context: extra,
+          scene_name: isCustom ? customSceneName.trim() : str(DATA.displayName),
+          mode: "compare"
+        }),
+        signal: ctrl.signal
+      })
+        .then(function (res) {
+          if (!res.ok) { return res.text().then(function (t) { throw new Error("API " + res.status + ": " + (t || "").slice(0, 200)); }); }
+          return res.json();
+        })
+        .then(function (data) {
+          clearTimeout(timeoutId);
+          if (data.error) { throw new Error(data.error); }
+          renderCompareResult(data);
+        })
+        .catch(function (err) {
+          if (err.name === "AbortError") return;
+          var container = out.querySelector(".compare-results");
+          if (container) { container.innerHTML = '<p style="color:var(--warn);padding:2rem;text-align:center;">对比生成失败：' + escapeHtml(err.message || "未知错误") + "</p>"; }
+        })
+        .finally(function () {
+          clearTimeout(timeoutId);
+          _aiAbortController = null;
+          btn.disabled = false;
+          btn.removeAttribute("aria-busy");
+          btn.textContent = "对比选型";
+        });
+    }
+
+    function renderCompareResult(data) {
+      var proposals = data.proposals || [];
+      if (!proposals.length) {
+        var container = document.querySelector(".compare-results");
+        if (container) container.innerHTML = '<p style="padding:2rem;text-align:center;color:var(--warn);">未获取到方案数据</p>';
+        return;
+      }
+
+      var COLORS = ["#22C55E", "#3B82F6", "#F59E0B", "#A855F7"];
+
+      function esc(s) { return escapeHtml(String(s || "")); }
+
+      var radarHtml = '<div class="compare-radar-wrap">';
+      radarHtml += '<canvas id="compare-radar-canvas" width="460" height="420" style="width:460px;height:420px;max-width:100%;"></canvas>';
+      radarHtml += '<div class="compare-radar-legend">';
+      for (var ci = 0; ci < proposals.length; ci++) {
+        var p = proposals[ci];
+        radarHtml += '<span class="compare-legend-item"><span class="compare-legend-dot" style="background:' + COLORS[ci % COLORS.length] + ';"></span>' + esc(p.name) + ' <strong>' + esc(p.overall_score) + '</strong></span>';
+      }
+      radarHtml += '</div></div>';
+
+      var cardsHtml = '<div class="compare-cards">';
+      for (var ci2 = 0; ci2 < proposals.length; ci2++) {
+        var p2 = proposals[ci2];
+        var cls = "compare-card" + (p2.id === "recommended" ? " compare-card--recommended" : "");
+        cardsHtml += '<div class="' + cls + '">';
+        if (p2.id === "recommended") cardsHtml += '<span class="compare-card-badge">推荐</span>';
+        cardsHtml += '<div class="compare-card-head">';
+        cardsHtml += '<span class="compare-card-aircraft">' + esc(p2.aircraft) + '</span>';
+        cardsHtml += '<span class="compare-card-name">' + esc(p2.name) + '</span>';
+        cardsHtml += '</div>';
+        cardsHtml += '<div class="compare-card-score-wrap">';
+        cardsHtml += '<span class="compare-card-score">' + esc(p2.overall_score) + '</span>';
+        cardsHtml += '<span class="compare-card-score-label">综合评分</span>';
+        cardsHtml += '</div>';
+        cardsHtml += '<div class="compare-card-bars">';
+        var dims = ["feasibility", "cost", "efficiency", "safety"];
+        var dimLabels = { feasibility: "可行性", cost: "成本效率", efficiency: "作业效率", safety: "安全性" };
+        var scores = p2.scores || {};
+        for (var di = 0; di < dims.length; di++) {
+          var val = scores[dims[di]] || 0;
+          var pct = Math.min(val / 5 * 100, 100);
+          cardsHtml += '<div class="compare-card-bar-row"><span class="compare-card-bar-label">' + dimLabels[dims[di]] + '</span><div class="compare-card-bar-track"><div class="compare-card-bar-fill" style="width:' + pct + '%;background:' + COLORS[ci2 % COLORS.length] + ';"></div></div><span class="compare-card-bar-val">' + val.toFixed(1) + '</span></div>';
+        }
+        cardsHtml += '</div>';
+        cardsHtml += '<p class="compare-card-summary">' + esc(p2.summary) + "</p>";
+        cardsHtml += '<div class="compare-card-pros"><strong>优势</strong><ul>';
+        var pros = p2.pros || [];
+        for (var pri = 0; pri < pros.length; pri++) cardsHtml += "<li>" + esc(pros[pri]) + "</li>";
+        cardsHtml += "</ul></div>";
+        cardsHtml += '<div class="compare-card-cons"><strong>劣势</strong><ul>';
+        var cons = p2.cons || [];
+        for (var cri = 0; cri < cons.length; cri++) cardsHtml += "<li>" + esc(cons[cri]) + "</li>";
+        cardsHtml += "</ul></div>";
+        cardsHtml += '<div class="compare-card-meta"><span>💰 ' + esc(p2.cost_estimate) + "</span><span>📋 " + esc(p2.cert_status) + "</span></div>";
+        cardsHtml += "</div>";
+      }
+      cardsHtml += "</div>";
+
+      var noteHtml = '<div class="compare-note"><strong>选型分析：</strong>' + esc(data.analysis_note) + "</div>";
+
+      var tableHtml = '<div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>指标</th>';
+      for (var ti = 0; ti < proposals.length; ti++) tableHtml += "<th>" + esc(proposals[ti].name) + "</th>";
+      tableHtml += "</tr></thead><tbody>";
+      var tableRows = [
+        ["推荐机型", function (pp) { return esc(pp.aircraft); }],
+        ["综合评分", function (pp) { return '<strong>' + esc(pp.overall_score) + "</strong>"; }],
+        ["可行性", function (pp) { return (pp.scores ? pp.scores.feasibility || 0 : 0).toFixed(1); }],
+        ["成本效率", function (pp) { return (pp.scores ? pp.scores.cost || 0 : 0).toFixed(1); }],
+        ["作业效率", function (pp) { return (pp.scores ? pp.scores.efficiency || 0 : 0).toFixed(1); }],
+        ["安全性", function (pp) { return (pp.scores ? pp.scores.safety || 0 : 0).toFixed(1); }],
+        ["成本估算", function (pp) { return esc(pp.cost_estimate); }],
+        ["适航状态", function (pp) { return esc(pp.cert_status); }]
+      ];
+      for (var ri = 0; ri < tableRows.length; ri++) {
+        tableHtml += "<tr><td>" + tableRows[ri][0] + "</td>";
+        for (var ci3 = 0; ci3 < proposals.length; ci3++) {
+          tableHtml += "<td>" + tableRows[ri][1](proposals[ci3]) + "</td>";
+        }
+        tableHtml += "</tr>";
+      }
+      tableHtml += "</tbody></table></div>";
+
+      var meta = data.meta || {};
+      var metaHtml = '<p class="ai-meta" style="font-size:0.8rem;color:var(--muted);margin:1rem 0 0;">模型：' + esc(meta.model || "deepseek") + " | Token：" + (meta.input_tokens || 0) + "\u2192" + (meta.output_tokens || 0) + " | 费用：¥" + (meta.cost_est_cny || 0).toFixed(4) + "</p>";
+
+      var container = document.querySelector(".compare-results");
+      if (!container) return;
+      container.innerHTML = radarHtml + cardsHtml + noteHtml + tableHtml + metaHtml;
+
+      var canvas = document.getElementById("compare-radar-canvas");
+      if (canvas) drawRadarChart(canvas, proposals, COLORS);
+
+      container.scrollIntoView({ block: "start", behavior: "smooth" });
+      window.dispatchEvent(new CustomEvent("briefing:rendered", { detail: { ok: true, ai: true, compare: true } }));
+    }
+
+    function drawRadarChart(canvas, proposals, colors) {
+      var ctx = canvas.getContext("2d");
+      var W = canvas.width, H = canvas.height;
+      var CX = W / 2, CY = H / 2 - 10;
+      var R = Math.min(W, H) / 2 - 60;
+      var N = 4;
+      var DIMS = ["feasibility", "cost", "efficiency", "safety"];
+      var LABELS = { feasibility: "可行性", cost: "成本效率", efficiency: "作业效率", safety: "安全性" };
+      var MAX_VAL = 5;
+
+      ctx.clearRect(0, 0, W, H);
+
+      function angle(i) { return (i / N) * Math.PI * 2 - Math.PI / 2; }
+
+      function point(i, ratio) {
+        var a = angle(i);
+        return { x: CX + R * ratio * Math.cos(a), y: CY + R * ratio * Math.sin(a) };
+      }
+
+      for (var level = 0.5; level <= MAX_VAL; level += 0.5) {
+        var ratio = level / MAX_VAL;
+        ctx.beginPath();
+        for (var di = 0; di <= N; di++) {
+          var p = point(di % N, ratio);
+          if (di === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.closePath();
+        var isMajor = level === Math.round(level);
+        ctx.strokeStyle = isMajor ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.07)";
+        ctx.lineWidth = isMajor ? 1 : 0.5;
+        ctx.stroke();
+        if (isMajor && level > 0) {
+          ctx.fillStyle = "rgba(255,255,255,0.35)";
+          ctx.font = "10px sans-serif";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(level.toFixed(1), CX + R * ratio + 4, CY);
+        }
+      }
+
+      for (var di2 = 0; di2 < N; di2++) {
+        var ep = point(di2, 1);
+        ctx.beginPath();
+        ctx.moveTo(CX, CY);
+        ctx.lineTo(ep.x, ep.y);
+        ctx.strokeStyle = "rgba(255,255,255,0.12)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        var labelAngle = angle(di2);
+        var lx = CX + (R + 36) * Math.cos(labelAngle);
+        var ly = CY + (R + 36) * Math.sin(labelAngle);
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.font = "13px sans-serif";
+        ctx.textAlign = labelAngle > Math.PI / 2 || labelAngle < -Math.PI / 2 ? "right" : labelAngle === 0 || labelAngle === Math.PI * 2 ? "center" : "left";
+        ctx.textBaseline = labelAngle > 0 ? "top" : labelAngle < 0 ? "bottom" : "middle";
+        ctx.fillText(LABELS[DIMS[di2]] || DIMS[di2], lx, ly);
+      }
+
+      for (var pi = 0; pi < proposals.length; pi++) {
+        var prop = proposals[pi];
+        var scores = prop.scores || {};
+        var color = colors[pi % colors.length];
+
+        ctx.beginPath();
+        for (var di3 = 0; di3 <= N; di3++) {
+          var val = Math.min(scores[DIMS[di3 % N]] || 0, MAX_VAL);
+          var r2 = val / MAX_VAL;
+          var p2 = point(di3 % N, r2);
+          if (di3 === 0) ctx.moveTo(p2.x, p2.y); else ctx.lineTo(p2.x, p2.y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = color + "20";
+        ctx.fill();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        for (var di4 = 0; di4 < N; di4++) {
+          var val2 = Math.min(scores[DIMS[di4]] || 0, MAX_VAL);
+          var r3 = val2 / MAX_VAL;
+          var dp = point(di4, r3);
+          ctx.beginPath();
+          ctx.arc(dp.x, dp.y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.fill();
+          ctx.strokeStyle = "#111";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
 
     window.BriefingApp = {
       loadScenarioData: loadScenarioData,
