@@ -12,6 +12,105 @@ const DEEPSEEK_MODEL = process.env.DEEPSEEK_GENERATION_MODEL || "deepseek-v4-fla
 
 // ── System Prompts ──
 
+// ── 三档文档深度提示词 ──
+
+const OVERVIEW_SYSTEM = `你是一位资深解决方案架构师，专注低空经济与无人机应用领域。
+你的任务是为决策者（政府/企业领导）撰写一页纸方案简报。
+
+要求：
+- 精炼：不超过 800 字，只说该场景的关键矛盾、核心方案、预期效果
+- 无参数、无型号、无表格
+- 输出结构：场景矛盾→我方方案→核心能力→最小资源配置→合规提要→建议下一步
+- 引用最新政策和标准时只提名称，不展开条款
+- 避免套话，注重决策可读性
+- 输出中文
+- 使用 HTML 标签格式化，不要用 Markdown`
+
+const OVERVIEW_TEMPLATE = `为「{topic}」撰写一份决策速览（一页纸简报）。
+
+行业方向：{industry}
+目标受众：决策层
+
+{extra}
+
+输出规范：
+- 用 <h3> 写标题，<p> 写段落，<strong> 加粗重点
+- 不超过 800 字
+- 结构：背景与矛盾→方案概述→核心能力→编成与资源→合规提要→建议下一步`
+
+const TECHNICAL_SYSTEM = `你是一位资深解决方案架构师，专注低空经济与无人机应用领域。
+你的任务是为业务部门撰写技术深化方案。
+
+要求：
+- 中篇深度解析：问题→逻辑→实现→要点
+- 可含分节叙述、简表、术语解释
+- 定量标注（航时、载荷、航程、成本等）须基于真实数据
+- 引用最新政策和标准时提及具体条款号
+- 输出中文
+- 使用 HTML 标签格式化，不要用 Markdown`
+
+const TECHNICAL_TEMPLATE = `为「{topic}」撰写一份技术深化方案。
+
+行业方向：{industry}
+目标受众：业务/技术部门
+
+{extra}
+
+输出规范：
+- 用 <h3> 写标题，<p> 写段落，<strong> 加粗重点
+- 用 <table> 呈现对比数据
+- 用 <ul><li> 写要点列表
+- 结构：技术背景→方案逻辑→实现路径→关键技术参数（表格）→实施要点→风险与对策`
+
+const FULL_SYSTEM = `你是一位资深解决方案架构师，专注低空经济与无人机应用领域。
+你的方案面向政府 / 企业决策者，要求：
+- 结构化输出（背景→目标→架构→实施→收益→风险→预算）
+- 引用最新政策和标准（GB 46761/46750、无人驾驶航空器条例、新民航法等）
+- 2026年5月9日民航局低空安全司（编制30人）正式成立，负责低空发展规划、安全协调与飞行服务调度平台——所有方案须体现与该监管机构的对齐
+- 数据有依据，不确定处标注"待核实"
+- 避免套话，注重可执行性
+- 输出中文
+- 必须使用 HTML 标签格式化输出，不要用 Markdown`
+
+const FULL_TEMPLATE = `为「{topic}」撰写一份结构化方案。
+
+行业方向：{industry}
+目标受众：{audience}
+
+{extra}
+
+方案中涉及续航/能源的技术选型时，如场景数据中提供了「前沿技术动态」（氢燃料电池、锂硫电池等），应在技术架构章节作为技术前瞻简要提及，但需标注技术成熟度等级与可用性状态。
+
+输出规范：
+- 用 <h3> 标签写标题（不要用 ###）
+- 用 <strong> 标签加粗重点（不要用 **）
+- 表格必须用标准 HTML 标签，不得省略标签名或尖括号。参考示例：
+<table><tr><th>项目</th><th>数量</th><th>单价(万元)</th></tr><tr><td>无人机平台</td><td>2</td><td>150</td></tr></table>
+- 用 <ul><li> 写列表
+- 段落用 <p> 包裹
+
+输出结构：
+<h3>1. 项目背景与痛点</h3>
+<h3>2. 方案目标（SMART 原则）</h3>
+<h3>3. 技术架构（分层描述）</h3>
+<h3>4. 实施路径（试点→推广→深化）</h3>
+<h3>5. 预期收益</h3>
+<h3>6. 风险与对策</h3>
+<h3>7. 预算框架</h3>`
+
+// ── 深度选择器 ──
+
+function selectDepthTemplates(depth) {
+  switch (depth) {
+    case "overview":
+      return { system: OVERVIEW_SYSTEM, template: OVERVIEW_TEMPLATE }
+    case "technical":
+      return { system: TECHNICAL_SYSTEM, template: TECHNICAL_TEMPLATE }
+    default:
+      return { system: FULL_SYSTEM, template: FULL_TEMPLATE }
+  }
+}
+
 const COMPLIANCE_SYSTEM = `你是一位低空经济政策法规合规审查专家，专注无人机行业合规体检。
 你的审查面向政府 / 企业采购与合规部门，要求：
 - 结构化输出（适用法规→检查项→差距分析→建议）
@@ -176,7 +275,7 @@ export default async (request) => {
     })
   }
 
-  const { topic, industry, audience, extra_context, scene_name, follow_up_to, follow_up_question, mode } = body || {}
+  const { topic, industry, audience, extra_context, scene_name, follow_up_to, follow_up_question, mode, depth } = body || {}
   if (!topic || !topic.trim()) {
     return new Response(JSON.stringify({ error: "topic 为必填项" }), {
       status: 400, headers: { "Content-Type": "application/json" },
@@ -298,12 +397,15 @@ export default async (request) => {
 
   // ── Existing Modes (proposal / compliance / follow-up) ──
 
-  const systemPrompt = mode === "compliance" ? COMPLIANCE_SYSTEM : PROPOSAL_SYSTEM
+  const depthKey = (mode === "compliance") ? null : (depth || "full")
+  const depthTemplates = depthKey ? selectDepthTemplates(depthKey) : null
+  const systemPrompt = mode === "compliance" ? COMPLIANCE_SYSTEM : (depthTemplates ? depthTemplates.system : FULL_SYSTEM)
+  const proposalTemplate = depthTemplates ? depthTemplates.template : FULL_TEMPLATE
 
   let messages
 
   if (follow_up_to && follow_up_question) {
-    const originalPrompt = PROPOSAL_TEMPLATE
+    const originalPrompt = proposalTemplate
       .replace("{topic}", topic.trim())
       .replace("{industry}", industry || "低空经济")
       .replace("{audience}", audience || "政府")
@@ -316,7 +418,7 @@ export default async (request) => {
       { role: "user", content: `基于上述方案，请回答以下追问：${follow_up_question.trim()}` },
     ]
   } else {
-    const prompt = PROPOSAL_TEMPLATE
+    const prompt = proposalTemplate
       .replace("{topic}", topic.trim())
       .replace("{industry}", industry || "低空经济")
       .replace("{audience}", audience || "政府")
@@ -341,7 +443,7 @@ export default async (request) => {
       body: JSON.stringify({
         model: DEEPSEEK_MODEL,
         messages: messages,
-        max_tokens: 4096,
+        max_tokens: (mode === "compliance" || depthKey === "overview") ? 2048 : 8192,
         temperature: 0.7,
         stream: true,
       }),

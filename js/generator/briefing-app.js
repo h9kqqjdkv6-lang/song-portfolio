@@ -2767,6 +2767,10 @@
       }
       var extra = extraParts.join("；");
 
+      // 读取当前文档深度
+      var depthToggle = document.querySelector('.tog-depth-option[aria-checked="true"]');
+      var currentDepth = depthToggle ? depthToggle.dataset.depth : "full";
+
       /** 自定义场景用最小 DATA 代用对象，供 briefingChrome 渲染标题栏 */
       var chromeData = DATA || { displayName: customSceneName.trim() };
 
@@ -2793,7 +2797,8 @@
           industry: "低空经济",
           audience: "政府",
           extra_context: extra,
-          scene_name: isCustom ? customSceneName.trim() : str(DATA.displayName)
+          scene_name: isCustom ? customSceneName.trim() : str(DATA.displayName),
+          depth: currentDepth
         }),
         signal: ctrl.signal
       })
@@ -2828,6 +2833,8 @@
                       rawContent += evt.content || "";
                       // 流式阶段剥离 HTML 标签，显示纯文本预览
                       contentEl.textContent = rawContent.replace(/<[^>]*>/g, "");
+                      // 自动滚屏到内容底部
+                      contentEl.scrollIntoView({ block: "end", behavior: "smooth" });
                     }
                     if (evt.type === "done") {
                       clearTimeout(timeoutId);
@@ -2835,6 +2842,8 @@
                       if (contentEl && rawContent.trim()) {
                         contentEl.style.whiteSpace = "normal";
                         contentEl.innerHTML = sanitizeAIHtml(rawContent);
+                        // 完成时滚到底部
+                        contentEl.scrollIntoView({ block: "end", behavior: "smooth" });
                         // 存储对话上下文，供追问使用
                         currentConversation = {
                             topic: topic,
@@ -2842,6 +2851,7 @@
                             audience: "政府",
                             extra: extra,
                             scene_name: isCustom ? customSceneName.trim() : str(DATA ? DATA.displayName : ""),
+                            depth: currentDepth,
                             _lastResponse: rawContent
                         };
                         showFollowUpSection();
@@ -3261,7 +3271,8 @@
                 extra_context: extra,
                 scene_name: conv.scene_name || "",
                 follow_up_to: currentConversation._lastResponse || "",
-                follow_up_question: question
+                follow_up_question: question,
+                depth: currentConversation.depth || "full"
             }),
             signal: ctrl.signal
         })
@@ -3300,11 +3311,13 @@
                                     if (evt.type === "chunk") {
                                         followUpContent += evt.content || "";
                                         followDiv.textContent = followUpContent.replace(/<[^>]*>/g, "");
+                                        followDiv.scrollIntoView({ block: "end", behavior: "smooth" });
                                     }
                                     if (evt.type === "done") {
                                         clearTimeout(timeoutId);
                                         followDiv.style.whiteSpace = "normal";
                                         followDiv.innerHTML = sanitizeAIHtml(followUpContent);
+                                        followDiv.scrollIntoView({ block: "end", behavior: "smooth" });
                                         currentConversation._lastResponse = followUpContent;
                                     }
                                 } catch (_) {}
@@ -3432,12 +3445,14 @@
                                     if (evt.type === "chunk" && contentEl) {
                                         rawContent += evt.content || "";
                                         contentEl.textContent = rawContent.replace(/<[^>]*>/g, "");
+                                        contentEl.scrollIntoView({ block: "end", behavior: "smooth" });
                                     }
                                     if (evt.type === "done") {
                                         clearTimeout(timeoutId);
                                         if (contentEl && rawContent.trim()) {
                                             contentEl.style.whiteSpace = "normal";
                                             contentEl.innerHTML = sanitizeAIHtml(rawContent);
+                                            contentEl.scrollIntoView({ block: "end", behavior: "smooth" });
                                         }
                                         setBriefingActionsEnabled(true);
                                         triggerBriefingPulse();
