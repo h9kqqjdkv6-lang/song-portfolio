@@ -2926,6 +2926,11 @@
         pdf.disabled = !on;
         pdf.setAttribute("aria-disabled", on ? "false" : "true");
       }
+      var md = document.getElementById("btn-export-md");
+      if (md) {
+        md.disabled = !on;
+        md.setAttribute("aria-disabled", on ? "false" : "true");
+      }
       var cp = document.getElementById("btn-copy");
       if (cp) {
         cp.disabled = !on;
@@ -3522,8 +3527,25 @@
         document.getElementById("btn-compare").addEventListener("click", generateCompare);
         document.getElementById("btn-export").addEventListener("click", exportBriefingPng);
         document.getElementById("btn-export-pdf").addEventListener("click", exportBriefingPDF);
+        document.getElementById("btn-export-md").addEventListener("click", exportMarkdown);
         document.getElementById("btn-follow-up").addEventListener("click", submitFollowUp);
+        document.getElementById("btn-clear-conversation").addEventListener("click", clearConversation);
         document.getElementById("btn-compliance-check").addEventListener("click", runComplianceCheck);
+
+        // 快捷提问
+        document.addEventListener("click", function (e) {
+          var qBtn = e.target && e.target.closest && e.target.closest(".quick-ask");
+          if (qBtn) {
+            var q = qBtn.getAttribute("data-q");
+            if (q) { document.getElementById("follow-up-input").value = q; submitFollowUp(); }
+          }
+        });
+
+        // 追问 Enter 发送
+        document.getElementById("follow-up-input").addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submitFollowUp(); }
+        });
+
         initWindBeaufortControls();
         initBriefingVideoPlayOverlay();
         var hSel = document.getElementById("height");
@@ -3586,9 +3608,11 @@
             out.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
           });
         });
+
+        // 加载情报面板
+        loadIntel();
       });
     });
-
 // ── Phase 3: 对比选型 ──
 
     function generateCompare() {
@@ -3758,10 +3782,19 @@
 
       var meta = data.meta || {};
       var metaHtml = '<p class="ai-meta" style="font-size:0.8rem;color:var(--muted);margin:1rem 0 0;">模型：' + esc(meta.model || "deepseek") + " | Token：" + (meta.input_tokens || 0) + "\u2192" + (meta.output_tokens || 0) + " | 费用：¥" + (meta.cost_est_cny || 0).toFixed(4) + "</p>";
+      metaHtml += '<button type="button" id="btn-export-compare" class="btn-export-compare" onclick="exportComparePng()">导出对比报告(图)</button>';
 
       var container = document.querySelector(".compare-results");
       if (!container) return;
       container.innerHTML = radarHtml + cardsHtml + noteHtml + tableHtml + metaHtml;
+
+      // 在对比模式启用追问
+      var followSection = document.getElementById("follow-up-section");
+      if (followSection) followSection.style.display = "block";
+      var input = document.getElementById("follow-up-input");
+      if (input) input.placeholder = "例：对比分析中请考虑续航时间 / 请增加某机型对比...";
+      currentConversation = currentConversation || {};
+      currentConversation._isCompare = true;
 
       var canvas = document.getElementById("compare-radar-canvas");
       if (canvas) drawRadarChart(canvas, proposals, COLORS);
@@ -3860,6 +3893,225 @@
           ctx.stroke();
         }
       }
+    }
+
+    // ── Phase 4: Intel 情报面板 ──
+
+    function loadIntel() {
+      var container = document.getElementById("intel-container");
+      var badge = document.getElementById("intel-count-badge");
+      if (!container) return;
+      container.innerHTML = '<p class="intel-loading">加载中...</p>';
+
+      fetch("/api/intel?limit=20")
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          var items = data.intel || [];
+          if (badge) badge.textContent = items.length;
+          renderIntelItems(container, items);
+        })
+        .catch(function (err) {
+          container.innerHTML = '<p class="intel-error">情报加载失败：' + escapeHtml(err.message) + "</p>";
+          if (badge) badge.textContent = "0";
+        });
+    }
+
+    function renderIntelItems(container, items) {
+      if (!items.length) {
+        container.innerHTML = '<p class="intel-empty">暂无情报数据</p>';
+        return;
+      }
+
+      // 提取所有 category
+      var cats = {};
+      var allCats = [];
+      for (var i = 0; i < items.length; i++) {
+        var cat = items[i].category || "article";
+        if (!cats[cat]) { cats[cat] = true; allCats.push(cat); }
+      }
+      var catLabels = {
+        policy: "政策", product: "产品", funding: "融资",
+        article: "文章", speech: "演讲", interview: "访谈",
+        report: "报告", partnership: "合作"
+      };
+      // "全部" 放在最前
+      allCats.unshift("__all");
+
+      var html = '<div class="intel-tabs" id="intel-tabs">';
+      for (var ci = 0; ci < allCats.length; ci++) {
+        var c = allCats[ci];
+        var label = c === "__all" ? "全部" : (catLabels[c] || c);
+        html += '<button type="button" class="intel-tab' + (ci === 0 ? " intel-tab--active" : "") + '" data-cat="' + c + '">' + escapeHtml(label) + "</button>";
+      }
+      html += '</div><div class="intel-list" id="intel-list">';
+      html += renderIntelItemsByCat(items, "__all");
+      html += "</div>";
+
+      container.innerHTML = html;
+
+      // Tab 切换事件（委托）
+      container.addEventListener("click", function (e) {
+        var tab = e.target && e.target.closest && e.target.closest(".intel-tab");
+        if (!tab) return;
+        var cat = tab.getAttribute("data-cat");
+        // 去激活
+        var tabs = container.querySelectorAll(".intel-tab");
+        for (var ti = 0; ti < tabs.length; ti++) tabs[ti].classList.remove("intel-tab--active");
+        tab.classList.add("intel-tab--active");
+        var list = document.getElementById("intel-list");
+        if (list) list.innerHTML = renderIntelItemsByCat(items, cat);
+      });
+    }
+
+    function renderIntelItemsByCat(items, filterCat) {
+      var html = "";
+      var count = 0;
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        var cat = it.category || "article";
+        if (filterCat !== "__all" && cat !== filterCat) continue;
+        count++;
+        var catLabel = ({
+          policy: "政策", product: "产品", funding: "融资",
+          article: "文章", speech: "演讲", interview: "访谈",
+          report: "报告", partnership: "合作"
+        })[cat] || cat;
+        var dateStr = (it.date || "").slice(0, 10);
+        var url = it.url || "";
+        var title = it.title || "未命名情报";
+        var summary = it.summary || "";
+        var source = it.source || "";
+        html += '<div class="intel-item intel-item--' + cat + '">';
+        html += '<div class="intel-item-head"><span class="intel-item-cat">' + escapeHtml(catLabel) + "</span>";
+        html += '<span class="intel-item-title">';
+        if (url) html += '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener">';
+        html += escapeHtml(title);
+        if (url) html += "</a>";
+        html += "</span></div>";
+        if (summary) html += '<p class="intel-item-summary">' + escapeHtml(summary) + "</p>";
+        html += '<div class="intel-item-meta">';
+        if (dateStr) html += "<span>" + dateStr + "</span>";
+        if (source) html += '<span class="intel-item-source">' + escapeHtml(source) + "</span>";
+        html += "</div></div>";
+      }
+      if (count === 0) html = '<p class="intel-empty">该分类暂无情报</p>';
+      return html;
+    }
+
+    // ── Phase 4: 导出 Markdown ──
+
+    function exportMarkdown() {
+      var wrap = document.querySelector("#output .briefing-wrap") || document.querySelector("#output .compare-results");
+      if (!wrap) {
+        alert("请先生成方案或对比结果");
+        return;
+      }
+
+      var titleEl = wrap.querySelector(".briefing-title");
+      var bodyEl = document.getElementById("briefing-body-content");
+      var compareContainer = document.querySelector(".compare-results");
+
+      var lines = [];
+      lines.push("# " + (titleEl ? titleEl.innerText.trim() : "方案简报"));
+      lines.push("");
+      lines.push("> 生成时间：" + new Date().toLocaleString("zh-CN"));
+      lines.push("");
+
+      if (bodyEl) {
+        lines.push(bodyEl.innerText.trim());
+      } else if (compareContainer) {
+        // 从 compare 结果提取文本
+        var cards = compareContainer.querySelectorAll(".compare-card");
+        cards.forEach(function (card) {
+          var name = card.querySelector(".compare-card-name");
+          var score = card.querySelector(".compare-card-score");
+          if (name) lines.push("## " + name.innerText.trim());
+          if (score) lines.push("综合评分：" + score.innerText.trim());
+          var summary = card.querySelector(".compare-card-summary");
+          if (summary) lines.push(summary.innerText.trim());
+          var pros = card.querySelector(".compare-card-pros");
+          var cons = card.querySelector(".compare-card-cons");
+          if (pros) lines.push("\n优势：\n" + pros.innerText.trim());
+          if (cons) lines.push("\n劣势：\n" + cons.innerText.trim());
+          var meta = card.querySelector(".compare-card-meta");
+          if (meta) lines.push(meta.innerText.trim());
+          lines.push("");
+        });
+        var note = compareContainer.querySelector(".compare-note");
+        if (note) lines.push("## 选型分析\n" + note.innerText.trim());
+        var table = compareContainer.querySelector(".compare-table");
+        if (table) lines.push("## 对比表\n" + table.innerText.trim());
+      }
+
+      var text = lines.join("\n");
+      var blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "方案简报_" + formatTimestampForFile() + ".md";
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // ── Phase 4: 对比结果导出 PNG ──
+
+    function exportComparePng() {
+      if (typeof html2canvas === "undefined") {
+        alert("无法加载 html2canvas 库，请连接网络后刷新页面重试。");
+        return;
+      }
+      var container = document.querySelector(".compare-results");
+      if (!container) { alert("请先生成对比结果"); return; }
+
+      var btn = document.getElementById("btn-export-compare");
+      if (btn) { btn.disabled = true; btn.textContent = "导出中..."; }
+
+      html2canvas(container, {
+        scale: 2,
+        backgroundColor: "#0b1120",
+        useCORS: true,
+        logging: false
+      }).then(function (canvas) {
+        return new Promise(function (resolve) {
+          canvas.toBlob(function (blob) { resolve(blob); }, "image/png");
+        });
+      }).then(function (blob) {
+        if (!blob) throw new Error("生成失败");
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "对比选型_" + formatTimestampForFile() + ".png";
+        a.rel = "noopener";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }).catch(function (err) {
+        console.error(err);
+        alert("导出失败：" + (err && err.message ? err.message : "请稍后重试"));
+      }).finally(function () {
+        if (btn) { btn.disabled = false; btn.textContent = "导出对比报告(图)"; }
+      });
+    }
+
+    // ── Phase 4: 清空对话 ──
+
+    function clearConversation() {
+      if (!window.confirm("确定清空当前对话历史？此操作不可撤销。")) return;
+      currentConversation = null;
+      var out = document.getElementById("output");
+      if (out) out.innerHTML = "";
+      var followSection = document.getElementById("follow-up-section");
+      if (followSection) followSection.style.display = "none";
+      var input = document.getElementById("follow-up-input");
+      if (input) input.value = "";
+      setBriefingActionsEnabled(false);
     }
 
     window.BriefingApp = {

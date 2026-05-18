@@ -126,8 +126,17 @@
                 <div id="follow-up-section" class="card card-input panel--tog" style="margin-top:1rem;display:none;">
                   <label for="follow-up-input" style="font-weight:700;display:block;margin-bottom:0.4rem;">追问迭代优化</label>
                   <textarea id="follow-up-input" rows="2" placeholder="例：请补充预算明细 / 增加风险评估 / 细化实施路径..." aria-label="追问内容"></textarea>
-                  <button type="button" id="btn-follow-up" class="btn-follow-up" style="margin-top:0.5rem;">发送追问</button>
-                  <span id="follow-up-status" style="font-size:0.75rem;color:var(--muted);margin-left:0.5rem;"></span>
+                  <div class="follow-up-actions">
+                    <button type="button" id="btn-follow-up" class="btn-follow-up">发送追问</button>
+                    <button type="button" id="btn-clear-conversation" class="btn-clear-conversation">清空对话</button>
+                    <span id="follow-up-status" style="font-size:0.75rem;color:var(--muted);margin-left:0.5rem;"></span>
+                  </div>
+                  <div class="follow-up-quick-asks">
+                    <button type="button" class="quick-ask" data-q="请补充详细的预算明细和成本分析">💰 预算明细</button>
+                    <button type="button" class="quick-ask" data-q="请增加风险评估和应急预案">⚠️ 风险评估</button>
+                    <button type="button" class="quick-ask" data-q="请细化实施路径和时间节点">📋 实施路径</button>
+                    <button type="button" class="quick-ask" data-q="请列出所需资质和审批流程">📄 资质要求</button>
+                  </div>
                 </div>
                 <details class="case-breakdown">
                   <summary>案例拆解：作战简报管道</summary>
@@ -143,6 +152,10 @@
                   </div>
                 </details>
                 <footer class="tog-panel-footer-note">数据自 scenes.json、aircrafts.json 加载；离线使用页面内嵌 fallback；PNG 依赖 html2canvas。</footer>
+                <details class="intel-panel">
+                  <summary><span class="intel-panel-icon">📡</span> 行业情报动态 <span class="intel-panel-badge" id="intel-count-badge">0</span></summary>
+                  <div id="intel-container" class="intel-container"><p class="intel-loading">加载中...</p></div>
+                </details>
               </div>
             </div>
           </div>
@@ -387,6 +400,7 @@
         <div class="tog-rail-png-export">
           <button type="button" id="btn-export" disabled aria-disabled="true">导出简报 PNG</button>
           <button type="button" id="btn-export-pdf" disabled aria-disabled="true" class="btn-export-pdf">导出简报 PDF</button>
+          <button type="button" id="btn-export-md" disabled aria-disabled="true" class="btn-export-md">导出 Markdown</button>
         </div>
       </div>
 

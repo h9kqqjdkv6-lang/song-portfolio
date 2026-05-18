@@ -4292,3 +4292,217 @@
 @media (max-width: 700px) {
   .compare-cards { grid-template-columns: 1fr; }
 }
+
+/* ── Phase 4: Intel 情报面板 ── */
+
+.intel-panel {
+  margin-top: 1rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.intel-panel summary {
+  cursor: pointer;
+  padding: 0.7rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  user-select: none;
+  list-style: none;
+}
+.intel-panel summary::-webkit-details-marker { display: none; }
+.intel-panel summary::before {
+  content: "▶";
+  font-size: 0.65rem;
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+.intel-panel[open] summary::before { transform: rotate(90deg); }
+.intel-panel-icon { font-size: 1rem; }
+.intel-panel-badge {
+  margin-left: auto;
+  background: var(--theme-color);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 8px;
+}
+.intel-container { padding: 0 1rem 1rem; }
+.intel-loading { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 1rem 0; }
+
+.intel-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+.intel-tab {
+  font-size: 0.72rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.intel-tab:hover { background: var(--surface); }
+.intel-tab--active {
+  background: var(--theme-color);
+  color: #fff;
+  border-color: var(--theme-color);
+}
+
+.intel-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.intel-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.6rem;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--border-subtle);
+}
+.intel-item--policy { border-left-color: #3B82F6; }
+.intel-item--product { border-left-color: #22C55E; }
+.intel-item--funding { border-left-color: #F59E0B; }
+.intel-item--article { border-left-color: #A855F7; }
+.intel-item--speech { border-left-color: #06B6D4; }
+.intel-item--interview { border-left-color: #EC4899; }
+
+.intel-item-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.intel-item-cat {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+  background: var(--border-subtle);
+  color: var(--muted);
+}
+.intel-item-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  line-height: 1.3;
+}
+.intel-item-title a {
+  color: inherit;
+  text-decoration: none;
+}
+.intel-item-title a:hover { text-decoration: underline; color: var(--theme-color); }
+.intel-item-summary {
+  font-size: 0.73rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.intel-item-meta {
+  font-size: 0.65rem;
+  color: var(--muted);
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.intel-item-source { font-style: italic; }
+.intel-empty { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 1rem 0; }
+.intel-error { text-align: center; color: var(--warn); font-size: 0.8rem; padding: 1rem 0; }
+
+/* ── Phase 4: 导出 Markdown 按钮 ── */
+
+.btn-export-md {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(var(--control-height) * 0.85);
+  padding: 0 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: background 0.15s;
+  box-sizing: border-box;
+}
+.btn-export-md:hover:not(:disabled) { background: var(--surface-raised); border-color: var(--btn-edge-hover); }
+.btn-export-md:disabled { opacity: 0.4; cursor: default; }
+
+/* ── Phase 4: 追问 UI 增强 ── */
+
+.follow-up-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+.btn-follow-up {
+  min-height: var(--control-height);
+  padding: 0 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 1px solid var(--btn-edge);
+  background: linear-gradient(180deg, var(--btn-top), var(--btn-bot));
+}
+.btn-follow-up:disabled { opacity: 0.5; cursor: default; }
+
+.btn-clear-conversation {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-clear-conversation:hover { color: #EF4444; border-color: #EF4444; }
+
+.follow-up-quick-asks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+.quick-ask {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.quick-ask:hover { background: var(--surface-raised); border-color: var(--theme-color); color: var(--theme-color); }
+
+.btn-export-compare {
+  display: block;
+  margin: 0.75rem 0 0;
+  padding: 0.45rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #fff;
+  border: 1px solid var(--btn-edge);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, var(--btn-top), var(--btn-bot));
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.btn-export-compare:hover { filter: brightness(1.06); }
+.btn-export-compare:disabled { opacity: 0.5; cursor: default; }
