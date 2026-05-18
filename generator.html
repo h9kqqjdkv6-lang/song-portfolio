@@ -36,26 +36,23 @@
           <span class="tog-kpi-val tog-kpi-val--sm" id="tog-kpi-scene">—</span>
         </div>
         <div class="tog-kpi-item">
-          <span class="tog-kpi-label">空间档位</span>
+          <span class="tog-kpi-label">预算规模</span>
+          <span class="tog-kpi-val tog-kpi-val--sm" id="tog-kpi-budget">—</span>
+        </div>
+        <div class="tog-kpi-item">
+          <span class="tog-kpi-label" id="tog-kpi-spatial-label">空间档位</span>
           <span class="tog-kpi-val tog-kpi-val--sm" id="tog-kpi-spatial">—</span>
         </div>
-        <div class="tog-kpi-item tog-kpi-item--wind">
-          <span class="tog-kpi-label">现场风速</span>
-          <div class="tog-kpi-wind-row">
-            <span class="tog-kpi-val" id="tog-kpi-wind">—</span>
-            <span class="tog-kpi-badge" id="tog-kpi-wind-tier" data-tier="na">—</span>
-          </div>
+        <div class="tog-kpi-item">
+          <span class="tog-kpi-label">推荐方案</span>
+          <span class="tog-kpi-val" id="tog-kpi-rec-solution">—</span>
         </div>
         <div class="tog-kpi-item">
-          <span class="tog-kpi-label">推荐方案加权</span>
+          <span class="tog-kpi-label">方案评分</span>
           <span class="tog-kpi-val" id="tog-kpi-compare">—</span>
         </div>
-        <div class="tog-kpi-item">
-          <span class="tog-kpi-label">工作区版本</span>
-          <span class="tog-kpi-val tog-kpi-val--sm" id="tog-kpi-revision">—</span>
-        </div>
         <div class="tog-kpi-item tog-kpi-item--wide">
-          <span class="tog-kpi-hint" id="tog-kpi-hint">请先在右侧填写风速并点击「生成方案」。</span>
+          <span class="tog-kpi-hint" id="tog-kpi-hint">在右侧选择场景与参数，点击生成方案。</span>
         </div>
       </div>
       <p class="tog-sidebar-title">工作台步骤</p>
@@ -136,11 +133,6 @@
 
           <div id="tog-work-wrap" class="wrap tog-brief-wrap">
             <div class="lower-grid" id="lower-grid">
-              <section id="medical-map-section" class="card medical-map-card panel--tog" hidden aria-hidden="true">
-                <h3>青岛市 · 供血航线示意</h3>
-                <div id="amap-container" role="img" aria-label="地图：血站至医院航线"></div>
-                <p class="medical-map-caption">起点：血站 → 终点：医院。生成方案后将绘制蓝色示意航线。</p>
-              </section>
               <div class="output-stack">
                 <div id="output" role="region" aria-live="polite"></div>
                 <div id="follow-up-section" class="card card-input panel--tog follow-up-card" style="margin-top:1rem;display:none;">
@@ -172,7 +164,7 @@
                   <div class="case-breakdown-body">
                     <section class="case-breakdown-section">
                       <h4 class="case-breakdown-h">输入与输出</h4>
-                      <p>在右侧选择场景、空间档位与风速；步骤 1「解决方案」中生成简报并导出 PNG。</p>
+                      <p>在右侧选择场景、参数与预算；步骤 1「解决方案」中生成简报并导出。</p>
                     </section>
                     <section class="case-breakdown-section">
                       <h4 class="case-breakdown-h">工作台</h4>
@@ -180,9 +172,14 @@
                     </section>
                   </div>
                 </details>
-                <footer class="tog-panel-footer-note">数据自 scenes.json、aircrafts.json 加载；离线使用页面内嵌 fallback；PNG 依赖 html2canvas。</footer>
+                <footer class="tog-panel-footer-note">场景数据加载自 scenes.json + aircrafts.json + Supabase 实时情报；预算、高度/范围/距离参数由用户设定；方案由 DeepSeek AI 生成。</footer>
                 <button type="button" class="intel-quick-link" onclick="document.querySelector('.wb-tab[data-panel=&quot;intel&quot;]').click()">📡 <span id="intel-count-badge-sm">0</span> 条行业情报 → 步骤 3</button>
               </div>
+              <section id="medical-map-section" class="card medical-map-card panel--tog" hidden aria-hidden="true">
+                <h3>青岛市 · 供血航线示意</h3>
+                <div id="amap-container" role="img" aria-label="地图：血站至医院航线"></div>
+                <p class="medical-map-caption">起点：血站 → 终点：医院。生成方案后将绘制蓝色示意航线。</p>
+              </section>
             </div>
           </div>
         </div>
@@ -386,6 +383,16 @@
         <div class="row">
           <label for="requirement-desc">项目需求描述（选填）</label>
           <textarea id="requirement-desc" rows="3" placeholder="例：针对青岛市南区30层以上住宅消防部署，预算控制在200万以内，需覆盖3个街道…" aria-label="项目需求描述"></textarea>
+        </div>
+        <div class="row">
+          <label for="budget">预算规模</label>
+          <select id="budget" aria-label="预算规模">
+            <option value="">请选择预算区间（选填）</option>
+            <option value="30以下">¥30万以下</option>
+            <option value="30-80">¥30-80万</option>
+            <option value="80-200">¥80-200万</option>
+            <option value="200以上">¥200万以上</option>
+          </select>
         </div>
       </div>
 

@@ -4,10 +4,6 @@
 (function (global) {
   var WIND_REF_HIGH = 8;
 
-  function $(id) {
-    return document.getElementById(id);
-  }
-
   function parseWindLimit() {
     if (global.BriefingApp && global.BriefingApp.getData) {
       var d = global.BriefingApp.getData();
@@ -61,16 +57,16 @@
   }
 
   function spatialLabel() {
-    var sel = $("height");
-    var lbl = $("height-field-label");
+    var sel = document.getElementById("height");
+    var lbl = document.getElementById("height-field-label");
     if (!sel) return "—";
-    if (lbl && /搜救|范围/.test(lbl.textContent || "")) {
+    if (lbl && /搜救|范围|半径|距离/.test(lbl.textContent || "")) {
       var optR = sel.options[sel.selectedIndex];
       var textR = optR ? optR.text : String(sel.value);
-      return "范围 " + textR;
+      return textR;
     }
     if (sel.value === "other") {
-      var c = $("height-custom-m");
+      var c = document.getElementById("height-custom-m");
       var m = c ? parseInt(String(c.value).trim(), 10) : NaN;
       if (!isNaN(m)) return "其他 " + m + " m";
       return "其他（待填米数）";
@@ -80,71 +76,63 @@
   }
 
   function refresh() {
-    var sceneEl = $("page-title");
-    var kScene = $("tog-kpi-scene");
-    var kSp = $("tog-kpi-spatial");
-    var kWind = $("tog-kpi-wind");
-    var kTier = $("tog-kpi-wind-tier");
-    var kCmp = $("tog-kpi-compare");
-    var kRev = $("tog-kpi-revision");
-    var hint = $("tog-kpi-hint");
+    var sceneEl = document.getElementById("page-title");
+    var kScene = document.getElementById("tog-kpi-scene");
+    var kSp = document.getElementById("tog-kpi-spatial");
+    var kCmp = document.getElementById("tog-kpi-compare");
+    var kRec = document.getElementById("tog-kpi-rec-solution");
+    var hint = document.getElementById("tog-kpi-hint");
 
     if (kScene) kScene.textContent = sceneEl ? sceneEl.textContent.replace(/\s+/g, " ").trim() : "—";
     if (kSp) kSp.textContent = spatialLabel();
 
-    var windIn = $("wind");
-    var windRaw = windIn && String(windIn.value).trim();
-    var wind = windRaw === "" ? NaN : parseFloat(windRaw);
-    var lim = parseWindLimit();
-    if (kWind && kTier) {
-      if (isNaN(wind)) {
-        kWind.textContent = "—";
-        kTier.textContent = "—";
-        kTier.setAttribute("data-tier", "na");
-        kTier.className = "tog-kpi-badge";
-      } else {
-        kWind.textContent = wind.toFixed(1);
-        var t = windTier(wind, lim);
-        kTier.textContent = t.label;
-        kTier.setAttribute("data-tier", t.key);
-        kTier.className = "tog-kpi-badge " + t.cls;
-      }
-    }
-
     var ws = global.WorkspaceStore ? global.WorkspaceStore.load() : null;
-    if (kRev) kRev.textContent = ws && ws.revision != null ? String(ws.revision) : "—";
     if (kCmp) kCmp.textContent = weightedForRecommended(ws);
+
+    /* 推荐方案：从 workspace 的 comparison 结果取推荐行名称 */
+    if (kRec) {
+      var name = "—";
+      if (ws && ws.comparison && ws.comparison.recommendedRowId) {
+        var row = findRow(ws.comparison.rows, ws.comparison.recommendedRowId);
+        if (row && row.name) name = row.name;
+      }
+      kRec.textContent = name;
+    }
 
     if (hint) {
       var hasBrief = !!document.querySelector("#output #briefing-body-content");
       hint.textContent = hasBrief
-        ? "简报已生成。风速档位为演示估算，请以现场观测与机型手册为准。"
-        : "请先在右侧填写风速并点击「生成方案」。";
+        ? "简报已生成。参数为演示估算，请以实际方案为准。"
+        : "在右侧选择场景与参数，点击生成方案。";
     }
   }
 
   function init() {
     refresh();
     ["height", "scenario"].forEach(function (id) {
-      var el = $(id);
+      var el = document.getElementById(id);
       if (el) el.addEventListener("change", refresh);
     });
-    var hCustom = $("height-custom-m");
+    var hCustom = document.getElementById("height-custom-m");
     if (hCustom) {
       hCustom.addEventListener("input", refresh);
       hCustom.addEventListener("change", refresh);
     }
-    var windEl = $("wind");
-    if (windEl) {
-      windEl.addEventListener("input", refresh);
-      windEl.addEventListener("change", refresh);
-    }
+    var budgetEl = document.getElementById("budget");
+    if (budgetEl) budgetEl.addEventListener("change", refresh);
     window.addEventListener("briefing:rendered", refresh);
     window.addEventListener("workbench:scenario-change", refresh);
     window.addEventListener("workspace:updated", refresh);
   }
 
-  global.TogKpiBar = { refresh: refresh };
+  global.TogKpiBar = {
+    refresh: refresh,
+    getComparisonScore: function () {
+      var ws = global.WorkspaceStore ? global.WorkspaceStore.load() : null;
+      var s = weightedForRecommended(ws);
+      return s !== "—" ? parseFloat(s) : null;
+    }
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

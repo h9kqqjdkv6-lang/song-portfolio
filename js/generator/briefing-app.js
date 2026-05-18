@@ -316,34 +316,122 @@
     function syncSpatialFieldWithScenario() {
       var sel = document.getElementById("height");
       var lbl = document.getElementById("height-field-label");
+      var kLabel = document.getElementById("tog-kpi-spatial-label");
+      var kSp = document.getElementById("tog-kpi-spatial");
+      var customRow = document.getElementById("row-height-custom");
+      var customLabel = document.querySelector("#row-height-custom label");
       if (!sel) return;
-      var mountain = isMountainScenario();
-      if (lbl) lbl.textContent = mountain ? "搜救作业范围" : "建筑高度";
-      var cur = sel.value;
-      var pairs = mountain
-        ? [
-            ["50", "约 3 km²（小范围）"],
-            ["100", "约 10 km²（中等范围）"],
-            ["150", "约 20 km²（大范围）"]
-          ]
-        : [
-            ["50", "50 米"],
-            ["100", "100 米"],
-            ["150", "150 米"],
+
+      /** 场景空间参数配置 */
+      var configs = {
+        "高楼灭火": {
+          label: "建筑高度",
+          kpiLabel: "作业高度",
+          customLabel: "自定义高度（米）",
+          aria: "建筑高度",
+          options: [
+            ["50", "50米"],
+            ["100", "100米"],
+            ["150", "150米"],
             ["other", "其他（自定义米数）"]
-          ];
-      var hadOther = cur === "other";
-      if (mountain && hadOther) cur = "100";
+          ]
+        },
+        "山林搜救": {
+          label: "搜救作业范围",
+          kpiLabel: "搜救半径",
+          customLabel: "",
+          aria: "搜救作业范围（平面尺度档位）",
+          options: [
+            ["50", "约3km²（小范围）"],
+            ["100", "约10km²（中等范围）"],
+            ["150", "约20km²（大范围）"]
+          ]
+        },
+        "公安执法": {
+          label: "巡逻覆盖半径",
+          kpiLabel: "巡逻半径",
+          customLabel: "自定义半径（km）",
+          aria: "巡逻覆盖半径",
+          options: [
+            ["1", "1km"],
+            ["3", "3km"],
+            ["5", "5km"],
+            ["other", "其他（自定义）"]
+          ]
+        },
+        "医疗应急": {
+          label: "单程运输距离",
+          kpiLabel: "运输距离",
+          customLabel: "自定义距离（km）",
+          aria: "单程运输距离",
+          options: [
+            ["10", "10km"],
+            ["30", "30km"],
+            ["50", "50km"],
+            ["other", "其他（自定义）"]
+          ]
+        }
+      };
+
+      var key = getScenarioKey() || "高楼灭火";
+      var cfg = configs[key] || configs["高楼灭火"];
+
+      if (lbl) lbl.textContent = cfg.label;
+      if (kLabel) kLabel.textContent = cfg.kpiLabel;
+      sel.setAttribute("aria-label", cfg.aria);
+
+      var cur = sel.value;
+      if (!cfg.options.some(function(o){ return o[0] === cur; })) {
+        if (cfg.options.length === 4) cur = cfg.options[1][0];
+        else cur = cfg.options[0][0];
+      }
+
       sel.innerHTML = "";
-      for (var i = 0; i < pairs.length; i++) {
+      for (var i = 0; i < cfg.options.length; i++) {
         var opt = document.createElement("option");
-        opt.value = pairs[i][0];
-        opt.textContent = pairs[i][1];
-        if (pairs[i][0] === cur) opt.selected = true;
+        opt.value = cfg.options[i][0];
+        opt.textContent = cfg.options[i][1];
+        if (cfg.options[i][0] === cur) opt.selected = true;
         sel.appendChild(opt);
       }
-      sel.setAttribute("aria-label", mountain ? "搜救作业范围（平面尺度档位）" : "建筑高度");
-      updateHeightCustomRowVisibility();
+
+      /* 自定义行：只有非山林且有自定义选项的场景显示 */
+      if (customRow) {
+        var hasOther = cfg.options.length === 4;
+        customRow.hidden = !hasOther || sel.value !== "other";
+      }
+      if (customLabel) {
+        customLabel.textContent = cfg.customLabel || "自定义";
+      }
+
+      /* 刷新KPI值 */
+      updateSpatialKpiValue();
+      updateBudgetKpiValue();
+    }
+
+    function updateSpatialKpiValue() {
+      var sel = document.getElementById("height");
+      var kSp = document.getElementById("tog-kpi-spatial");
+      if (!sel || !kSp) return;
+      var opt = sel.options[sel.selectedIndex];
+      var text = opt ? opt.text : String(sel.value);
+      kSp.textContent = text || "—";
+    }
+
+    function updateBudgetKpiValue() {
+      var sel = document.getElementById("budget");
+      var kBg = document.getElementById("tog-kpi-budget");
+      if (!sel || !kBg) return;
+      var opt = sel.options[sel.selectedIndex];
+      kBg.textContent = opt && opt.value ? opt.textContent : "—";
+    }
+
+    function readBudgetText() {
+      var sel = document.getElementById("budget");
+      if (!sel) return "";
+      var opt = sel.options[sel.selectedIndex];
+      if (opt && opt.value) return "预算规模：" + opt.textContent;
+      return "";
     }
 
     function isValidAmapKey() {
@@ -718,6 +806,7 @@
       var videoMap = {
         "高楼灭火": "media/高楼灭火.mp4",
         "医疗救援": "media/医疗救援.mp4",
+        "医疗应急": "media/医疗应急.mp4",
         "山林搜救": "media/山林搜救.mp4"
       };
 
@@ -2814,6 +2903,7 @@
           "场景类型：" + topic,
           "作业高度：" + h + "m",
           Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s",
+          readBudgetText(),
           reqDesc ? "客户需求描述：" + reqDesc : ""
         ].filter(Boolean);
       } else {
@@ -2822,6 +2912,7 @@
           "场景：" + str(DATA.displayName),
           "作业高度：" + h + "m",
           Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s",
+          readBudgetText(),
           reqDesc ? "客户补充需求：" + reqDesc : ""
         ].filter(Boolean);
       }
@@ -3458,6 +3549,10 @@
         if (reqDesc) {
             promptParts.push("项目补充描述：" + reqDesc);
         }
+        var budgetText = readBudgetText();
+        if (budgetText) {
+            promptParts.push(budgetText);
+        }
 
         if (DATA) {
             var ctx = buildAIContext(DATA);
@@ -3591,6 +3686,13 @@
         document.getElementById("btn").addEventListener("click", render);
         document.getElementById("btn-ai").addEventListener("click", generateWithAI);
         document.getElementById("btn-compare").addEventListener("click", generateCompare);
+
+        var budgetEl = document.getElementById("budget");
+        if (budgetEl) {
+          budgetEl.addEventListener("change", function () {
+            updateBudgetKpiValue();
+          });
+        }
         document.getElementById("btn-export").addEventListener("click", exportBriefingPng);
         document.getElementById("btn-export-pdf").addEventListener("click", exportBriefingPDF);
         document.getElementById("btn-export-md").addEventListener("click", exportMarkdown);
@@ -3618,6 +3720,7 @@
         if (hSel) {
           hSel.addEventListener("change", function () {
             updateHeightCustomRowVisibility();
+            updateSpatialKpiValue();
             scheduleRebriefDebounced();
           });
         }
@@ -3705,10 +3808,10 @@
       var topic, extraParts;
       if (isCustom) {
         topic = customSceneName.trim();
-        extraParts = ["场景类型：" + topic, "作业高度：" + h + "m", Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s", reqDesc ? "客户需求描述：" + reqDesc : ""].filter(Boolean);
+        extraParts = ["场景类型：" + topic, "作业高度：" + h + "m", Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s", readBudgetText(), reqDesc ? "客户需求描述：" + reqDesc : ""].filter(Boolean);
       } else {
         topic = str(DATA.displayName) + " - " + str(DATA.primaryScenario || "");
-        extraParts = ["场景：" + str(DATA.displayName), "作业高度：" + h + "m", Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s", reqDesc ? "客户补充需求：" + reqDesc : ""].filter(Boolean);
+        extraParts = ["场景：" + str(DATA.displayName), "作业高度：" + h + "m", Number.isNaN(wind) ? "" : "当前风速：" + wind + "m/s", readBudgetText(), reqDesc ? "客户补充需求：" + reqDesc : ""].filter(Boolean);
       }
 
       var sceneContext = DATA ? buildAIContext(DATA) : buildAircraftCatalogForAI();
