@@ -23,6 +23,8 @@
       selectedScenarioId: "高楼灭火",
       briefingDocumentDepth: "full",
       comparison: null,
+      history: [],
+      followUpHistory: [],
       poc: {
         checklist: [],
         performanceRows: [],
@@ -59,6 +61,8 @@
       if (!ws.poc) ws.poc = { checklist: [], performanceRows: [], notes: "" };
       if (!ws.tender) ws.tender = { phases: [], outlineSections: [] };
       if (!ws.delivery) ws.delivery = { milestones: [] };
+      if (!Array.isArray(ws.history)) ws.history = [];
+      if (!Array.isArray(ws.followUpHistory)) ws.followUpHistory = [];
       return ws;
     } catch (e) {
       console.warn("workspace load", e);
@@ -98,6 +102,137 @@
     return ws;
   }
 
+  /**
+   * Simple browser fingerprint for cloud sync identification
+   */
+  function getBrowserFingerprint() {
+    try {
+      var raw = navigator.userAgent + screen.width + 'song-portfolio-v1';
+      // Simple hash via btoa
+      return btoa(unescape(encodeURIComponent(raw))).slice(0, 32);
+    } catch (e) {
+      return 'unknown-' + Date.now();
+    }
+  }
+
+  /**
+   * Push a history snapshot (prepends, max 20 items)
+   */
+  function pushHistory(snapshot) {
+    var ws = load();
+    if (!Array.isArray(ws.history)) ws.history = [];
+    snapshot._checked = false;
+    ws.history.unshift(snapshot);
+    if (ws.history.length > 20) ws.history.length = 20;
+    save(ws);
+  }
+
+  function getHistory() {
+    var ws = load();
+    return Array.isArray(ws.history) ? ws.history : [];
+  }
+
+  function restoreHistory(index) {
+    var ws = load();
+    var list = Array.isArray(ws.history) ? ws.history : [];
+    var item = list[index];
+    if (!item) return false;
+    ws.selectedScenarioId = item.scenarioName || ws.selectedScenarioId;
+    ws.projectMeta = ws.projectMeta || {};
+    ws.projectMeta.updatedAt = nowIso();
+    // Store a reference for the history panel to use
+    ws._restoredHistoryIndex = index;
+    ws._restoredHistorySnapshot = deepClone(item);
+    save(ws);
+    return true;
+  }
+
+  function clearHistory() {
+    var ws = load();
+    ws.history = [];
+    delete ws._restoredHistoryIndex;
+    delete ws._restoredHistorySnapshot;
+    save(ws);
+  }
+
+  function toggleHistoryItem(index) {
+    var ws = load();
+    var list = Array.isArray(ws.history) ? ws.history : [];
+    if (index < 0 || index >= list.length) return;
+    var item = list[index];
+    // Toggle
+    item._checked = !item._checked;
+    // Enforce max 2 checked: if more than 2, uncheck oldest
+    var checked = list.filter(function (h) { return h._checked; });
+    if (checked.length > 2) {
+      // Find the earliest checked item (furthest in list) and uncheck it
+      for (var i = list.length - 1; i >= 0; i--) {
+        if (list[i]._checked) {
+          list[i]._checked = false;
+          break;
+        }
+      }
+    }
+    ws.history = list;
+    save(ws);
+  }
+
+  function getCheckedForCompare() {
+    var ws = load();
+    var list = Array.isArray(ws.history) ? ws.history : [];
+    return list.filter(function (h) { return h._checked; }).slice(0, 2);
+  }
+
+  function saveToCloud() {
+    return new Promise(function (resolve, reject) {
+      var ws = load();
+      var fingerprint = getBrowserFingerprint();
+      var payload = deepClone(ws);
+      payload._fingerprint = fingerprint;
+      payload._fingerprint_label = navigator.userAgent.slice(0, 80);
+      fetch('/api/proposals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+        .then(function (r) {
+          if (!r.ok) throw new Error('cloud save ' + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          resolve(data);
+        })
+        .catch(function (err) {
+          reject(err);
+        });
+    });
+  }
+
+  function loadFromCloud() {
+    return new Promise(function (resolve, reject) {
+      var fingerprint = getBrowserFingerprint();
+      fetch('/api/proposals?_fp=' + encodeURIComponent(fingerprint), {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(function (r) {
+          if (!r.ok) throw new Error('cloud load ' + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          if (data && data.workspace) {
+            importFromObject(data.workspace);
+            resolve(data);
+          } else {
+            reject(new Error('no cloud workspace'));
+          }
+        })
+        .catch(function (err) {
+          reject(err);
+        });
+    });
+  }
+
   global.WorkspaceStore = {
     STORAGE_KEY: STORAGE_KEY,
     createEmptyWorkspace: createEmptyWorkspace,
@@ -106,6 +241,15 @@
     exportJSON: exportJSON,
     importFromObject: importFromObject,
     bumpRevision: bumpRevision,
-    deepClone: deepClone
+    deepClone: deepClone,
+    pushHistory: pushHistory,
+    getHistory: getHistory,
+    restoreHistory: restoreHistory,
+    clearHistory: clearHistory,
+    toggleHistoryItem: toggleHistoryItem,
+    getCheckedForCompare: getCheckedForCompare,
+    saveToCloud: saveToCloud,
+    loadFromCloud: loadFromCloud,
+    getBrowserFingerprint: getBrowserFingerprint
   };
 })(typeof window !== "undefined" ? window : this);

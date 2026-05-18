@@ -4529,3 +4529,237 @@
   color: var(--theme-color);
   background: var(--surface-raised);
 }
+
+/* ── 方案历史面板 ── */
+.tog-history-panel {
+  margin: 0.75rem 0.5rem 0;
+  padding: 0.6rem 0.5rem;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.75rem;
+}
+.tog-history-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.tog-history-title {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+.tog-history-badge {
+  background: var(--theme-color);
+  color: #fff;
+  font-size: 0.62rem;
+  padding: 0.08rem 0.35rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.tog-history-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 0.35rem;
+}
+.tog-history-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.3rem;
+  padding: 0.3rem 0.35rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.12s;
+  border: 1px solid transparent;
+  margin-bottom: 0.2rem;
+}
+.tog-history-item:hover { background: var(--surface-raised); }
+.tog-history-item.is-selected {
+  border-color: var(--theme-color);
+  background: rgba(32, 128, 224, 0.08);
+}
+.tog-history-item-check {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  width: 14px; height: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.tog-history-item-check.is-checked {
+  background: var(--theme-color);
+  border-color: var(--theme-color);
+  color: #fff;
+  font-size: 0.6rem;
+}
+.tog-history-item-body { flex: 1; min-width: 0; }
+.tog-history-item-title {
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tog-history-item-meta {
+  font-size: 0.62rem;
+  color: var(--muted);
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.1rem;
+}
+.tog-history-item-score {
+  color: var(--theme-color);
+  font-weight: 600;
+}
+.tog-history-actions {
+  display: flex;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+}
+.tog-history-btn {
+  flex: 1;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.12s;
+}
+.tog-history-btn:hover:not(:disabled) { background: var(--surface-raised); border-color: var(--btn-edge-hover); }
+.tog-history-btn:disabled { opacity: 0.4; cursor: default; }
+.tog-history-btn--danger:hover { color: #EF4444; border-color: #EF4444; }
+
+/* ── 云同步状态指示器 ── */
+.tog-cloud-status {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+.tog-cloud-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.tog-cloud-dot[data-state="syncing"] { background: var(--theme-color); animation: pulse-dot 1s ease-in-out infinite; }
+.tog-cloud-dot[data-state="saved"] { background: #22C55E; }
+.tog-cloud-dot[data-state="error"] { background: #EF4444; }
+.tog-cloud-dot[data-state="offline"] { background: var(--muted); }
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ── 追问 UI 增强 ── */
+.follow-up-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+}
+.follow-up-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.follow-up-label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.follow-up-hint {
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+.follow-up-textarea {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.82rem;
+  font-family: inherit;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  color: var(--text);
+  resize: vertical;
+  min-height: 2.8rem;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.follow-up-textarea:focus { outline: none; border-color: var(--theme-color); box-shadow: 0 0 0 2px rgba(32, 128, 224, 0.15); }
+.follow-up-status {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-left: 0.3rem;
+}
+.follow-up-token {
+  font-size: 0.62rem;
+  color: var(--muted);
+  margin-left: auto;
+}
+.follow-up-conversation {
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  max-height: 260px;
+  overflow-y: auto;
+}
+.follow-up-messages {
+  padding: 0.5rem;
+}
+.follow-up-msg {
+  margin-bottom: 0.5rem;
+  animation: fade-in 0.15s ease;
+}
+.follow-up-msg:last-child { margin-bottom: 0; }
+.follow-up-msg-user {
+  display: flex;
+  justify-content: flex-end;
+}
+.follow-up-msg-ai {
+  display: flex;
+  justify-content: flex-start;
+}
+.follow-up-msg-bubble {
+  max-width: 85%;
+  padding: 0.4rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+.follow-up-msg-user .follow-up-msg-bubble {
+  background: var(--theme-color);
+  color: #fff;
+  border-bottom-right-radius: 2px;
+}
+.follow-up-msg-ai .follow-up-msg-bubble {
+  background: var(--surface-raised);
+  color: var(--text);
+  border-bottom-left-radius: 2px;
+}
+.follow-up-msg-time {
+  font-size: 0.58rem;
+  color: var(--muted);
+  margin-top: 0.1rem;
+  text-align: right;
+}
+.follow-up-msg-ai .follow-up-msg-time { text-align: left; }
+.follow-up-msg-loading .follow-up-msg-bubble {
+  background: var(--surface-raised);
+  color: var(--muted);
+  font-style: italic;
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

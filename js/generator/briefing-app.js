@@ -21,6 +21,22 @@
     /** 全局 AI 生成中止控制器 —— 切换场景/静态生成时自动中止后台 AI 请求 */
     var _aiAbortController = null;
 
+    /** 从 SCENE_INTEL_CACHE 提取 local_intel 格式数据，供 generate API 注入 prompt */
+    function getLocalIntelForScene(sceneName) {
+      if (!sceneName || !SCENE_INTEL_CACHE[sceneName]) return null;
+      var cache = SCENE_INTEL_CACHE[sceneName];
+      if (!cache.items || !cache.items.length) return null;
+      return cache.items.map(function (item) {
+        return { title: item.title, summary: item.summary, category: item.category, date: item.date, source: item.source };
+      });
+    }
+
+    /** 从场景 DATA 对象提取 scene_data 摘要，供 generate API 注入 prompt */
+    function getSceneDataForAPI(DATA) {
+      if (!DATA) return null;
+      return { description: DATA.displayName || DATA.subtitle || "", aircrafts: (DATA.aircraftModel || []).slice(0, 5) };
+    }
+
     function fetchSceneIntel(sceneKey) {
       if (!sceneKey) return Promise.resolve(null);
       if (SCENE_INTEL_CACHE[sceneKey]) return Promise.resolve(SCENE_INTEL_CACHE[sceneKey]);
@@ -2385,6 +2401,11 @@
             detail: { ok: true, wind: wind, height: h }
           })
         );
+        // 激活追问 Q&A
+        if (window.FollowUpChat) {
+          var briefText = out ? out.innerText || "" : "";
+          window.FollowUpChat.init(briefText, getScenarioKey());
+        }
         return;
       }
 
@@ -2544,6 +2565,11 @@
           detail: { ok: true, wind: wind, height: h }
         })
       );
+      // 激活追问 Q&A
+      if (window.FollowUpChat) {
+        var briefText = out ? out.innerText || "" : "";
+        window.FollowUpChat.init(briefText, getScenarioKey());
+      }
     }
 
     function render() {
@@ -2807,6 +2833,8 @@
           audience: "政府",
           extra_context: extra,
           scene_name: isCustom ? customSceneName.trim() : str(DATA.displayName),
+          local_intel: getLocalIntelForScene(isCustom ? customSceneName.trim() : str(DATA.displayName)),
+          scene_data: getSceneDataForAPI(DATA),
           depth: currentDepth
         }),
         signal: ctrl.signal
@@ -2864,6 +2892,9 @@
                             _lastResponse: rawContent
                         };
                         showFollowUpSection();
+                        if (window.FollowUpChat) {
+                          window.FollowUpChat.init(rawContent, getScenarioKey());
+                        }
                       }
                       var metaHtml =
                         '<p class="ai-meta" style="font-size:0.8rem;color:var(--muted);margin:0 0 1rem 0;">' +
@@ -3285,6 +3316,8 @@
                 audience: conv.audience || "政府",
                 extra_context: extra,
                 scene_name: conv.scene_name || "",
+                local_intel: getLocalIntelForScene(conv.scene_name || ""),
+                scene_data: conv.scene_name ? getSceneDataForAPI(conv) : null,
                 follow_up_to: currentConversation._lastResponse || "",
                 follow_up_question: question,
                 depth: currentConversation.depth || "full"
@@ -3430,6 +3463,8 @@
                 audience: "政府",
                 extra_context: prompt,
                 scene_name: sceneName2,
+                local_intel: getLocalIntelForScene(sceneName2),
+                scene_data: null,
                 mode: "compliance"
             }),
             signal: ctrl.signal
@@ -3670,6 +3705,8 @@
           audience: "政府",
           extra_context: extra,
           scene_name: isCustom ? customSceneName.trim() : str(DATA.displayName),
+          local_intel: getLocalIntelForScene(isCustom ? customSceneName.trim() : str(DATA.displayName)),
+          scene_data: getSceneDataForAPI(DATA),
           mode: "compare"
         }),
         signal: ctrl.signal
@@ -4280,6 +4317,13 @@
       if (input) input.value = "";
       setBriefingActionsEnabled(false);
     }
+
+    // ── 场景切换时重置追问 ──
+    window.addEventListener("workbench:scenario-change", function () {
+      if (window.FollowUpChat) {
+        window.FollowUpChat.reset();
+      }
+    });
 
     window.BriefingApp = {
       loadScenarioData: loadScenarioData,

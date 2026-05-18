@@ -275,7 +275,7 @@ export default async (request) => {
     })
   }
 
-  const { topic, industry, audience, extra_context, scene_name, follow_up_to, follow_up_question, mode, depth } = body || {}
+  const { topic, industry, audience, extra_context, scene_name, follow_up_to, follow_up_question, mode, depth, local_intel, scene_data } = body || {}
   if (!topic || !topic.trim()) {
     return new Response(JSON.stringify({ error: "topic 为必填项" }), {
       status: 400, headers: { "Content-Type": "application/json" },
@@ -286,6 +286,63 @@ export default async (request) => {
     return new Response(JSON.stringify({ error: "DeepSeek API Key 未配置" }), {
       status: 500, headers: { "Content-Type": "application/json" },
     })
+  }
+
+  // ── 情报注入：Supabase intel_items + 本地情报 ──
+  let intelContext = ""
+
+  // 1. Supabase 实时情报（部署环境：展台/线上）
+  if (scene_name && scene_name.trim()) {
+    try {
+      const { data: intelItems } = await supabaseAdmin
+        .from("intel_items")
+        .select("title, summary, category, date, source, score")
+        .filter("scene_tags", "cs", `{${scene_name.trim()}}`)
+        .gte("score", 60)
+        .order("date", { ascending: false })
+        .limit(5)
+
+      if (intelItems && intelItems.length > 0) {
+        intelContext += "\n\n## 当前行业动态（基于实时情报）\n以下情报来自公开新闻源，可在方案中引用：\n"
+        intelItems.forEach(item => {
+          intelContext += `- [${item.date || "近期"}][${item.source || "媒体"}] ${item.title}（${item.category || "行业动态"}）`
+          if (item.summary) intelContext += ` — ${item.summary}`
+          intelContext += "\n"
+        })
+      }
+    } catch (e) {
+      console.error("intel_items fetch failed:", e.message)
+    }
+  }
+
+  // 2. 本地情报（本地 my-ai-hub + Obsidian 环境）
+  if (local_intel && Array.isArray(local_intel) && local_intel.length > 0) {
+    intelContext += "\n\n## 情报参考（来自私有知识库）\n"
+    local_intel.forEach(item => {
+      if (typeof item === "string") {
+        intelContext += `- ${item}\n`
+      } else if (item && item.title) {
+        intelContext += `- ${item.title}`
+        if (item.summary) intelContext += `：${item.summary}`
+        intelContext += "\n"
+      }
+    })
+  }
+
+  // 3. 场景数据（scenes.json 静态数据）
+  if (scene_data && typeof scene_data === "object") {
+    intelContext += "\n\n## 场景参数参考\n"
+    if (scene_data.description) intelContext += `场景描述：${scene_data.description}\n`
+    if (scene_data.aircrafts && Array.isArray(scene_data.aircrafts)) {
+      intelContext += "适用机型：\n"
+      scene_data.aircrafts.forEach(ac => {
+        intelContext += `- ${ac.model || ac}`
+        if (ac.payload) intelContext += `（载荷${ac.payload}kg`
+        if (ac.endurance) intelContext += `，航程${ac.endurance}`
+        if (ac.payload || ac.endurance) intelContext += "）"
+        intelContext += "\n"
+      })
+    }
   }
 
   // ── Compare Mode ──
@@ -409,7 +466,7 @@ export default async (request) => {
       .replace("{topic}", topic.trim())
       .replace("{industry}", industry || "低空经济")
       .replace("{audience}", audience || "政府")
-      .replace("{extra}", extra_context ? `补充约束：${extra_context.trim()}` : "")
+      .replace("{extra}", (extra_context ? `补充约束：${extra_context.trim()}\n` : "") + (intelContext ? intelContext.trim() : ""))
 
     messages = [
       { role: "system", content: systemPrompt },
@@ -422,7 +479,7 @@ export default async (request) => {
       .replace("{topic}", topic.trim())
       .replace("{industry}", industry || "低空经济")
       .replace("{audience}", audience || "政府")
-      .replace("{extra}", extra_context ? `补充约束：${extra_context.trim()}` : "")
+      .replace("{extra}", (extra_context ? `补充约束：${extra_context.trim()}\n` : "") + (intelContext ? intelContext.trim() : ""))
 
     messages = [
       { role: "system", content: systemPrompt },

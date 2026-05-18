@@ -97,6 +97,22 @@
         <summary class="tog-sidebar-extra-sum">场景配图（可选）</summary>
         <p class="tog-sidebar-extra-note">政务界面默认隐藏轮播以保持高信噪比。如需品牌示意，可使用独立宣传物料。</p>
       </details>
+
+      <div class="tog-history-panel" id="tog-history-panel" hidden>
+        <div class="tog-history-head">
+          <span class="tog-history-title">📋 方案历史</span>
+          <span class="tog-history-badge" id="tog-history-badge">0</span>
+        </div>
+        <div class="tog-history-list" id="tog-history-list"></div>
+        <div class="tog-history-actions">
+          <button type="button" id="tog-history-compare" class="tog-history-btn" disabled>📊 对比选中</button>
+          <button type="button" id="tog-history-clear" class="tog-history-btn tog-history-btn--danger">🗑️ 清空</button>
+        </div>
+        <div class="tog-cloud-status" id="tog-cloud-status" hidden>
+          <span class="tog-cloud-dot" id="tog-cloud-dot"></span>
+          <span class="tog-cloud-label" id="tog-cloud-label">云同步中...</span>
+        </div>
+      </div>
     </aside>
 
     <main class="tog-main" role="main">
@@ -127,19 +143,28 @@
               </section>
               <div class="output-stack">
                 <div id="output" role="region" aria-live="polite"></div>
-                <div id="follow-up-section" class="card card-input panel--tog" style="margin-top:1rem;display:none;">
-                  <label for="follow-up-input" style="font-weight:700;display:block;margin-bottom:0.4rem;">追问迭代优化</label>
-                  <textarea id="follow-up-input" rows="2" placeholder="例：请补充预算明细 / 增加风险评估 / 细化实施路径..." aria-label="追问内容"></textarea>
+                <div id="follow-up-section" class="card card-input panel--tog follow-up-card" style="margin-top:1rem;display:none;">
+                  <div class="follow-up-head">
+                    <span class="follow-up-label">💬 追问 AI</span>
+                    <span class="follow-up-hint">以当前场景+方案为基础继续对话</span>
+                  </div>
+                  <div class="follow-up-conversation" id="follow-up-conversation" hidden>
+                    <div class="follow-up-messages" id="follow-up-messages"></div>
+                  </div>
+                  <textarea id="follow-up-input" class="follow-up-textarea" rows="2" placeholder="问任何关于当前方案的跟进问题..." aria-label="追问内容"></textarea>
                   <div class="follow-up-actions">
                     <button type="button" id="btn-follow-up" class="btn-follow-up">发送追问</button>
                     <button type="button" id="btn-clear-conversation" class="btn-clear-conversation">清空对话</button>
-                    <span id="follow-up-status" style="font-size:0.75rem;color:var(--muted);margin-left:0.5rem;"></span>
+                    <span id="follow-up-status" class="follow-up-status"></span>
+                    <span class="follow-up-token" id="follow-up-token"></span>
                   </div>
                   <div class="follow-up-quick-asks">
                     <button type="button" class="quick-ask" data-q="请补充详细的预算明细和成本分析">💰 预算明细</button>
                     <button type="button" class="quick-ask" data-q="请增加风险评估和应急预案">⚠️ 风险评估</button>
                     <button type="button" class="quick-ask" data-q="请细化实施路径和时间节点">📋 实施路径</button>
                     <button type="button" class="quick-ask" data-q="请列出所需资质和审批流程">📄 资质要求</button>
+                    <button type="button" class="quick-ask" data-q="如果预算减半，方案如何调整">💡 预算减半</button>
+                    <button type="button" class="quick-ask" data-q="如果风速增加到8级，操作方案如何调整">🌬️ 高风调整</button>
                   </div>
                 </div>
                 <details class="case-breakdown">
@@ -2435,5 +2460,7 @@
   <script src="js/generator/workbench-ui.js"></script>
   <script src="js/generator/tog-kpi-bar.js"></script>
   <script src="js/generator/briefing-app.js"></script>
+  <script src="js/generator/follow-up.js"></script>
+  <script src="js/generator/history-panel.js"></script>
 </body>
 </html>
