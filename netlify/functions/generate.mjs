@@ -253,15 +253,15 @@ export default async (request) => {
       const costEst = (inputTokens / 1_000_000) * 1.0 + (outputTokens / 1_000_000) * 2.0
 
       // Background write to Supabase
-      supabaseAdmin.from("usage_log").insert({
+      try { await supabaseAdmin.from("usage_log").insert({
         model: DEEPSEEK_MODEL,
         endpoint: "/api/generate (compare)",
         input_tokens: inputTokens,
         output_tokens: outputTokens,
         cost_cny: parseFloat(costEst.toFixed(6)),
-      }).catch(() => {})
+      }) } catch (e) { console.error("usage_log insert failed:", e.message) }
 
-      supabaseAdmin.from("proposals").insert({
+      try { await supabaseAdmin.from("proposals").insert({
         topic: topic.trim(),
         industry: industry || "",
         audience: audience || "政府",
@@ -270,7 +270,7 @@ export default async (request) => {
         route_reason: "Netlify Function (compare)",
         input_tokens_est: inputTokens,
         output_tokens_est: outputTokens,
-      }).catch(() => {})
+      }) } catch (e) { console.error("proposals insert failed:", e.message) }
 
       return new Response(JSON.stringify({
         type: "compare_result",
