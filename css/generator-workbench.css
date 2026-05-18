@@ -3227,6 +3227,21 @@
       border-top: 1px solid var(--border-subtle);
     }
 
+    .tog-video-empty {
+      background: color-mix(in srgb, var(--tog-bg) 40%, var(--surface));
+    }
+    .tog-video-empty::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--muted);
+      opacity: 0.4;
+    }
+
     .tog-brief-header {
       margin-bottom: var(--section-gap);
       padding-bottom: 1rem;

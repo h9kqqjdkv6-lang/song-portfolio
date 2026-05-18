@@ -689,6 +689,7 @@
         document.title = customName + " · 解决方案工作台";
         updateMedicalMapSectionVisibility();
         syncSpatialFieldWithScenario();
+        setSceneVideo("");
         return;
       }
       var d = getData();
@@ -705,6 +706,36 @@
       applyTheme(d.themeColor);
       updateMedicalMapSectionVisibility();
       syncSpatialFieldWithScenario();
+      setSceneVideo(str(d.displayName));
+    }
+
+    function setSceneVideo(displayName) {
+      var v = document.getElementById("tog-brief-video");
+      var hint = document.querySelector(".tog-brief-video-hint");
+      var frame = document.getElementById("tog-brief-video-frame");
+
+      /** 場景→影片檔名對應表 */
+      var videoMap = {
+        "高楼灭火": "media/高楼灭火.mp4",
+        "医疗救援": "media/医疗救援.mp4",
+        "山林搜救": "media/山林搜救.mp4"
+      };
+
+      var src = videoMap[displayName];
+      if (v) {
+        if (src) {
+          if (v.getAttribute("src") !== src) {
+            v.setAttribute("src", src);
+            v.load();
+          }
+          if (hint) hint.textContent = "▶️ 场景演示 · 点击播放";
+          if (frame) frame.classList.remove("tog-video-empty");
+        } else {
+          v.removeAttribute("src");
+          if (hint) hint.textContent = "🚧 演示视频制作中";
+          if (frame) frame.classList.add("tog-video-empty");
+        }
+      }
     }
 
     function loadScenarioData() {
