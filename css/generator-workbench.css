@@ -4050,6 +4050,41 @@
         min-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
       }
 
+      .tog-sidebar,
+      .tog-main,
+      .tog-rail {
+        min-width: 0;
+        overflow-x: hidden;
+      }
+
+      /* 顶栏：防止主题切换按钮换行 */
+      .tog-top-bar {
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+        padding-left: max(0.65rem, env(safe-area-inset-left, 0px));
+        padding-right: max(0.65rem, env(safe-area-inset-right, 0px));
+      }
+
+      .tog-top-left {
+        flex: 1 1 auto;
+        min-width: 0;
+        flex-wrap: nowrap;
+        overflow: hidden;
+      }
+
+      .tog-back-link {
+        flex-shrink: 0;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+      }
+
+      .tog-product-name,
+      .tog-page-context {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       .tog-rail {
         --control-height: 48px;
         grid-area: rail;
@@ -4293,6 +4328,8 @@
 
 @media (max-width: 700px) {
   .compare-cards { grid-template-columns: 1fr; }
+  .compare-table th,
+  .compare-table td:first-child { white-space: normal; }
 }
 
 /* ── Phase 4: Intel 情报面板 ── */
@@ -4464,8 +4501,8 @@
 .btn-follow-up:disabled { opacity: 0.5; cursor: default; }
 
 .btn-clear-conversation {
-  padding: 0.3rem 0.6rem;
-  font-size: 0.72rem;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.82rem;
   color: var(--muted);
   background: transparent;
   border: 1px solid var(--border-subtle);

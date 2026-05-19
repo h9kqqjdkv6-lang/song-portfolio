@@ -3697,22 +3697,6 @@
         document.getElementById("btn-export-pdf").addEventListener("click", exportBriefingPDF);
         document.getElementById("btn-export-md").addEventListener("click", exportMarkdown);
         document.getElementById("btn-compliance-check").addEventListener("click", runComplianceCheck);
-        document.getElementById("btn-follow-up").addEventListener("click", submitFollowUp);
-        document.getElementById("btn-clear-conversation").addEventListener("click", clearConversation);
-
-        // 快捷提问
-        document.addEventListener("click", function (e) {
-          var qBtn = e.target && e.target.closest && e.target.closest(".quick-ask");
-          if (qBtn) {
-            var q = qBtn.getAttribute("data-q");
-            if (q) { document.getElementById("follow-up-input").value = q; submitFollowUp(); }
-          }
-        });
-
-        // 追问 Enter 发送
-        document.getElementById("follow-up-input").addEventListener("keydown", function (e) {
-          if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submitFollowUp(); }
-        });
 
         initWindBeaufortControls();
         initBriefingVideoPlayOverlay();

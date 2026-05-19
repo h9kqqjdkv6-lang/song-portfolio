@@ -147,19 +147,34 @@
    * @param {string} scenarioKey  当前场景 key
    */
   function init(briefContent, scenarioKey) {
-    _briefContent = briefContent || '';
-    _scenarioKey = scenarioKey || '';
-
     var section = $(SECTION_ID);
     if (section) section.style.display = 'block';
 
     var conv = $(CONV_ID);
     if (conv) conv.hidden = false;
 
-    // 清空消息
-    var msgArea = $(MSG_AREA_ID);
-    if (msgArea) msgArea.innerHTML = '';
+    // BUG 2: 剥离 HTML 标签，只存纯文本用于后续追问上下文
+    _briefContent = (briefContent || '').replace(/<[^>]*>/g, '');
+    _scenarioKey = scenarioKey || '';
 
+    // BUG 1: 先尝试从 workspace 恢复历史对话
+    var msgArea = $(MSG_AREA_ID);
+    if (restoreFromWorkspace()) {
+      // 有历史对话：渲染到 UI
+      if (msgArea) {
+        msgArea.innerHTML = '';
+        _messages.forEach(function (m) {
+          appendMessage(m.role, m.content, m.time);
+        });
+      }
+      var status = $(STATUS_ID);
+      if (status) status.textContent = '已恢复上次对话';
+      updateTokenInfo(null);
+      return;
+    }
+
+    // 没有历史：清空
+    if (msgArea) msgArea.innerHTML = '';
     _messages = [];
 
     var status = $(STATUS_ID);
@@ -513,5 +528,6 @@
     reset: reset
   };
 
+  // 启动事件绑定（发送按钮、Enter 键、快捷提问、清空对话）
   initModule();
 })(typeof window !== 'undefined' ? window : this);
