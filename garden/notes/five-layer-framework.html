@@ -20,16 +20,8 @@
           <a href="../index.html">数字花园</a>
           <a href="../../index.html#hub-title">作品与能力</a>
         </nav>
-        <button type="button" class="g-nav__toggle" id="nav-toggle" aria-expanded="false" aria-label="打开菜单">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
       </div>
     </header>
-    <div class="g-mobile-drawer__overlay" id="drawer-overlay"></div>
-    <div class="g-mobile-drawer" id="mobile-drawer" role="dialog" aria-label="导航菜单">
-      <a href="../index.html">数字花园</a>
-      <a href="../../index.html#hub-title">作品与能力</a>
-    </div>
     <article class="g-note-layout">
       <nav class="g-breadcrumb" aria-label="面包屑"><a href="../index.html">数字花园</a> / 方法论 / <span aria-current="page">五层框架 · 从地基到演进</span></nav>
       <div class="g-read">
@@ -149,28 +141,5 @@
 })();
   </script>
   <script src="../wiki-popup.js" defer></script>
-<script>
-(function () {
-  var toggle = document.getElementById("nav-toggle");
-  var drawer = document.getElementById("mobile-drawer");
-  var overlay = document.getElementById("drawer-overlay");
-  if (!toggle || !drawer || !overlay) return;
-  function openDrawer() {
-    drawer.classList.add("is-open");
-    overlay.classList.add("is-open");
-    toggle.setAttribute("aria-expanded", "true");
-  }
-  function closeDrawer() {
-    drawer.classList.remove("is-open");
-    overlay.classList.remove("is-open");
-    toggle.setAttribute("aria-expanded", "false");
-  }
-  toggle.addEventListener("click", function () {
-    if (drawer.classList.contains("is-open")) closeDrawer(); else openDrawer();
-  });
-  overlay.addEventListener("click", closeDrawer);
-  drawer.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", closeDrawer); });
-})();
-</script>
 </body>
 </html>

@@ -2017,26 +2017,13 @@
     }
 
     .wrap.wrap--medical-map .lower-grid {
-      display: grid;
-      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column;
       gap: var(--section-gap);
-      align-items: start;
     }
 
-    @media (min-width: 961px) {
-      .wrap.wrap--medical-map .lower-grid {
-        grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-      }
-
-      .wrap.wrap--medical-map .lower-grid .output-stack {
-        grid-column: 1;
-        grid-row: 1;
-      }
-
-      .wrap.wrap--medical-map .lower-grid #medical-map-section {
-        grid-column: 2;
-        grid-row: 1;
-      }
+    .wrap.wrap--medical-map .lower-grid #medical-map-section {
+      order: 1;
     }
 
     #medical-map-section {
@@ -2055,8 +2042,8 @@
     }
 
     #amap-container {
-      width: 400px;
-      height: 300px;
+      width: 100%;
+      height: 340px;
       max-width: 100%;
       border-radius: var(--radius-sm);
       overflow: hidden;
@@ -3498,9 +3485,9 @@
     .btn-follow-up {
         display: inline-flex;
         align-items: center;
-        padding: 0.45rem 0.95rem;
+        padding: 0.5rem 1rem;
         font: inherit;
-        font-size: 0.8125rem;
+        font-size: 0.92rem;
         font-weight: 600;
         color: var(--text-heading);
         background: var(--tog-accent);
@@ -4465,8 +4452,8 @@
 }
 .btn-follow-up {
   min-height: var(--control-height);
-  padding: 0 1rem;
-  font-size: 0.85rem;
+  padding: 0 1.2rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: #fff;
   border-radius: var(--radius-sm);
@@ -4495,8 +4482,8 @@
   margin-top: 0.5rem;
 }
 .quick-ask {
-  padding: 0.25rem 0.55rem;
-  font-size: 0.72rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
   background: var(--surface);
   border: 1px solid var(--border-subtle);
@@ -4688,7 +4675,7 @@
 }
 .follow-up-label {
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: var(--text);
 }
 .follow-up-hint {
@@ -4698,7 +4685,7 @@
 .follow-up-textarea {
   width: 100%;
   padding: 0.5rem 0.65rem;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-family: inherit;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -4746,10 +4733,10 @@
 }
 .follow-up-msg-bubble {
   max-width: 85%;
-  padding: 0.4rem 0.65rem;
+  padding: 0.45rem 0.7rem;
   border-radius: 8px;
-  font-size: 0.78rem;
-  line-height: 1.45;
+  font-size: 0.88rem;
+  line-height: 1.5;
   word-break: break-word;
 }
 .follow-up-msg-user .follow-up-msg-bubble {

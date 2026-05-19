@@ -11,7 +11,7 @@
     };
 
     /** AI Hub 连接 —— 获取场景相关的实时情报（政策更新、行业事件、人物动态） */
-    var AI_HUB_URL = (typeof window !== "undefined" && window.AI_HUB_URL) || "http://localhost:8787";
+    var AI_HUB_URL = (typeof window !== "undefined" && window.AI_HUB_URL) || "";
     /** Netlify API（同源）—— 静态文件 + 轻 API（scenes/intel/mentors/health/usage） */
     var API_BASE = (typeof window !== "undefined" && window.API_BASE) || "";
     /** AI 生成端点（同源 Netlify Function，流式输出避免超时） */
@@ -3696,9 +3696,9 @@
         document.getElementById("btn-export").addEventListener("click", exportBriefingPng);
         document.getElementById("btn-export-pdf").addEventListener("click", exportBriefingPDF);
         document.getElementById("btn-export-md").addEventListener("click", exportMarkdown);
+        document.getElementById("btn-compliance-check").addEventListener("click", runComplianceCheck);
         document.getElementById("btn-follow-up").addEventListener("click", submitFollowUp);
         document.getElementById("btn-clear-conversation").addEventListener("click", clearConversation);
-        document.getElementById("btn-compliance-check").addEventListener("click", runComplianceCheck);
 
         // 快捷提问
         document.addEventListener("click", function (e) {

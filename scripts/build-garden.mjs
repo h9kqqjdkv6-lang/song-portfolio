@@ -251,8 +251,8 @@ function layoutIndex({ categories, cardsHtml, graphJson, searchJson }) {
     <p class="g-grid-empty" id="g-grid-empty" hidden role="status">当前筛选下暂无笔记。</p>
     <script type="application/json" id="garden-graph-json">${graphJson}</script>
     <script type="application/json" id="garden-search-json">${searchJson}</script>
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/fuse.js/7.1.0/fuse.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/d3/7.8.5/d3.min.js" crossorigin="anonymous"></script>
     <script>
 (function () {
   var raw = document.getElementById("garden-graph-json");
@@ -447,7 +447,7 @@ function layoutIndex({ categories, cardsHtml, graphJson, searchJson }) {
   var listEl = document.getElementById("garden-search-results");
   var root = document.getElementById("garden-search-root");
   var rawIdx = document.getElementById("garden-search-json");
-  if (!input || !listEl || !root || !rawIdx || typeof Fuse === "undefined") return;
+  if (!input || !listEl || !root || !rawIdx) return;
 
   var STAGE_EMOJI = { seedling: "🌱", budding: "🌿", evergreen: "🌳" };
   var notes;
@@ -459,20 +459,41 @@ function layoutIndex({ categories, cardsHtml, graphJson, searchJson }) {
     return;
   }
 
-  var fuse = new Fuse(notes, {
-    keys: [
-      { name: "title", weight: 0.32 },
-      { name: "summary", weight: 0.18 },
-      { name: "body", weight: 0.28 },
-      { name: "category", weight: 0.11 },
-      { name: "stage", weight: 0.11 },
-    ],
-    threshold: 0.38,
-    ignoreLocation: true,
-    minMatchCharLength: 1,
-    distance: 128,
-    includeScore: true,
-  });
+  function searchNotes(q) {
+    q = q.toLowerCase();
+    var results = [];
+    notes.forEach(function (n) {
+      var score = 0;
+      if (n.title.toLowerCase().indexOf(q) !== -1) score += 10;
+      if (n.summary.toLowerCase().indexOf(q) !== -1) score += 6;
+      if (n.body.toLowerCase().indexOf(q) !== -1) score += 3;
+      if (n.category.toLowerCase().indexOf(q) !== -1) score += 1;
+      if (score > 0) results.push({ item: n, score: score });
+    });
+    results.sort(function (a, b) { return b.score - a.score; });
+    return results.slice(0, 16);
+  }
+
+  var doSearch;
+  if (typeof Fuse !== "undefined") {
+    var fuse = new Fuse(notes, {
+      keys: [
+        { name: "title", weight: 0.32 },
+        { name: "summary", weight: 0.18 },
+        { name: "body", weight: 0.28 },
+        { name: "category", weight: 0.11 },
+        { name: "stage", weight: 0.11 },
+      ],
+      threshold: 0.38,
+      ignoreLocation: true,
+      minMatchCharLength: 1,
+      distance: 128,
+      includeScore: true,
+    });
+    doSearch = function (q) { return fuse.search(q).slice(0, 16); };
+  } else {
+    doSearch = searchNotes;
+  }
 
   function setOpen(open) {
     listEl.hidden = !open;
@@ -518,7 +539,7 @@ function layoutIndex({ categories, cardsHtml, graphJson, searchJson }) {
       setOpen(false);
       return;
     }
-    var hits = fuse.search(q).slice(0, 16);
+    var hits = doSearch(q);
     renderHits(hits);
   }
 
