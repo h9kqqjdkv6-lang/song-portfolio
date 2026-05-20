@@ -40,6 +40,10 @@
           <span class="tog-kpi-val tog-kpi-val--sm" id="tog-kpi-budget">—</span>
         </div>
         <div class="tog-kpi-item">
+          <span class="tog-kpi-label">作业城市</span>
+          <span class="tog-kpi-val tog-kpi-val--sm" id="tog-kpi-city">—</span>
+        </div>
+        <div class="tog-kpi-item">
           <span class="tog-kpi-label" id="tog-kpi-spatial-label">空间档位</span>
           <span class="tog-kpi-val tog-kpi-val--sm" id="tog-kpi-spatial">—</span>
         </div>
@@ -394,6 +398,16 @@
             <option value="200以上">¥200万以上</option>
           </select>
         </div>
+        <div class="row">
+          <label for="city-select">作业城市</label>
+          <select id="city-select" aria-label="作业城市">
+            <option value="shenzhen" selected>深圳</option>
+            <option value="guangzhou">广州</option>
+            <option value="suzhou">苏州</option>
+            <option value="chongqing">重庆</option>
+            <option value="sichuan">四川</option>
+          </select>
+        </div>
       </div>
 
       <div class="card card-input panel--tog tog-rail-card">
@@ -477,6 +491,7 @@
       <span class="tog-footer-item" id="tog-footer-pack">方案包 —</span>
     </div>
     <span class="tog-footer-copyright">© 2026 宋宗源</span>
+    <span class="tog-footer-item" style="font-size:0.7rem;">This site is powered by <a href="https://www.netlify.com" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:underline;text-underline-offset:2px;">Netlify</a></span>
   </footer>
 
   <a class="feedback-fab feedback-fab--tog" href="https://8pczx084.jsjform.com/f/eigkFW" target="_blank" rel="noopener noreferrer" aria-label="提交反馈">反馈</a>

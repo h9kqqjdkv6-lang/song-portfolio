@@ -86,6 +86,18 @@
     if (kScene) kScene.textContent = sceneEl ? sceneEl.textContent.replace(/\s+/g, " ").trim() : "—";
     if (kSp) kSp.textContent = spatialLabel();
 
+    // 作业城市
+    var kCity = document.getElementById("tog-kpi-city");
+    if (kCity) {
+      var citySel = document.getElementById("city-select");
+      if (citySel) {
+        var opt = citySel.options[citySel.selectedIndex];
+        kCity.textContent = opt ? opt.textContent : "—";
+      } else {
+        kCity.textContent = "—";
+      }
+    }
+
     var ws = global.WorkspaceStore ? global.WorkspaceStore.load() : null;
     if (kCmp) kCmp.textContent = weightedForRecommended(ws);
 

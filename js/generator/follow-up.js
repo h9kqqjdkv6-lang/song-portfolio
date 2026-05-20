@@ -195,14 +195,28 @@
     var DATA = global.BriefingApp && typeof global.BriefingApp.getData === 'function'
       ? global.BriefingApp.getData()
       : null;
-    var sceneName = global.BriefingApp && typeof global.BriefingApp.getScenarioKey === 'function'
+    var sceneKey = global.BriefingApp && typeof global.BriefingApp.getScenarioKey === 'function'
       ? global.BriefingApp.getScenarioKey()
       : (_scenarioKey || '');
     var depth = global.BriefingApp && typeof global.BriefingApp.getDocumentDepth === 'function'
       ? global.BriefingApp.getDocumentDepth()
       : 'full';
 
-    var topic = DATA ? (DATA.displayName || sceneName) : sceneName;
+    // BUG FIX: 自定义场景下 getData() 返回 null，需要用表单里的自定义场景名称
+    var topic;
+    var sceneName;
+    var isCustom = sceneKey === '__custom__';
+    if (isCustom) {
+      var customName = (document.getElementById('custom-scene-name') || {}).value || '';
+      topic = customName.trim() || sceneKey;
+      sceneName = topic;
+    } else if (DATA) {
+      topic = DATA.displayName || sceneKey;
+      sceneName = sceneKey;
+    } else {
+      topic = sceneKey;
+      sceneName = sceneKey;
+    }
     var industry = '低空经济';
     var audience = '政府';
 
@@ -220,12 +234,14 @@
     var windRaw = (document.getElementById('wind') || {}).value || '';
     var wind = windRaw.trim() === '' ? NaN : parseFloat(windRaw);
     var extraParts = [];
-    if (DATA) {
-      var aiCtx = global.BriefingApp && typeof global.BriefingApp.buildAIContext === 'function'
-        ? global.BriefingApp.buildAIContext(DATA)
-        : '';
-      if (aiCtx) extraParts.push(aiCtx);
+    // BUG FIX: 自定义场景 DATA 为 null 时不调用 buildAIContext, 改用 buildAircraftCatalogForAI
+    var aiCtx = '';
+    if (DATA && global.BriefingApp && typeof global.BriefingApp.buildAIContext === 'function') {
+      aiCtx = global.BriefingApp.buildAIContext(DATA);
+    } else if (!DATA && global.BriefingApp && typeof global.BriefingApp.buildAircraftCatalogForAI === 'function') {
+      aiCtx = global.BriefingApp.buildAircraftCatalogForAI();
     }
+    if (aiCtx) extraParts.push(aiCtx);
     extraParts.push('作业高度：' + h + 'm');
     if (!isNaN(wind)) extraParts.push('当前风速：' + wind + 'm/s');
     var extra = extraParts.join('；');

@@ -60,7 +60,10 @@
     "transmission": {
       "system": "DJI O4运载增强版",
       "maxRange": "40km（8天线）",
-      "features": ["Sub-2G频段", "双卡4G中继"]
+      "features": [
+        "Sub-2G频段",
+        "双卡4G中继"
+      ]
     },
     "safetySystem": {
       "sensors": "11个核心传感器",
@@ -83,7 +86,9 @@
       "financing": "飞手贷：首付2成起"
     },
     "cumulativeStats": "截至2026.04，大疆无人机累计1.8亿趟次、运输1150万吨物资",
-    "keyConstraint": "最大起飞重量>150kg属于大型无人机，适航审定与空域审批流程复杂于150kg以下机型；运营须配备持证飞手"
+    "keyConstraint": "最大起飞重量>150kg属于大型无人机，适航审定与空域审批流程复杂于150kg以下机型；运营须配备持证飞手",
+    "annualMaintenance": 50000,
+    "annualMaintenanceNote": "含电池更换、定期检修、保险（估算值）"
   },
   "FC100": {
     "model": "大疆FlyCart 100",
@@ -144,7 +149,9 @@
       "lidar": "激光雷达",
       "vision": "四目视觉"
     },
-    "keyConstraint": "149.9kg为监管套利上限；动力系统无防护，雨中飞行后需怠速1分钟排水"
+    "keyConstraint": "149.9kg为监管套利上限；动力系统无防护，雨中飞行后需怠速1分钟排水",
+    "annualMaintenance": 30000,
+    "annualMaintenanceNote": "含电池更换、定期检修、保险（估算值）"
   },
   "FC100_Medical": {
     "model": "大疆FlyCart 100（医疗版）",
@@ -162,7 +169,9 @@
       "capacity": "可装载4单位红细胞或急救药品箱"
     },
     "protectionLevel": "IP55",
-    "keyConstraint": "温控货舱需起飞前预冷10分钟；血液运输需全程GPS追踪"
+    "keyConstraint": "温控货舱需起飞前预冷10分钟；血液运输需全程GPS追踪",
+    "annualMaintenance": 35000,
+    "annualMaintenanceNote": "含电池更换、定期检修、保险（估算值）"
   },
   "M400": {
     "model": "大疆 Matrice 400（M400 RTK）",
@@ -203,21 +212,27 @@
       "energy": "977Wh"
     },
     "multiPayloadNote": "多路 E 口 / PSDK 架构下可组合多类任务负载（公开资料常述多达 7 路接口能力）；实际搜救编成以最大商载约 6 kg、重心与厂方兼容矩阵为硬约束。",
-    "keyConstraint": "最大起飞重量 15.8 kg；防护等级非永久；总载重须预留安全余量。"
+    "keyConstraint": "最大起飞重量 15.8 kg；防护等级非永久；总载重须预留安全余量。",
+    "annualMaintenance": 20000,
+    "annualMaintenanceNote": "含电池更换、定期检修、保险（估算值）"
   },
   "大疆M30T": {
     "model": "大疆M30T",
     "thermalResolution": "640×512",
     "zoomCapability": "200倍变焦",
     "endurance": "41分钟（理论）",
-    "role": "先M30T看，再FC100打——侦查-打击链"
+    "role": "先M30T看，再FC100打——侦查-打击链",
+    "annualMaintenance": 15000,
+    "annualMaintenanceNote": "含电池更换、定期检修、保险（估算值）"
   },
   "大疆M30T搜救": {
     "model": "大疆M30T",
     "thermalResolution": "640×512",
     "zoomCapability": "200倍变焦",
     "endurance": "41分钟（理论）",
-    "role": "可选：超大面积首轮低空走廊侦察；主作业链仍以 M400 RTK 与下列 SOP 为准。"
+    "role": "可选：超大面积首轮低空走廊侦察；主作业链仍以 M400 RTK 与下列 SOP 为准。",
+    "annualMaintenance": 15000,
+    "annualMaintenanceNote": "含电池更换、定期检修、保险（估算值）"
   },
   "EH216-S": {
     "model": "亿航 EH216-S",
@@ -230,7 +245,12 @@
     "certificationStatus": "四证齐全（TC+PC+AC+OC）",
     "price": "约239万/台",
     "keyConstraint": "航程仅30km；适航已通过但载人运营成本高；无专门消防版本",
-    "applicableScenes": ["公安执法", "医疗应急"]
+    "applicableScenes": [
+      "公安执法",
+      "医疗应急"
+    ],
+    "annualMaintenance": 200000,
+    "annualMaintenanceNote": "含电池更换、定期检修、保险（估算值）"
   },
   "V2000CG": {
     "model": "峰飞V2000CG凯瑞鸥",
@@ -244,7 +264,12 @@
     "price": "待核实",
     "keyConstraint": "纯电航程200km，消防版本尚未量产；应用案例多在物流运输",
     "firefightingVersion": "可搭载4×100kg灭火弹",
-    "applicableScenes": ["高楼灭火", "山林搜救"]
+    "applicableScenes": [
+      "高楼灭火",
+      "山林搜救"
+    ],
+    "annualMaintenance": 100000,
+    "annualMaintenanceNote": "含电池更换、定期检修、保险（估算值）"
   },
   "R6000": {
     "model": "联合飞机镧影R6000",
@@ -257,7 +282,9 @@
     "certificationStatus": "2025.12首飞，取证中（预计3-5年）",
     "price": "待披露",
     "keyConstraint": "适航取证至少3-5年，短期不可用；倾转旋翼技术复杂度高",
-    "applicableScenes": []
+    "applicableScenes": [],
+    "annualMaintenance": 120000,
+    "annualMaintenanceNote": "含电池更换、定期检修、保险（估算值）"
   },
   "_emergingTech": {
     "note": "以下为2026年5月前沿技术动态，尚未进入量产产品，但可能影响方案选型",

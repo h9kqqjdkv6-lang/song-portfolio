@@ -72,12 +72,11 @@
     var labels = {
       syncing: '云同步中…',
       saved: '已同步',
-      error: '同步失败',
-      offline: '离线'
+      error: '同步失败'
     };
     cloudLabelEl.textContent = labels[state] || state;
-    // Auto-hide saved after 4s
-    if (state === 'saved') {
+    // Auto-hide after 4s for all non-syncing states (especially error)
+    if (state !== 'syncing') {
       clearTimeout(cloudStatusEl._hideTimer);
       cloudStatusEl._hideTimer = setTimeout(function () {
         cloudStatusEl.hidden = true;
@@ -186,13 +185,19 @@
   function updateCompareButton() {
     if (!compareBtn) return;
     var checked = global.WorkspaceStore ? global.WorkspaceStore.getCheckedForCompare() : [];
-    compareBtn.disabled = checked.length !== 2;
+    compareBtn.disabled = checked.length < 2;
   }
 
   /* ───────── actions ───────── */
 
   function restoreSnapshot(index) {
     if (!global.WorkspaceStore) return;
+    
+    // BUG FIX: 设置标志位防止场景切换时清空输出
+    if (global.BriefingApp) {
+      global.BriefingApp._isRestoringHistory = true;
+    }
+    
     var ok = global.WorkspaceStore.restoreHistory(index);
     if (!ok) return;
 
@@ -227,6 +232,17 @@
       }
     }
 
+    // Re-enable copy/export buttons after restore
+    if (global.BriefingApp && typeof global.BriefingApp.setBriefingActionsEnabled === 'function') {
+      global.BriefingApp.setBriefingActionsEnabled(true);
+    }
+
+    // Re-init follow-up chat with restored content
+    if (window.FollowUpChat && item.briefHtml) {
+      var briefText = item.briefHtml.replace(/<[^>]*>/g, '');
+      window.FollowUpChat.init(briefText, item.scenarioName || '');
+    }
+
     // Dispatch event so other components know
     window.dispatchEvent(new CustomEvent('briefing:restored', {
       detail: { index: index, snapshot: item }
@@ -252,18 +268,23 @@
   function openCompareView() {
     if (!global.WorkspaceStore) return;
     var checked = global.WorkspaceStore.getCheckedForCompare();
-    if (checked.length !== 2) return;
+    if (checked.length < 2) return;
 
     // Build a side-by-side comparison view in #output
     var out = document.getElementById('output');
     if (!out) return;
 
-    var html = '<div class="history-compare-wrapper" style="display:flex;gap:1rem;">';
+    var html = '<div style="margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;">' +
+      '<button type="button" class="btn-back-from-compare" style="padding:0.3rem 0.75rem;font-size:0.8rem;cursor:pointer;background:var(--border-subtle);border:1px solid var(--border-subtle);border-radius:4px;color:var(--text);">' +
+      '← 返回单方案视图</button>' +
+      '<span style="font-size:0.75rem;color:var(--muted);">对比 ' + checked.length + ' 个方案（点击历史项可退出对比）</span>' +
+      '</div>';
+    html += '<div class="history-compare-wrapper" style="display:flex;gap:1rem;flex-wrap:wrap;">';
     for (var i = 0; i < checked.length; i++) {
       var item = checked[i];
       var title = escapeHtml(item.scenarioName || '方案') +
                   (typeof item.revision === 'number' ? ' · rev ' + item.revision : '');
-      html += '<div style="flex:1;min-width:0;border:1px solid var(--border-subtle);border-radius:6px;padding:0.75rem;overflow:auto;max-height:80vh;">';
+      html += '<div style="flex:1;min-width:260px;border:1px solid var(--border-subtle);border-radius:6px;padding:0.75rem;overflow:auto;max-height:80vh;">';
       html += '<h3 style="margin:0 0 0.5rem;font-size:0.9rem;color:var(--text);">' + title + '</h3>';
       if (item.score != null && !isNaN(Number(item.score))) {
         html += '<p style="margin:0 0 0.5rem;font-size:0.8rem;color:var(--theme-color);">' +
@@ -281,6 +302,24 @@
     html += '</div>';
 
     out.innerHTML = html;
+
+    // Bind back button to restore first checked item
+    var backBtn = out.querySelector('.btn-back-from-compare');
+    if (backBtn) {
+      backBtn.addEventListener('click', function () {
+        var allHistory = global.WorkspaceStore.getHistory();
+        // Find the first checked item and restore it
+        for (var j = 0; j < allHistory.length; j++) {
+          if (allHistory[j]._checked) {
+            restoreSnapshot(j);
+            return;
+          }
+        }
+        // Fallback: clear output
+        out.innerHTML = '';
+      });
+    }
+
     window.dispatchEvent(new CustomEvent('briefing:rendered', { detail: { ok: true, compare: true } }));
   }
 

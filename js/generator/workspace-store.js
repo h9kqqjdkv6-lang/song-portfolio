@@ -162,9 +162,9 @@
     var item = list[index];
     // Toggle
     item._checked = !item._checked;
-    // Enforce max 2 checked: if more than 2, uncheck oldest
+    // Enforce max 3 checked: if more than 3, uncheck oldest
     var checked = list.filter(function (h) { return h._checked; });
-    if (checked.length > 2) {
+    if (checked.length > 3) {
       // Find the earliest checked item (furthest in list) and uncheck it
       for (var i = list.length - 1; i >= 0; i--) {
         if (list[i]._checked) {
@@ -180,7 +180,7 @@
   function getCheckedForCompare() {
     var ws = load();
     var list = Array.isArray(ws.history) ? ws.history : [];
-    return list.filter(function (h) { return h._checked; }).slice(0, 2);
+    return list.filter(function (h) { return h._checked; }).slice(0, 3);
   }
 
   function saveToCloud() {
